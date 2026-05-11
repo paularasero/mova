@@ -104,7 +104,8 @@ export default function Onboarding() {
                 />
               </AnimatePresence>
 
-              <div className="absolute inset-0 bg-gradient-to-b from-black/76 via-black/18 to-black/94" />
+              <div className="absolute inset-0 bg-black/30" />
+              <div className="absolute inset-0 bg-gradient-to-b from-black/82 via-black/36 to-black/96" />
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_68%,rgba(200,255,61,0.10),transparent_42%)]" />
 
               <header className="relative z-10 flex items-center justify-between px-6 pt-8">
@@ -129,7 +130,7 @@ export default function Onboarding() {
                     <p className="mb-3 text-xs font-bold uppercase tracking-[0.22em] text-[#C8FF3D]">
                       Experiencias urbanas
                     </p>
-                    <h1 className="max-w-[22rem] text-[2.82rem] font-black leading-[0.93] tracking-[-0.055em] text-white">
+                    <h1 className="max-w-[21rem] text-[2.55rem] font-black leading-[0.95] tracking-[-0.055em] text-white">
                       {activeSlide.title}
                     </h1>
                     <p className="mt-4 max-w-[19rem] text-base font-medium leading-snug text-white/70">
