@@ -28,7 +28,7 @@ const slides = [
 
 function Logo({ className = '' }) {
   return (
-    <p className={`text-[1.72rem] font-black tracking-[-0.04em] text-white ${className}`}>
+    <p className={`text-[1.72rem] font-bold tracking-[-0.01em] text-white ${className}`}>
       MOVA<span className="text-[#C8FF3D]">.</span>
     </p>
   );
@@ -71,7 +71,7 @@ export default function Onboarding() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
             >
-              <Logo className="text-[3.25rem]" />
+              <Logo className="text-[3.1rem]" />
             </motion.div>
             <div className="absolute bottom-12 h-[2px] w-44 overflow-hidden rounded-full bg-white/10">
               <motion.div
@@ -127,13 +127,13 @@ export default function Onboarding() {
                     exit={{ opacity: 0, x: -24, filter: 'blur(8px)' }}
                     transition={{ duration: 0.48, ease: [0.16, 1, 0.3, 1] }}
                   >
-                    <p className="mb-3 text-xs font-bold uppercase tracking-[0.22em] text-[#C8FF3D]">
+                    <p className="mb-3 text-xs font-semibold uppercase tracking-[0.24em] text-[#C8FF3D]">
                       Experiencias urbanas
                     </p>
-                    <h1 className="max-w-[21rem] text-[2.55rem] font-black leading-[0.95] tracking-[-0.055em] text-white">
+                    <h1 className="max-w-[21rem] text-[2.38rem] font-bold leading-[1.04] tracking-[-0.018em] text-white">
                       {activeSlide.title}
                     </h1>
-                    <p className="mt-4 max-w-[19rem] text-base font-medium leading-snug text-white/70">
+                    <p className="mt-4 max-w-[19rem] text-base font-medium leading-[1.45] text-white/76">
                       {activeSlide.subtitle}
                     </p>
                   </motion.div>
@@ -143,10 +143,10 @@ export default function Onboarding() {
                   type="button"
                   onClick={handleNext}
                   whileTap={{ scale: 0.97 }}
-                  className="mt-10 flex h-16 w-full items-center justify-between rounded-full border border-white/12 bg-white/12 px-5 pl-6 text-left text-base font-bold text-white shadow-[0_24px_80px_rgba(0,0,0,0.45)] backdrop-blur-2xl transition hover:bg-white/16"
+                  className="mt-10 flex h-16 w-full items-center justify-between rounded-full border border-white/12 bg-white/12 px-5 pl-6 text-left text-base font-semibold text-white shadow-[0_24px_80px_rgba(0,0,0,0.45)] backdrop-blur-2xl transition hover:bg-white/16"
                 >
                   <span>{activeSlide.button}</span>
-                  <span className="grid h-11 w-11 place-items-center rounded-full bg-[#C8FF3D] text-2xl font-black text-black shadow-[0_0_28px_rgba(200,255,61,0.42)]">
+                  <span className="grid h-11 w-11 place-items-center rounded-full bg-[#C8FF3D] text-2xl font-bold text-black shadow-[0_0_28px_rgba(200,255,61,0.42)]">
                     →
                   </span>
                 </motion.button>

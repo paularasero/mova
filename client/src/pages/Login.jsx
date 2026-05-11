@@ -14,7 +14,7 @@ function isValidEmail(value) {
 
 function Logo() {
   return (
-    <p className="text-[1.75rem] font-black tracking-[-0.04em] text-white">
+    <p className="text-[1.75rem] font-bold tracking-[-0.01em] text-white">
       MOVA<span className="text-[#C8FF3D]">.</span>
     </p>
   );
@@ -37,6 +37,7 @@ export default function Login() {
   const [form, setForm] = useState({ email: '', password: '' });
   const [touched, setTouched] = useState({ email: false, password: false });
   const [submitError, setSubmitError] = useState('');
+  const [submitSuccess, setSubmitSuccess] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const errors = {
@@ -57,20 +58,25 @@ export default function Login() {
   const handleChange = (field) => (event) => {
     setForm((prev) => ({ ...prev, [field]: event.target.value }));
     setSubmitError('');
+    setSubmitSuccess('');
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     setTouched({ email: true, password: true });
 
-    if (!isValid) return;
+    if (!isValid) {
+      setSubmitError('Completá todos los campos correctamente.');
+      return;
+    }
 
     setIsSubmitting(true);
     const result = await loginUser({ email: form.email, password: form.password });
     setIsSubmitting(false);
 
     if (result.ok) {
-      navigate('/home');
+      setSubmitSuccess('Sesión iniciada correctamente.');
+      window.setTimeout(() => navigate('/home'), 350);
       return;
     }
 
@@ -101,20 +107,20 @@ export default function Login() {
             initial={{ opacity: 0, y: 28, filter: 'blur(10px)' }}
             animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
             transition={{ duration: 0.58, ease: [0.16, 1, 0.3, 1] }}
-            className="rounded-[1.75rem] bg-black/28 p-4 shadow-[0_28px_90px_rgba(0,0,0,0.55)] backdrop-blur-xl"
+            className="rounded-[1.75rem] bg-black/30 p-4 shadow-[0_28px_90px_rgba(0,0,0,0.55)] backdrop-blur-xl"
           >
             <div className="mb-5">
-              <p className="mb-2 text-xs font-bold uppercase tracking-[0.24em] text-[#C8FF3D]">Acceso MOVA</p>
-              <h1 className="text-[2.45rem] font-black leading-[0.95] tracking-[-0.055em] text-white">
+              <p className="mb-2 text-xs font-semibold uppercase tracking-[0.24em] text-[#C8FF3D]">Acceso MOVA</p>
+              <h1 className="text-[2.28rem] font-bold leading-[1.05] tracking-[-0.018em] text-white">
                 Bienvenido a MOVA<span className="text-[#C8FF3D]">.</span>
               </h1>
-              <p className="mt-3 text-sm font-medium text-white/62">Iniciá sesión para continuar</p>
+              <p className="mt-3 text-sm font-medium leading-relaxed text-white/68">Iniciá sesión para continuar</p>
             </div>
 
             <form onSubmit={handleSubmit}>
               <div className="space-y-4">
                 <label className="block">
-                  <span className="mb-2 block text-sm font-semibold text-white/72">Email</span>
+                  <span className="mb-2 block text-sm font-medium text-white/74">Email</span>
                   <input
                     type="email"
                     value={form.email}
@@ -122,13 +128,13 @@ export default function Login() {
                     onBlur={() => setTouched((prev) => ({ ...prev, email: true }))}
                     placeholder="vos@email.com"
                     style={{ backgroundColor: 'rgba(13, 13, 13, 0.88)' }}
-                    className="w-full rounded-[1.35rem] border border-white/10 bg-[#0d0d0d]/86 px-4 py-3.5 text-base text-white outline-none transition placeholder:text-white/28 focus:border-[#C8FF3D]/70 focus:bg-[#161616] focus:shadow-[0_0_0_4px_rgba(200,255,61,0.08)]"
+                    className="w-full rounded-[1.2rem] border border-white/10 bg-[#0d0d0d]/86 px-4 py-3.5 text-base text-white outline-none transition placeholder:text-white/38 focus:border-[#C8FF3D]/70 focus:bg-[#161616] focus:shadow-[0_0_0_4px_rgba(200,255,61,0.08)]"
                   />
                   {touched.email && errors.email && <p className="mt-2 text-xs font-semibold text-[#ff7474]">{errors.email}</p>}
                 </label>
 
                 <label className="block">
-                  <span className="mb-2 block text-sm font-semibold text-white/72">Contraseña</span>
+                  <span className="mb-2 block text-sm font-medium text-white/74">Contraseña</span>
                   <input
                     type="password"
                     value={form.password}
@@ -136,7 +142,7 @@ export default function Login() {
                     onBlur={() => setTouched((prev) => ({ ...prev, password: true }))}
                     placeholder="Mínimo 6 caracteres"
                     style={{ backgroundColor: 'rgba(13, 13, 13, 0.88)' }}
-                    className="w-full rounded-[1.35rem] border border-white/10 bg-[#0d0d0d]/86 px-4 py-3.5 text-base text-white outline-none transition placeholder:text-white/28 focus:border-[#C8FF3D]/70 focus:bg-[#161616] focus:shadow-[0_0_0_4px_rgba(200,255,61,0.08)]"
+                    className="w-full rounded-[1.2rem] border border-white/10 bg-[#0d0d0d]/86 px-4 py-3.5 text-base text-white outline-none transition placeholder:text-white/38 focus:border-[#C8FF3D]/70 focus:bg-[#161616] focus:shadow-[0_0_0_4px_rgba(200,255,61,0.08)]"
                   />
                   {touched.password && errors.password && (
                     <p className="mt-2 text-xs font-semibold text-[#ff7474]">{errors.password}</p>
@@ -158,11 +164,17 @@ export default function Login() {
                   {submitError}
                 </p>
               )}
+              {submitSuccess && (
+                <p className="mt-4 rounded-2xl border border-[#C8FF3D]/20 bg-[#C8FF3D]/10 px-4 py-3 text-sm font-semibold text-[#D9FF73]">
+                  {submitSuccess}
+                </p>
+              )}
 
               <motion.button
                 type="submit"
                 whileTap={{ scale: 0.98 }}
-                className={`mt-6 h-14 w-full rounded-full bg-[#C8FF3D] text-base font-black text-black shadow-[0_18px_44px_rgba(200,255,61,0.28)] transition hover:brightness-105 ${
+                disabled={isSubmitting}
+                className={`mt-6 h-14 w-full rounded-full bg-[#C8FF3D] text-base font-bold text-black shadow-[0_18px_44px_rgba(200,255,61,0.28)] transition hover:brightness-105 disabled:cursor-wait ${
                   !isValid || isSubmitting ? 'opacity-70' : ''
                 }`}
               >
