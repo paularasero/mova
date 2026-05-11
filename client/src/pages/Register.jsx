@@ -104,7 +104,7 @@ export default function Register() {
     }
 
     setSubmitSuccess('Usuario creado correctamente.');
-    window.setTimeout(() => navigate('/home'), 450);
+    window.setTimeout(() => navigate('/setup'), 450);
   };
 
   return (

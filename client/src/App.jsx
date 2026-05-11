@@ -15,8 +15,9 @@ import Rewards from './pages/Rewards';
 import Saved from './pages/Saved';
 import { getCurrentUser } from './lib/auth';
 import Settings from './pages/Settings';
+import SetupOnboarding from './pages/SetupOnboarding';
 
-const hideNavbarRoutes = ['/', '/login', '/register'];
+const hideNavbarRoutes = ['/', '/login', '/register', '/setup'];
 
 export default function App() {
   const location = useLocation();
@@ -34,6 +35,7 @@ export default function App() {
         <Route path="/" element={currentUser ? <Navigate to="/home" replace /> : <Onboarding />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/setup" element={<PrivateRoute><SetupOnboarding /></PrivateRoute>} />
         <Route path="/home" element={<PrivateRoute><Home /></PrivateRoute>} />
         <Route path="/explore" element={<PrivateRoute><Explore /></PrivateRoute>} />
         <Route path="/map" element={<PrivateRoute><Map /></PrivateRoute>} />

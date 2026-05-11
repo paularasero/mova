@@ -13,6 +13,9 @@ const planSchema = new mongoose.Schema(
     horario: { type: String, required: true },
     precio: { type: String, required: true },
     imagen: { type: String, required: true },
+    images: [{ type: String }],
+    tags: [{ type: String }],
+    location: { type: String },
     rating: { type: Number, default: 0 },
     likes: { type: Number, default: 0 },
     guardados: { type: Number, default: 0 },
@@ -41,6 +44,7 @@ const planSchema = new mongoose.Schema(
       transform(_doc, ret) {
         ret.id = ret._id;
         ret.image = ret.imagen;
+        ret.images = ret.images?.length ? ret.images : [ret.imagen].filter(Boolean);
         ret.title = ret.titulo;
         ret.description = ret.descripcion;
         ret.city = ret.ciudad;
@@ -50,6 +54,7 @@ const planSchema = new mongoose.Schema(
         ret.date = ret.fecha;
         ret.time = ret.horario;
         ret.price = ret.precio;
+        ret.location = ret.location || ret.barrio;
         ret.author = ret.usuario;
         ret.saves = ret.guardados;
         ret.commentCount = ret.comentarios;

@@ -9,19 +9,21 @@ function regex(value) {
 }
 
 function buildQuery(queryParams) {
-  const { q, ciudad, city, categoria, category, compania, company, fecha, date } = queryParams;
+  const { q, ciudad, city, categoria, category, compania, company, fecha, date, presupuesto, price } = queryParams;
   const query = {};
 
   if (ciudad || city) query.ciudad = regex(ciudad || city);
   if (categoria || category) query.categoria = regex(categoria || category);
   if (compania || company) query.compania = regex(compania || company);
   if (fecha || date) query.fecha = fecha || date;
+  if (presupuesto || price) query.precio = regex(presupuesto || price);
   if (q) {
     query.$or = [
       { titulo: new RegExp(String(q), 'i') },
       { descripcion: new RegExp(String(q), 'i') },
       { barrio: new RegExp(String(q), 'i') },
       { categoria: new RegExp(String(q), 'i') },
+      { tags: new RegExp(String(q), 'i') },
     ];
   }
 
@@ -60,6 +62,9 @@ router.post('/', async (req, res) => {
       precio,
       image,
       imagen,
+      images,
+      tags,
+      location,
       author,
       usuario,
       authorId,
@@ -67,7 +72,9 @@ router.post('/', async (req, res) => {
       lng,
     } = req.body;
 
-    const required = [title || titulo, description || descripcion, city || ciudad, neighborhood || barrio, category || categoria, company || compania, date || fecha, time || horario, image || imagen];
+    const gallery = Array.isArray(images) ? images.filter(Boolean) : String(images || '').split('\n').map((item) => item.trim()).filter(Boolean);
+    const cover = image || imagen || gallery[0];
+    const required = [title || titulo, description || descripcion, city || ciudad, neighborhood || barrio, category || categoria, company || compania, date || fecha, time || horario, cover];
     if (required.some((value) => !String(value || '').trim())) {
       return res.status(400).json({ error: 'Completá los campos obligatorios.' });
     }
@@ -83,7 +90,10 @@ router.post('/', async (req, res) => {
       fecha: date || fecha,
       horario: time || horario,
       precio: price || precio || '$',
-      imagen: image || imagen,
+      imagen: cover,
+      images: gallery.length ? gallery : [cover],
+      tags: Array.isArray(tags) ? tags : String(tags || category || categoria).split(',').map((item) => item.trim()).filter(Boolean),
+      location: location || barrio || neighborhood,
       usuario: author || usuario || 'MOVA user',
       authorId,
       lat,
@@ -137,6 +147,9 @@ router.put('/:id', async (req, res) => {
       precio,
       image,
       imagen,
+      images,
+      tags,
+      location,
       lat,
       lng,
     } = req.body;
@@ -152,11 +165,14 @@ router.put('/:id', async (req, res) => {
       ...(time || horario ? { horario: time || horario } : {}),
       ...(price || precio ? { precio: price || precio } : {}),
       ...(image || imagen ? { imagen: image || imagen } : {}),
+      ...(images ? { images: Array.isArray(images) ? images.filter(Boolean) : String(images).split('\n').map((item) => item.trim()).filter(Boolean) } : {}),
+      ...(tags ? { tags: Array.isArray(tags) ? tags : String(tags).split(',').map((item) => item.trim()).filter(Boolean) } : {}),
+      ...(location ? { location } : {}),
       ...(lat !== undefined ? { lat } : {}),
       ...(lng !== undefined ? { lng } : {}),
     };
 
-    const experience = await Plan.findByIdAndUpdate(req.params.id, update, { new: true });
+    const experience = await Plan.findByIdAndUpdate(req.params.id, update, { returnDocument: 'after' });
     if (!experience) return res.status(404).json({ error: 'Experiencia no encontrada.' });
     return res.json(experience);
   } catch {
@@ -191,7 +207,7 @@ router.post('/:id/comment', async (req, res) => {
     const experience = await Plan.findByIdAndUpdate(
       req.params.id,
       { $push: { comments: comment }, $inc: { comentarios: 1 } },
-      { new: true }
+      { returnDocument: 'after' }
     );
 
     if (!experience) return res.status(404).json({ error: 'Experiencia no encontrada.' });
@@ -221,7 +237,7 @@ router.post('/:id/save', async (req, res) => {
       : { $addToSet: { savedBy: userId }, $inc: { guardados: 1 } };
 
     await User.findByIdAndUpdate(userId, userUpdate);
-    const updated = await Plan.findByIdAndUpdate(req.params.id, planUpdate, { new: true });
+    const updated = await Plan.findByIdAndUpdate(req.params.id, planUpdate, { returnDocument: 'after' });
 
     return res.json({ saved: !saved, experience: updated, message: saved ? 'Experiencia eliminada de guardados.' : 'Experiencia guardada.' });
   } catch {
@@ -240,7 +256,7 @@ router.post('/:id/like', async (req, res) => {
       ? { $pull: { likedBy: userId }, $inc: { likes: -1 } }
       : { $addToSet: { likedBy: userId || `anon_${Date.now()}` }, $inc: { likes: 1 } };
 
-    const updated = await Plan.findByIdAndUpdate(req.params.id, update, { new: true });
+    const updated = await Plan.findByIdAndUpdate(req.params.id, update, { returnDocument: 'after' });
     return res.json(updated);
   } catch {
     return res.status(400).json({ error: 'No pudimos actualizar el like.' });

@@ -71,6 +71,26 @@ router.get('/me/experiences', async (req, res) => {
   }
 });
 
+router.put('/me', async (req, res) => {
+  try {
+    const { userId, name, nombre, city, ciudad, avatar, preferences } = req.body;
+    if (!userId) return res.status(400).json({ error: 'Falta identificar el usuario.' });
+
+    const update = {
+      ...(name || nombre ? { nombre: name || nombre } : {}),
+      ...(city || ciudad ? { ciudad: city || ciudad } : {}),
+      ...(avatar ? { avatar } : {}),
+      ...(preferences ? { preferences } : {}),
+    };
+
+    const user = await User.findByIdAndUpdate(userId, update, { returnDocument: 'after' });
+    if (!user) return res.status(404).json({ error: 'Usuario no encontrado.' });
+    return res.json(user);
+  } catch {
+    return res.status(400).json({ error: 'No pudimos actualizar tu perfil.' });
+  }
+});
+
 router.post('/register', async (req, res) => {
   try {
     const { name, nombre, email, city, ciudad, password } = req.body;

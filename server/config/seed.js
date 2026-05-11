@@ -6,10 +6,12 @@ import User from '../models/User.js';
 export async function seedDatabase() {
   const [planCount, userCount] = await Promise.all([Plan.countDocuments(), User.countDocuments()]);
 
-  if (planCount === 0) {
-    await Plan.insertMany(plans.map(({ id, ...plan }) => ({ _id: id, ...plan })));
-    console.log('Planes iniciales cargados en MongoDB');
-  }
+  await Promise.all(
+    plans.map(({ id, ...plan }) =>
+      Plan.findByIdAndUpdate(id, { _id: id, ...plan }, { upsert: true, returnDocument: 'after' })
+    )
+  );
+  if (planCount === 0) console.log('Planes iniciales cargados en MongoDB');
 
   if (userCount === 0) {
     await User.insertMany(users.map(({ id, ...user }) => ({ _id: id, ...user })));
