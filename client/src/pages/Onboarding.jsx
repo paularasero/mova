@@ -1,48 +1,179 @@
-import { Link } from 'react-router-dom';
-import Button from '../components/Button';
+import { AnimatePresence, motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
-const heroImage =
-  'https://images.unsplash.com/photo-1511818966892-d7d671e672a2?auto=format&fit=crop&w=1500&q=80';
+const slides = [
+  {
+    title: 'Encontrá lugares que cambian cómo vivís la ciudad.',
+    subtitle: 'Planes, rincones y salidas elegidas por gente que se mueve como vos.',
+    button: 'Continuar',
+    image:
+      'https://images.unsplash.com/photo-1516834474-48c0abc2a902?auto=format&fit=crop&w=1600&q=85',
+  },
+  {
+    title: 'Guardá momentos. Compartí experiencias.',
+    subtitle: 'De una cena íntima a una noche con música, todo puede convertirse en plan.',
+    button: 'Continuar',
+    image:
+      'https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=1600&q=85',
+  },
+  {
+    title: 'Tu ciudad se siente distinta cuando sabés dónde caer.',
+    subtitle: 'Entrá a MOVA y descubrí qué está pasando cerca tuyo.',
+    button: 'Entrar a MOVA',
+    image:
+      'https://images.unsplash.com/photo-1527529482837-4698179dc6ce?auto=format&fit=crop&w=1600&q=85',
+  },
+];
+
+function Logo({ className = '' }) {
+  return (
+    <p className={`text-[1.72rem] font-black tracking-[-0.04em] text-white ${className}`}>
+      MOVA<span className="text-[#C8FF3D]">.</span>
+    </p>
+  );
+}
 
 export default function Onboarding() {
+  const navigate = useNavigate();
+  const [showSplash, setShowSplash] = useState(true);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const activeSlide = slides[activeIndex];
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setShowSplash(false), 2300);
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  const handleNext = () => {
+    if (activeIndex === slides.length - 1) {
+      navigate('/login');
+      return;
+    }
+
+    setActiveIndex((index) => index + 1);
+  };
+
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-md flex-col bg-surface">
-      <section className="relative flex min-h-screen flex-col overflow-hidden rounded-none bg-white sm:rounded-[2.75rem] sm:shadow-soft">
-        <img
-          src={heroImage}
-          alt="Personas disfrutando la ciudad"
-          className="absolute inset-0 h-full w-full object-cover"
-        />
-
-        <div className="absolute inset-0 bg-gradient-to-t from-white/86 via-white/24 to-transparent" />
-
-        <header className="relative z-10 px-7 pt-10">
-          <p className="text-[2rem] font-black tracking-[-0.03em] text-black">MOVA.</p>
-        </header>
-
-        <div className="relative z-10 mt-auto px-7 pb-8">
-          <div className="max-w-[18rem] animate-[fadeIn_700ms_ease-out]">
-            <h1 className="text-[2.75rem] font-extrabold leading-[0.94] tracking-[-0.03em] text-black">
-              Descubrí lugares que te mueven.
-            </h1>
-            <p className="mt-4 text-[1.05rem] font-medium leading-snug text-black/70">
-              Compartí, explorá y creá planes con tu gente.
-            </p>
-          </div>
-
-          <div className="mt-8 rounded-5xl bg-white p-5 shadow-soft backdrop-blur-sm">
-            <div className="mx-auto mb-4 h-1.5 w-12 rounded-full bg-black/10" />
-            <div className="space-y-3">
-              <Link to="/register">
-                <Button variant="primary">Crear cuenta</Button>
-              </Link>
-              <Link to="/login">
-                <Button variant="secondary">Iniciar sesión</Button>
-              </Link>
+    <main className="relative min-h-screen overflow-hidden bg-[#050505] text-white">
+      <AnimatePresence mode="wait">
+        {showSplash ? (
+          <motion.section
+            key="splash"
+            className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-[#050505]"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0, filter: 'blur(10px)' }}
+            transition={{ duration: 0.55, ease: 'easeOut' }}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.92, y: 8 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <Logo className="text-[3.25rem]" />
+            </motion.div>
+            <div className="absolute bottom-12 h-[2px] w-44 overflow-hidden rounded-full bg-white/10">
+              <motion.div
+                className="h-full rounded-full bg-[#C8FF3D]"
+                initial={{ x: '-100%' }}
+                animate={{ x: '0%' }}
+                transition={{ duration: 1.85, ease: 'easeInOut' }}
+              />
             </div>
-          </div>
-        </div>
-      </section>
+          </motion.section>
+        ) : (
+          <motion.section
+            key="onboarding"
+            className="mx-auto flex min-h-screen w-full max-w-md flex-col overflow-hidden bg-[#050505] shadow-2xl"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.45 }}
+          >
+            <div className="relative min-h-screen overflow-hidden">
+              <AnimatePresence mode="wait">
+                <motion.img
+                  key={activeSlide.image}
+                  src={activeSlide.image}
+                  alt=""
+                  className="absolute inset-0 h-full w-full object-cover"
+                  initial={{ opacity: 0, scale: 1.08, x: 28 }}
+                  animate={{ opacity: 1, scale: 1.02, x: 0 }}
+                  exit={{ opacity: 0, scale: 1.04, x: -28 }}
+                  transition={{ duration: 0.75, ease: [0.16, 1, 0.3, 1] }}
+                />
+              </AnimatePresence>
+
+              <div className="absolute inset-0 bg-gradient-to-b from-black/75 via-black/24 to-black/92" />
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_70%,rgba(200,255,61,0.12),transparent_38%)]" />
+
+              <header className="relative z-10 flex items-center justify-between px-6 pt-8">
+                <Logo />
+                <Link
+                  to="/login"
+                  className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-semibold text-white/82 backdrop-blur-xl transition hover:bg-white/16"
+                >
+                  Omitir
+                </Link>
+              </header>
+
+              <div className="relative z-10 flex min-h-[calc(100vh-6rem)] flex-col justify-end px-6 pb-7">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={activeSlide.title}
+                    initial={{ opacity: 0, x: 26, filter: 'blur(8px)' }}
+                    animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
+                    exit={{ opacity: 0, x: -24, filter: 'blur(8px)' }}
+                    transition={{ duration: 0.48, ease: [0.16, 1, 0.3, 1] }}
+                  >
+                    <p className="mb-3 text-xs font-bold uppercase tracking-[0.22em] text-[#C8FF3D]">
+                      Experiencias urbanas
+                    </p>
+                    <h1 className="max-w-[22rem] text-[3rem] font-black leading-[0.93] tracking-[-0.055em] text-white">
+                      {activeSlide.title}
+                    </h1>
+                    <p className="mt-4 max-w-[19rem] text-base font-medium leading-snug text-white/70">
+                      {activeSlide.subtitle}
+                    </p>
+                  </motion.div>
+                </AnimatePresence>
+
+                <motion.button
+                  type="button"
+                  onClick={handleNext}
+                  whileTap={{ scale: 0.97 }}
+                  className="mt-10 flex h-16 w-full items-center justify-between rounded-full border border-white/12 bg-white/12 px-5 pl-6 text-left text-base font-bold text-white shadow-[0_24px_80px_rgba(0,0,0,0.45)] backdrop-blur-2xl transition hover:bg-white/16"
+                >
+                  <span>{activeSlide.button}</span>
+                  <span className="grid h-11 w-11 place-items-center rounded-full bg-[#C8FF3D] text-2xl font-black text-black shadow-[0_0_28px_rgba(200,255,61,0.42)]">
+                    →
+                  </span>
+                </motion.button>
+
+                <div className="mt-6 flex items-center gap-2">
+                  {slides.map((slide, index) => (
+                    <button
+                      key={slide.title}
+                      type="button"
+                      onClick={() => setActiveIndex(index)}
+                      className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/18"
+                      aria-label={`Ir al paso ${index + 1}`}
+                    >
+                      <motion.span
+                        className="block h-full rounded-full bg-[#C8FF3D]"
+                        initial={false}
+                        animate={{ scaleX: index <= activeIndex ? 1 : 0 }}
+                        style={{ originX: 0 }}
+                        transition={{ duration: 0.35, ease: 'easeOut' }}
+                      />
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </motion.section>
+        )}
+      </AnimatePresence>
     </main>
   );
 }
