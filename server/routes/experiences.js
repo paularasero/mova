@@ -4,6 +4,31 @@ import User from '../models/User.js';
 
 const router = Router();
 
+const fallbackCoordinates = {
+  rambla: [-34.9137, -56.1608],
+  'parque rodó': [-34.9108, -56.1709],
+  'parque rodo': [-34.9108, -56.1709],
+  'ciudad vieja': [-34.9067, -56.2035],
+  cordón: [-34.9027, -56.1786],
+  cordon: [-34.9027, -56.1786],
+  pocitos: [-34.9101, -56.1469],
+  'punta carretas': [-34.9227, -56.1594],
+  montevideo: [-34.9011, -56.1645],
+};
+
+function resolveCoordinates({ lat, lng, city, ciudad, neighborhood, barrio, location }) {
+  const parsedLat = Number(lat);
+  const parsedLng = Number(lng);
+  if (Number.isFinite(parsedLat) && Number.isFinite(parsedLng)) {
+    return { lat: parsedLat, lng: parsedLng };
+  }
+
+  const searchable = `${location || ''} ${neighborhood || barrio || ''} ${city || ciudad || ''}`.toLowerCase();
+  const match = Object.entries(fallbackCoordinates).find(([key]) => searchable.includes(key));
+  const [fallbackLat, fallbackLng] = match?.[1] || fallbackCoordinates.montevideo;
+  return { lat: fallbackLat, lng: fallbackLng };
+}
+
 function regex(value) {
   return new RegExp(`^${String(value)}$`, 'i');
 }
@@ -79,6 +104,8 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ error: 'Completá los campos obligatorios.' });
     }
 
+    const coords = resolveCoordinates({ lat, lng, city, ciudad, neighborhood, barrio, location });
+
     const experience = await Plan.create({
       _id: `p_${Date.now()}`,
       titulo: title || titulo,
@@ -96,8 +123,8 @@ router.post('/', async (req, res) => {
       location: location || barrio || neighborhood,
       usuario: author || usuario || 'MOVA user',
       authorId,
-      lat,
-      lng,
+      lat: coords.lat,
+      lng: coords.lng,
       rating: 4.8,
       likes: 0,
       guardados: 0,

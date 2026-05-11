@@ -1,4 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
+import { MapContainer, Marker, TileLayer, useMapEvents } from 'react-leaflet';
 import { useMemo, useState } from 'react';
 import { FiCamera, FiCheck, FiMapPin, FiPlus, FiX } from 'react-icons/fi';
 import { IoArrowBack } from 'react-icons/io5';
@@ -11,13 +14,39 @@ const companies = ['Amigos', 'Pareja', 'Solo', 'Familia'];
 const cities = ['Montevideo', 'Punta del Este', 'Buenos Aires'];
 const barrios = ['Ciudad Vieja', 'Pocitos', 'Parque Rodó', 'Cordón', 'Carrasco', 'Centro'];
 const fallback = 'https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=1400&q=85';
+const MONTEVIDEO = [-34.9011, -56.1645];
+const limeIcon = L.divIcon({
+  className: '',
+  html: '<div style="width:32px;height:32px;border-radius:999px;background:#C8FF3D;box-shadow:0 0 0 8px rgba(200,255,61,.16);border:2px solid rgba(0,0,0,.18)"></div>',
+  iconSize: [32, 32],
+  iconAnchor: [16, 16],
+});
+
+function ClickToSelect({ onSelect }) {
+  useMapEvents({
+    click(event) {
+      onSelect({ lat: event.latlng.lat, lng: event.latlng.lng });
+    },
+  });
+  return null;
+}
 
 function MapPicker({ open, onClose, onSelect }) {
+  const [query, setQuery] = useState('');
+  const [picked, setPicked] = useState({ lat: MONTEVIDEO[0], lng: MONTEVIDEO[1], barrio: 'Centro', location: 'Punto seleccionado' });
   const options = [
-    { barrio: 'Ciudad Vieja', location: 'Plaza Zabala', lat: -34.9065, lng: -56.2049 },
-    { barrio: 'Pocitos', location: 'Rambla de Pocitos', lat: -34.9169, lng: -56.1498 },
-    { barrio: 'Parque Rodó', location: 'Lago del Parque Rodó', lat: -34.9129, lng: -56.1649 },
+    { barrio: 'Rambla', location: 'Rambla', lat: -34.9137, lng: -56.1608 },
+    { barrio: 'Parque Rodó', location: 'Lago del Parque Rodó', lat: -34.9108, lng: -56.1709 },
+    { barrio: 'Ciudad Vieja', location: 'Ciudad Vieja', lat: -34.9067, lng: -56.2035 },
+    { barrio: 'Cordón', location: 'Cordón', lat: -34.9027, lng: -56.1786 },
+    { barrio: 'Pocitos', location: 'Pocitos', lat: -34.9101, lng: -56.1469 },
+    { barrio: 'Punta Carretas', location: 'Punta Carretas', lat: -34.9227, lng: -56.1594 },
   ];
+  const filtered = options.filter((item) => `${item.location} ${item.barrio}`.toLowerCase().includes(query.toLowerCase()));
+  const choose = (place) => {
+    setPicked(place);
+    onSelect(place);
+  };
 
   return (
     <AnimatePresence>
@@ -33,19 +62,19 @@ function MapPicker({ open, onClose, onSelect }) {
             </div>
             <label className="mt-5 flex h-12 items-center gap-3 rounded-2xl bg-white/[0.07] px-4 text-sm">
               <FiMapPin className="text-[#C8FF3D]" />
-              <input placeholder="Buscar dirección" className="w-full bg-transparent outline-none placeholder:text-white/35" />
+              <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Buscar dirección" className="w-full bg-transparent outline-none placeholder:text-white/35" />
             </label>
             <div className="relative mt-4 h-64 overflow-hidden rounded-[1.6rem] bg-[#111]">
-              <div className="absolute inset-0 opacity-60" style={{ backgroundImage: 'linear-gradient(30deg,#222 12%,transparent 12.5%,transparent 87%,#222 87.5%,#222),linear-gradient(150deg,#222 12%,transparent 12.5%,transparent 87%,#222 87.5%,#222)', backgroundSize: '78px 132px' }} />
-              {options.map((item, index) => (
-                <button key={item.location} onClick={() => { onSelect(item); onClose(); }} className="absolute grid h-12 w-12 place-items-center rounded-full bg-[#C8FF3D]/20 text-[#C8FF3D]" style={{ left: `${24 + index * 22}%`, top: `${32 + index * 13}%` }}>
-                  <FiMapPin fill="currentColor" />
-                </button>
-              ))}
+              <MapContainer center={MONTEVIDEO} zoom={13} className="h-full w-full">
+                <TileLayer attribution='&copy; OpenStreetMap' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                <ClickToSelect onSelect={(coords) => setPicked((prev) => ({ ...prev, ...coords, location: 'Punto seleccionado en mapa' }))} />
+                <Marker position={[picked.lat, picked.lng]} icon={limeIcon} />
+              </MapContainer>
             </div>
             <div className="mt-4 space-y-2">
-              {options.map((item) => <button key={item.location} onClick={() => { onSelect(item); onClose(); }} className="w-full rounded-2xl bg-white/[0.06] px-4 py-3 text-left text-sm font-semibold">{item.location} · {item.barrio}</button>)}
+              {filtered.map((item) => <button key={item.location} onClick={() => choose(item)} className="w-full rounded-2xl bg-white/[0.06] px-4 py-3 text-left text-sm font-semibold">{item.location} · {item.barrio}</button>)}
             </div>
+            <button onClick={() => { onSelect(picked); onClose(); }} className="mt-4 h-12 w-full rounded-full bg-[#C8FF3D] text-sm font-bold text-black">Guardar ubicación</button>
           </motion.div>
           </div>
         </>

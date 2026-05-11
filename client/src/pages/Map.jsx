@@ -1,35 +1,102 @@
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
+import { MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet';
 import { motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
-import { FiArrowLeft, FiBookmark, FiMapPin, FiNavigation, FiSearch, FiSliders } from 'react-icons/fi';
+import { useEffect, useMemo, useState } from 'react';
+import { FiArrowLeft, FiBookmark, FiMapPin, FiSearch, FiSliders } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 import { apiRequest } from '../lib/api';
 import { getCurrentUser } from '../lib/auth';
 
-const fallbackPins = [
-  ['20%', '34%'], ['58%', '25%'], ['78%', '43%'], ['42%', '55%'], ['25%', '68%'], ['70%', '72%'], ['52%', '40%'], ['34%', '24%'],
-];
+const MONTEVIDEO = [-34.9011, -56.1645];
+const fallbackCoordinates = {
+  rambla: [-34.9137, -56.1608],
+  'parque rodó': [-34.9108, -56.1709],
+  'parque rodo': [-34.9108, -56.1709],
+  'ciudad vieja': [-34.9067, -56.2035],
+  cordón: [-34.9027, -56.1786],
+  cordon: [-34.9027, -56.1786],
+  pocitos: [-34.9101, -56.1469],
+  'punta carretas': [-34.9227, -56.1594],
+  montevideo: MONTEVIDEO,
+};
 
-function pinPosition(item, index) {
-  if (item.lat && item.lng) {
-    const left = 18 + Math.abs((item.lng + 56.22) * 420) % 62;
-    const top = 22 + Math.abs((item.lat + 34.94) * 520) % 52;
-    return [`${left}%`, `${top}%`];
-  }
-  return fallbackPins[index % fallbackPins.length];
+const limeIcon = L.divIcon({
+  className: '',
+  html: '<div style="width:34px;height:34px;border-radius:999px;background:#C8FF3D;box-shadow:0 0 0 8px rgba(200,255,61,.16),0 12px 30px rgba(0,0,0,.32);display:grid;place-items:center;color:#111;font-weight:900;border:2px solid rgba(0,0,0,.18)">•</div>',
+  iconSize: [34, 34],
+  iconAnchor: [17, 17],
+  popupAnchor: [0, -18],
+});
+
+function getCoords(experience, index = 0) {
+  const lat = Number(experience.lat);
+  const lng = Number(experience.lng);
+  if (Number.isFinite(lat) && Number.isFinite(lng)) return [lat, lng];
+
+  const searchable = `${experience.location || ''} ${experience.neighborhood || experience.barrio || ''} ${experience.city || experience.ciudad || ''}`.toLowerCase();
+  const match = Object.entries(fallbackCoordinates).find(([key]) => searchable.includes(key));
+  if (match) return match[1];
+  return [MONTEVIDEO[0] + index * 0.004, MONTEVIDEO[1] + index * 0.006];
+}
+
+function cityCenter(city = '') {
+  const normalized = city.toLowerCase();
+  if (normalized.includes('montevideo')) return MONTEVIDEO;
+  if (normalized.includes('punta')) return [-34.936, -54.936];
+  if (normalized.includes('buenos')) return [-34.6037, -58.3816];
+  return MONTEVIDEO;
+}
+
+function Recenter({ center }) {
+  const map = useMap();
+  useEffect(() => {
+    map.setView(center, 13, { animate: true });
+  }, [center, map]);
+  return null;
+}
+
+function ExperiencePopup({ experience, onSave }) {
+  return (
+    <div className="w-56 overflow-hidden rounded-2xl bg-[var(--mova-surface)] text-[var(--mova-text)]">
+      <img src={experience.image} alt="" className="h-28 w-full object-cover" />
+      <div className="p-3">
+        <h3 className="text-sm font-bold leading-tight">{experience.title}</h3>
+        <p className="mt-1 text-xs opacity-60">{experience.neighborhood} · {experience.city}</p>
+        <p className="mt-2 text-xs font-semibold text-[#78a000]">{experience.category}</p>
+        <div className="mt-3 flex gap-2">
+          <Link to={`/plan/${experience.id}`} className="flex-1 rounded-full bg-[#C8FF3D] px-3 py-2 text-center text-xs font-bold text-black">Ver plan</Link>
+          <button onClick={() => onSave(experience.id)} className="grid h-8 w-8 place-items-center rounded-full bg-black/10 text-[#78a000]"><FiBookmark /></button>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default function Map() {
   const user = getCurrentUser();
+  const city = user?.city || user?.ciudad || 'Montevideo';
   const [experiences, setExperiences] = useState([]);
   const [selected, setSelected] = useState(null);
+  const [query, setQuery] = useState('');
+  const [activeCategory, setActiveCategory] = useState('Todos');
   const [message, setMessage] = useState('');
+  const center = cityCenter(city);
 
   useEffect(() => {
-    apiRequest('/experiences').then((data) => {
-      setExperiences(data);
-      setSelected(data[0]);
-    });
-  }, []);
+    apiRequest(`/experiences?city=${encodeURIComponent(city)}`)
+      .then((data) => {
+        setExperiences(data);
+        setSelected(data[0] || null);
+      })
+      .catch(() => setExperiences([]));
+  }, [city]);
+
+  const filtered = useMemo(() => experiences.filter((experience) => {
+    const text = `${experience.title} ${experience.neighborhood} ${experience.location} ${experience.category} ${(experience.tags || []).join(' ')}`.toLowerCase();
+    return (!query || text.includes(query.toLowerCase()))
+      && (activeCategory === 'Todos' || String(experience.category || '').toLowerCase().includes(activeCategory.toLowerCase()));
+  }), [experiences, query, activeCategory]);
 
   const save = async (id) => {
     if (!user?.id) return;
@@ -39,69 +106,74 @@ export default function Map() {
 
   return (
     <main className="mova-screen">
-      <section className="relative mova-mobile pb-28">
-        <div className="absolute inset-0 bg-[#090909]" />
-        <div className="absolute inset-0 opacity-70" style={{ backgroundImage: 'linear-gradient(30deg,#1b1b1b 12%,transparent 12.5%,transparent 87%,#1b1b1b 87.5%,#1b1b1b),linear-gradient(150deg,#161616 12%,transparent 12.5%,transparent 87%,#161616 87.5%,#161616),linear-gradient(90deg,rgba(200,255,61,.12) 1px,transparent 1px)', backgroundSize: '88px 150px,88px 150px,54px 54px', backgroundPosition: '0 0, 0 0, 0 0' }} />
-        <div className="absolute inset-x-0 top-0 h-52 bg-gradient-to-b from-black via-black/70 to-transparent" />
+      <section className="relative mova-mobile h-screen overflow-hidden pb-24">
+        <MapContainer center={center} zoom={13} scrollWheelZoom className="absolute inset-0 z-0 h-full w-full">
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
+          <Recenter center={center} />
+          {filtered.map((experience, index) => (
+            <Marker key={experience.id} position={getCoords(experience, index)} icon={limeIcon} eventHandlers={{ click: () => setSelected(experience) }}>
+              <Popup closeButton={false} className="mova-leaflet-popup">
+                <ExperiencePopup experience={experience} onSave={save} />
+              </Popup>
+            </Marker>
+          ))}
+        </MapContainer>
 
-        <header className="relative z-10 flex items-center justify-between px-5 pt-7">
-          <Link to="/home" className="grid h-11 w-11 place-items-center rounded-full bg-white/[0.08] text-xl"><FiArrowLeft /></Link>
-          <div>
-            <p className="text-sm text-white/50">Mapa MOVA</p>
-            <h1 className="text-3xl font-semibold">Planes cerca</h1>
+        <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-44 bg-gradient-to-b from-black/64 to-transparent" />
+        <header className="pointer-events-auto relative z-20 flex items-center justify-between px-5 pt-7 text-white">
+          <Link to="/home" className="grid h-11 w-11 place-items-center rounded-full bg-black/36 text-xl backdrop-blur-xl"><FiArrowLeft /></Link>
+          <div className="text-center">
+            <p className="text-xs text-white/68">Mapa real</p>
+            <h1 className="text-xl font-semibold">{city}</h1>
           </div>
-          <button className="grid h-12 w-12 place-items-center rounded-full bg-white/[0.08] text-xl"><FiSliders /></button>
+          <button className="grid h-11 w-11 place-items-center rounded-full bg-black/36 text-xl backdrop-blur-xl"><FiSliders /></button>
         </header>
-        <div className="relative z-10 mx-5 mt-4 flex h-12 items-center gap-3 rounded-full bg-white/[0.08] px-4 text-sm">
-          <FiSearch className="text-[#C8FF3D]" />
-          <input placeholder="Buscar en el mapa" className="w-full bg-transparent outline-none placeholder:text-white/40" />
-        </div>
-        <div className="relative z-10 mx-5 mt-3 flex gap-2 overflow-x-auto">
-          {['Todos', 'Night', 'Food', 'Chill', 'Outdoor'].map((chip) => <button key={chip} className="shrink-0 rounded-full bg-white/[0.08] px-3 py-1.5 text-xs font-semibold">{chip}</button>)}
-        </div>
 
-        {experiences.map((experience, index) => {
-          const [left, top] = pinPosition(experience, index);
-          const active = selected?.id === experience.id;
-          return (
-            <motion.button
-              key={experience.id}
-              whileTap={{ scale: 0.88 }}
-              onClick={() => setSelected(experience)}
-              className={`absolute z-10 grid h-12 w-12 place-items-center rounded-full ${active ? 'bg-[#C8FF3D] text-black' : 'bg-[#C8FF3D]/18 text-[#C8FF3D]'} shadow-[0_0_32px_rgba(200,255,61,0.24)]`}
-              style={{ left, top }}
-            >
-              <FiMapPin fill="currentColor" />
-            </motion.button>
-          );
-        })}
+        <div className="pointer-events-auto relative z-20 mx-5 mt-4 flex h-12 items-center gap-3 rounded-full bg-black/42 px-4 text-sm text-white backdrop-blur-xl">
+          <FiSearch className="text-[#C8FF3D]" />
+          <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Buscar en el mapa" className="w-full bg-transparent outline-none placeholder:text-white/60" />
+        </div>
+        <div className="pointer-events-auto relative z-20 mx-5 mt-3 flex gap-2 overflow-x-auto">
+          {['Todos', 'Night', 'Food', 'Chill', 'Outdoor', 'Música'].map((chip) => (
+            <button key={chip} onClick={() => setActiveCategory(chip)} className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-semibold backdrop-blur-xl ${activeCategory === chip ? 'bg-[#C8FF3D] text-black' : 'bg-black/36 text-white'}`}>{chip}</button>
+          ))}
+        </div>
 
         {selected && (
-          <motion.div key={selected.id} initial={{ y: 100, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="absolute bottom-24 left-4 right-4 z-20 rounded-[1.6rem] border border-white/10 bg-[#111]/94 p-3 backdrop-blur-2xl">
+          <motion.div key={selected.id} initial={{ y: 100, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="absolute bottom-24 left-4 right-4 z-20 rounded-[1.6rem] border border-white/10 bg-[var(--mova-surface)]/95 p-3 text-[var(--mova-text)] shadow-[0_22px_60px_rgba(0,0,0,.24)] backdrop-blur-2xl">
             <div className="flex gap-3">
               <Link to={`/plan/${selected.id}`} className="flex min-w-0 flex-1 gap-3">
                 <img src={selected.image} alt="" className="h-24 w-24 rounded-2xl object-cover" />
                 <div className="min-w-0 flex-1">
                   <h2 className="font-semibold leading-tight">{selected.title}</h2>
-                  <p className="mt-1 text-xs text-white/48">{selected.location || selected.neighborhood}</p>
-                  <div className="mt-2 flex flex-wrap gap-2 text-[11px] text-white/55"><span>{selected.category}</span><span>2.3 km</span><span>★ {selected.rating || 4.8}</span></div>
-                  <span className="mt-3 inline-flex rounded-full bg-[#C8FF3D] px-3 py-1.5 text-xs font-bold text-black">Ver más</span>
+                  <p className="mt-1 text-xs opacity-55">{selected.location || selected.neighborhood}</p>
+                  <div className="mt-2 flex flex-wrap gap-2 text-[11px] opacity-65"><span>{selected.category}</span><span>★ {selected.rating || 4.8}</span></div>
+                  <span className="mt-3 inline-flex rounded-full bg-[#C8FF3D] px-3 py-1.5 text-xs font-bold text-black">Ver plan</span>
                 </div>
               </Link>
-              <button onClick={() => save(selected.id)} className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[#C8FF3D]/12 text-[#C8FF3D]"><FiBookmark /></button>
+              <button onClick={() => save(selected.id)} className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[#C8FF3D]/18 text-[#78a000]"><FiBookmark /></button>
             </div>
-            {message && <p className="mt-3 text-xs font-semibold text-[#D9FF73]">{message}</p>}
-            <section className="mt-4 border-t border-white/8 pt-4">
+            {message && <p className="mt-3 text-xs font-semibold text-[#78a000]">{message}</p>}
+            <section className="mt-4 border-t border-[var(--mova-border)] pt-4">
               <h3 className="mb-3 text-sm font-semibold">Planes cerca de ti</h3>
               <div className="flex gap-3 overflow-x-auto pb-1">
-                {experiences.slice(0, 6).map((item) => <button key={item.id} onClick={() => setSelected(item)} className="relative h-24 w-32 shrink-0 overflow-hidden rounded-2xl"><img src={item.image} alt="" className="h-full w-full object-cover" /><div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/78" /><span className="absolute bottom-2 left-2 right-2 text-left text-xs font-semibold leading-tight">{item.title}</span></button>)}
+                {filtered.slice(0, 6).map((item, index) => (
+                  <button key={item.id} onClick={() => setSelected(item)} className="photo-card relative h-24 w-32 shrink-0 overflow-hidden rounded-2xl">
+                    <img src={item.image} alt="" className="h-full w-full object-cover" />
+                    <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/78" />
+                    <span className="absolute bottom-2 left-2 right-2 text-left text-xs font-semibold leading-tight text-white">{item.title}</span>
+                  </button>
+                ))}
               </div>
             </section>
           </motion.div>
         )}
 
-        <div className="absolute left-5 top-28 z-10 rounded-full bg-white/[0.08] px-3 py-2 text-xs text-white/60 backdrop-blur-xl">
-          <FiNavigation className="mr-1 inline text-[#C8FF3D]" /> {experiences.length} puntos activos
+        <div className="absolute left-5 top-40 z-20 rounded-full bg-black/42 px-3 py-2 text-xs text-white/80 backdrop-blur-xl">
+          <FiMapPin className="mr-1 inline text-[#C8FF3D]" /> {filtered.length} planes
         </div>
       </section>
     </main>
