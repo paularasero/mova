@@ -1,10 +1,12 @@
 import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import { FaApple, FaGoogle, FaInstagram } from 'react-icons/fa';
+import { IoArrowBack } from 'react-icons/io5';
 import { loginUser } from '../lib/auth';
 
 const loginImage =
-  'https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=1600&q=85';
+  'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1600&q=85';
 
 function isValidEmail(value) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
@@ -18,13 +20,14 @@ function Logo() {
   );
 }
 
-function SocialButton({ label }) {
+function SocialButton({ label, icon: Icon }) {
   return (
     <button
       type="button"
-      className="grid h-12 flex-1 place-items-center rounded-2xl border border-white/10 bg-white/[0.08] text-sm font-bold text-white/88 backdrop-blur-xl transition hover:bg-white/[0.12]"
+      aria-label={label}
+      className="grid h-12 w-12 place-items-center rounded-full border border-white/10 bg-white/[0.075] text-xl text-white/88 shadow-[0_12px_34px_rgba(0,0,0,0.24)] backdrop-blur-xl transition hover:bg-white/[0.13]"
     >
-      {label}
+      <Icon />
     </button>
   );
 }
@@ -75,32 +78,34 @@ export default function Login() {
   };
 
   return (
-    <main className="relative min-h-screen overflow-x-hidden bg-[#050505] text-white">
-      <img src={loginImage} alt="" className="absolute inset-0 h-full w-full scale-105 object-cover blur-[2px]" />
-      <div className="absolute inset-0 bg-black/68" />
-      <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/38 to-black/94" />
+    <main className="min-h-screen bg-[#050505] text-white">
+      <section className="relative mx-auto flex min-h-screen w-full max-w-[430px] flex-col overflow-hidden bg-[#050505] px-5 pb-6 pt-7">
+        <img src={loginImage} alt="" className="absolute inset-0 h-full w-full scale-110 object-cover blur-[2px]" />
+        <div className="absolute inset-0 bg-black/68" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/88 via-black/48 to-black/96" />
 
-      <section className="relative z-10 mx-auto flex min-h-screen w-full max-w-md flex-col px-5 pb-6 pt-8">
-        <header className="flex items-center justify-between">
-          <Logo />
+        <header className="relative z-10 flex items-center justify-between">
           <Link
             to="/"
-            className="rounded-full border border-white/12 bg-white/10 px-4 py-2 text-sm font-semibold text-white/75 backdrop-blur-xl transition hover:bg-white/15"
+            aria-label="Volver"
+            className="grid h-11 w-11 place-items-center rounded-full bg-black/24 text-2xl text-white/86 backdrop-blur-xl transition hover:bg-white/10"
           >
-            Volver
+            <IoArrowBack />
           </Link>
+          <Logo />
+          <span className="h-11 w-11" />
         </header>
 
-        <div className="mt-auto pb-3">
+        <div className="relative z-10 mt-auto pb-2">
           <motion.div
             initial={{ opacity: 0, y: 28, filter: 'blur(10px)' }}
             animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
             transition={{ duration: 0.58, ease: [0.16, 1, 0.3, 1] }}
-            className="rounded-[2rem] border border-white/12 bg-white/[0.095] p-5 shadow-[0_28px_90px_rgba(0,0,0,0.55)] backdrop-blur-2xl"
+            className="rounded-[1.75rem] bg-black/28 p-4 shadow-[0_28px_90px_rgba(0,0,0,0.55)] backdrop-blur-xl"
           >
-            <div className="mb-6">
+            <div className="mb-5">
               <p className="mb-2 text-xs font-bold uppercase tracking-[0.24em] text-[#C8FF3D]">Acceso MOVA</p>
-              <h1 className="text-[2.65rem] font-black leading-[0.95] tracking-[-0.055em] text-white">
+              <h1 className="text-[2.45rem] font-black leading-[0.95] tracking-[-0.055em] text-white">
                 Bienvenido a MOVA<span className="text-[#C8FF3D]">.</span>
               </h1>
               <p className="mt-3 text-sm font-medium text-white/62">Iniciá sesión para continuar</p>
@@ -116,7 +121,8 @@ export default function Login() {
                     onChange={handleChange('email')}
                     onBlur={() => setTouched((prev) => ({ ...prev, email: true }))}
                     placeholder="vos@email.com"
-                    className="h-14 w-full rounded-[1.35rem] border border-white/10 bg-[#111111] px-4 text-base text-white outline-none transition placeholder:text-white/28 focus:border-[#C8FF3D]/70 focus:bg-[#181818] focus:shadow-[0_0_0_4px_rgba(200,255,61,0.08)]"
+                    style={{ backgroundColor: 'rgba(13, 13, 13, 0.88)' }}
+                    className="w-full rounded-[1.35rem] border border-white/10 bg-[#0d0d0d]/86 px-4 py-3.5 text-base text-white outline-none transition placeholder:text-white/28 focus:border-[#C8FF3D]/70 focus:bg-[#161616] focus:shadow-[0_0_0_4px_rgba(200,255,61,0.08)]"
                   />
                   {touched.email && errors.email && <p className="mt-2 text-xs font-semibold text-[#ff7474]">{errors.email}</p>}
                 </label>
@@ -129,7 +135,8 @@ export default function Login() {
                     onChange={handleChange('password')}
                     onBlur={() => setTouched((prev) => ({ ...prev, password: true }))}
                     placeholder="Mínimo 6 caracteres"
-                    className="h-14 w-full rounded-[1.35rem] border border-white/10 bg-[#111111] px-4 text-base text-white outline-none transition placeholder:text-white/28 focus:border-[#C8FF3D]/70 focus:bg-[#181818] focus:shadow-[0_0_0_4px_rgba(200,255,61,0.08)]"
+                    style={{ backgroundColor: 'rgba(13, 13, 13, 0.88)' }}
+                    className="w-full rounded-[1.35rem] border border-white/10 bg-[#0d0d0d]/86 px-4 py-3.5 text-base text-white outline-none transition placeholder:text-white/28 focus:border-[#C8FF3D]/70 focus:bg-[#161616] focus:shadow-[0_0_0_4px_rgba(200,255,61,0.08)]"
                   />
                   {touched.password && errors.password && (
                     <p className="mt-2 text-xs font-semibold text-[#ff7474]">{errors.password}</p>
@@ -169,10 +176,10 @@ export default function Login() {
               <span className="h-px flex-1 bg-white/10" />
             </div>
 
-            <div className="flex gap-3">
-              <SocialButton label="Google" />
-              <SocialButton label="Apple" />
-              <SocialButton label="Instagram" />
+            <div className="flex justify-center gap-3">
+              <SocialButton label="Google" icon={FaGoogle} />
+              <SocialButton label="Apple" icon={FaApple} />
+              <SocialButton label="Instagram" icon={FaInstagram} />
             </div>
           </motion.div>
         </div>

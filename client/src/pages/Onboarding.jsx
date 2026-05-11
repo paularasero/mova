@@ -8,21 +8,21 @@ const slides = [
     subtitle: 'Planes, rincones y salidas elegidas por gente que se mueve como vos.',
     button: 'Continuar',
     image:
-      'https://images.unsplash.com/photo-1516834474-48c0abc2a902?auto=format&fit=crop&w=1600&q=85',
+      'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1600&q=85',
   },
   {
     title: 'Guardá momentos. Compartí experiencias.',
     subtitle: 'De una cena íntima a una noche con música, todo puede convertirse en plan.',
     button: 'Continuar',
     image:
-      'https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=1600&q=85',
+      'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1600&q=85',
   },
   {
     title: 'Tu ciudad se siente distinta cuando sabés dónde caer.',
     subtitle: 'Entrá a MOVA y descubrí qué está pasando cerca tuyo.',
     button: 'Entrar a MOVA',
     image:
-      'https://images.unsplash.com/photo-1527529482837-4698179dc6ce?auto=format&fit=crop&w=1600&q=85',
+      'https://images.unsplash.com/photo-1506869640319-fe1a24fd76dc?auto=format&fit=crop&w=1600&q=85',
   },
 ];
 
@@ -55,12 +55,12 @@ export default function Onboarding() {
   };
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[#050505] text-white">
+    <main className="min-h-screen bg-[#050505] text-white">
       <AnimatePresence mode="wait">
         {showSplash ? (
           <motion.section
             key="splash"
-            className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-[#050505]"
+            className="relative z-20 mx-auto flex min-h-screen w-full max-w-[430px] flex-col items-center justify-center overflow-hidden bg-[#050505]"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0, filter: 'blur(10px)' }}
@@ -85,7 +85,7 @@ export default function Onboarding() {
         ) : (
           <motion.section
             key="onboarding"
-            className="mx-auto flex min-h-screen w-full max-w-md flex-col overflow-hidden bg-[#050505] shadow-2xl"
+            className="mx-auto flex min-h-screen w-full max-w-[430px] flex-col overflow-hidden bg-[#050505] shadow-2xl"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.45 }}
@@ -104,8 +104,8 @@ export default function Onboarding() {
                 />
               </AnimatePresence>
 
-              <div className="absolute inset-0 bg-gradient-to-b from-black/75 via-black/24 to-black/92" />
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_70%,rgba(200,255,61,0.12),transparent_38%)]" />
+              <div className="absolute inset-0 bg-gradient-to-b from-black/76 via-black/18 to-black/94" />
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_68%,rgba(200,255,61,0.10),transparent_42%)]" />
 
               <header className="relative z-10 flex items-center justify-between px-6 pt-8">
                 <Logo />
@@ -129,7 +129,7 @@ export default function Onboarding() {
                     <p className="mb-3 text-xs font-bold uppercase tracking-[0.22em] text-[#C8FF3D]">
                       Experiencias urbanas
                     </p>
-                    <h1 className="max-w-[22rem] text-[3rem] font-black leading-[0.93] tracking-[-0.055em] text-white">
+                    <h1 className="max-w-[22rem] text-[2.82rem] font-black leading-[0.93] tracking-[-0.055em] text-white">
                       {activeSlide.title}
                     </h1>
                     <p className="mt-4 max-w-[19rem] text-base font-medium leading-snug text-white/70">
