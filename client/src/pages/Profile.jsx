@@ -1,52 +1,62 @@
 import { useEffect, useState } from 'react';
+import { FiMenu, FiSettings } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
-import Button from '../components/Button';
-import { clearCurrentUser, getCurrentUser } from '../lib/auth';
+import PlanCard from '../components/PlanCard';
+import { apiRequest } from '../lib/api';
+import { getCurrentUser } from '../lib/auth';
 
 export default function Profile() {
-  const [user, setUser] = useState(null);
+  const current = getCurrentUser();
+  const [profile, setProfile] = useState(null);
+  const [tab, setTab] = useState('Guardadas');
 
   useEffect(() => {
-    setUser(getCurrentUser());
-  }, []);
+    apiRequest(`/users/me/profile?userId=${current?.id}`).then(setProfile).catch(() => setProfile(null));
+  }, [current?.id]);
 
-  const handleLogout = () => {
-    clearCurrentUser();
-    window.location.href = '/login';
-  };
-
-  if (!user) {
-    return (
-      <section className="mx-auto w-full max-w-md px-4 pb-28 pt-6">
-        <h2 className="text-2xl font-bold tracking-tight text-ink">Perfil</h2>
-        <div className="mt-4 rounded-4xl bg-white p-5 shadow-soft">
-          <p className="text-sm text-black/65">No hay una sesión activa.</p>
-          <Link to="/login" className="mt-4 inline-block text-sm font-semibold text-black">
-            Iniciar sesión
-          </Link>
-        </div>
-      </section>
-    );
-  }
+  const user = profile?.user || current;
+  const list = tab === 'Publicadas' ? profile?.created || [] : profile?.saved || [];
 
   return (
-    <section className="mx-auto w-full max-w-md px-4 pb-28 pt-6">
-      <h2 className="text-2xl font-bold tracking-tight text-ink">Perfil</h2>
-      <div className="mt-4 rounded-4xl bg-white p-5 shadow-soft">
-        <p className="text-xl font-bold">{user.nombre}</p>
-        <p className="text-sm text-black/60">@{user.username}</p>
-        <p className="text-sm text-black/60">{user.email}</p>
-        <p className="mt-2 text-sm text-black/60">{user.ciudad}</p>
-        <p className="mt-3 text-sm font-medium">Puntos: {user.puntos ?? 0}</p>
-        <p className="mt-1 text-sm text-black/60">
-          Seguidores: {user.seguidores ?? 0} · Siguiendo: {user.siguiendo ?? 0}
-        </p>
-        <div className="mt-5">
-          <Button variant="secondary" onClick={handleLogout}>
-            Cerrar sesión
-          </Button>
+    <main className="min-h-screen bg-[#050505] text-white">
+      <section className="mx-auto min-h-screen w-full max-w-[430px] px-5 pb-28 pt-7">
+        <header className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <img src={user?.avatar} alt="" className="h-10 w-10 rounded-full object-cover ring-2 ring-[#C8FF3D]" />
+            <div>
+              <p className="text-sm font-semibold">{user?.nombre}</p>
+              <p className="text-xs text-white/45">Urban Explorer</p>
+            </div>
+          </div>
+          <Link to="/settings" className="grid h-10 w-10 place-items-center rounded-full bg-white/[0.07]"><FiSettings /></Link>
+        </header>
+
+        <div className="mt-7 rounded-[1.6rem] bg-white/[0.06] p-5">
+          <div className="flex items-center gap-4">
+            <img src={user?.avatar} alt="" className="h-20 w-20 rounded-full object-cover ring-2 ring-[#C8FF3D]" />
+            <div>
+              <h1 className="text-xl font-bold">{user?.nombre}</h1>
+              <p className="text-sm text-white/52">@{user?.username}</p>
+              <p className="mt-2 rounded-full bg-[#C8FF3D]/12 px-3 py-1 text-xs font-semibold text-[#D9FF73]">Urban Explorer</p>
+            </div>
+          </div>
+          <div className="mt-6 grid grid-cols-3 text-center">
+            <div><p className="text-xl font-bold">{profile?.stats?.points || user?.puntos || 0}</p><p className="text-xs text-white/45">Puntos</p></div>
+            <div><p className="text-xl font-bold">{profile?.stats?.created || 0}</p><p className="text-xs text-white/45">Creadas</p></div>
+            <div><p className="text-xl font-bold">{profile?.stats?.saved || 0}</p><p className="text-xs text-white/45">Guardadas</p></div>
+          </div>
         </div>
-      </div>
-    </section>
+
+        <div className="mt-5 flex gap-2">
+          {['Guardadas', 'Publicadas', 'Reseñas'].map((item) => (
+            <button key={item} onClick={() => setTab(item)} className={`rounded-full px-4 py-2 text-xs font-semibold ${tab === item ? 'bg-[#C8FF3D] text-black' : 'bg-white/[0.07] text-white/62'}`}>{item}</button>
+          ))}
+        </div>
+        <div className="mt-5 grid grid-cols-2 gap-3">
+          {list.map((experience) => <PlanCard key={experience.id} plan={experience} compact />)}
+        </div>
+        {list.length === 0 && <p className="mt-6 text-sm text-white/45">No hay contenido para mostrar.</p>}
+      </section>
+    </main>
   );
 }

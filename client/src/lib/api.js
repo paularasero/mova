@@ -1,4 +1,10 @@
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
+function resolveApiUrl() {
+  if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL.replace(/\/$/, '');
+  if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') return '/api';
+  return 'http://localhost:4000/api';
+}
+
+const API_URL = resolveApiUrl();
 
 export async function apiRequest(path, options = {}) {
   let response;

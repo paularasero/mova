@@ -14,6 +14,7 @@ import Register from './pages/Register';
 import Rewards from './pages/Rewards';
 import Saved from './pages/Saved';
 import { getCurrentUser } from './lib/auth';
+import Settings from './pages/Settings';
 
 const hideNavbarRoutes = ['/', '/login', '/register'];
 
@@ -43,6 +44,7 @@ export default function App() {
         <Route path="/rewards" element={<PrivateRoute><Rewards /></PrivateRoute>} />
         <Route path="/activity" element={<PrivateRoute><Activity /></PrivateRoute>} />
         <Route path="/messages" element={<PrivateRoute><Messages /></PrivateRoute>} />
+        <Route path="/settings" element={<PrivateRoute><Settings /></PrivateRoute>} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
 

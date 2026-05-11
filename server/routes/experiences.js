@@ -1,0 +1,250 @@
+import { Router } from 'express';
+import Plan from '../models/Plan.js';
+import User from '../models/User.js';
+
+const router = Router();
+
+function regex(value) {
+  return new RegExp(`^${String(value)}$`, 'i');
+}
+
+function buildQuery(queryParams) {
+  const { q, ciudad, city, categoria, category, compania, company, fecha, date } = queryParams;
+  const query = {};
+
+  if (ciudad || city) query.ciudad = regex(ciudad || city);
+  if (categoria || category) query.categoria = regex(categoria || category);
+  if (compania || company) query.compania = regex(compania || company);
+  if (fecha || date) query.fecha = fecha || date;
+  if (q) {
+    query.$or = [
+      { titulo: new RegExp(String(q), 'i') },
+      { descripcion: new RegExp(String(q), 'i') },
+      { barrio: new RegExp(String(q), 'i') },
+      { categoria: new RegExp(String(q), 'i') },
+    ];
+  }
+
+  return query;
+}
+
+router.get('/', async (req, res) => {
+  try {
+    const experiences = await Plan.find(buildQuery(req.query)).sort({ createdAt: -1, fecha: 1 });
+    res.json(experiences);
+  } catch {
+    res.status(500).json({ error: 'No se pudieron cargar las experiencias.' });
+  }
+});
+
+router.post('/', async (req, res) => {
+  try {
+    const {
+      title,
+      titulo,
+      description,
+      descripcion,
+      city,
+      ciudad,
+      neighborhood,
+      barrio,
+      category,
+      categoria,
+      company,
+      compania,
+      date,
+      fecha,
+      time,
+      horario,
+      price,
+      precio,
+      image,
+      imagen,
+      author,
+      usuario,
+      authorId,
+      lat,
+      lng,
+    } = req.body;
+
+    const required = [title || titulo, description || descripcion, city || ciudad, neighborhood || barrio, category || categoria, company || compania, date || fecha, time || horario, image || imagen];
+    if (required.some((value) => !String(value || '').trim())) {
+      return res.status(400).json({ error: 'Completá los campos obligatorios.' });
+    }
+
+    const experience = await Plan.create({
+      _id: `p_${Date.now()}`,
+      titulo: title || titulo,
+      descripcion: description || descripcion,
+      ciudad: city || ciudad,
+      barrio: neighborhood || barrio,
+      categoria: category || categoria,
+      compania: company || compania,
+      fecha: date || fecha,
+      horario: time || horario,
+      precio: price || precio || '$',
+      imagen: image || imagen,
+      usuario: author || usuario || 'MOVA user',
+      authorId,
+      lat,
+      lng,
+      rating: 4.8,
+      likes: 0,
+      guardados: 0,
+      comentarios: 0,
+    });
+
+    if (authorId) {
+      await User.findByIdAndUpdate(authorId, { $inc: { puntos: 20 } });
+    }
+
+    res.status(201).json(experience);
+  } catch {
+    res.status(400).json({ error: 'No pudimos publicar la experiencia.' });
+  }
+});
+
+router.get('/:id', async (req, res) => {
+  try {
+    const experience = await Plan.findById(req.params.id);
+    if (!experience) return res.status(404).json({ error: 'Experiencia no encontrada.' });
+    return res.json(experience);
+  } catch {
+    return res.status(500).json({ error: 'No se pudo cargar la experiencia.' });
+  }
+});
+
+router.put('/:id', async (req, res) => {
+  try {
+    const {
+      title,
+      titulo,
+      description,
+      descripcion,
+      city,
+      ciudad,
+      neighborhood,
+      barrio,
+      category,
+      categoria,
+      company,
+      compania,
+      date,
+      fecha,
+      time,
+      horario,
+      price,
+      precio,
+      image,
+      imagen,
+      lat,
+      lng,
+    } = req.body;
+
+    const update = {
+      ...(title || titulo ? { titulo: title || titulo } : {}),
+      ...(description || descripcion ? { descripcion: description || descripcion } : {}),
+      ...(city || ciudad ? { ciudad: city || ciudad } : {}),
+      ...(neighborhood || barrio ? { barrio: neighborhood || barrio } : {}),
+      ...(category || categoria ? { categoria: category || categoria } : {}),
+      ...(company || compania ? { compania: company || compania } : {}),
+      ...(date || fecha ? { fecha: date || fecha } : {}),
+      ...(time || horario ? { horario: time || horario } : {}),
+      ...(price || precio ? { precio: price || precio } : {}),
+      ...(image || imagen ? { imagen: image || imagen } : {}),
+      ...(lat !== undefined ? { lat } : {}),
+      ...(lng !== undefined ? { lng } : {}),
+    };
+
+    const experience = await Plan.findByIdAndUpdate(req.params.id, update, { new: true });
+    if (!experience) return res.status(404).json({ error: 'Experiencia no encontrada.' });
+    return res.json(experience);
+  } catch {
+    return res.status(400).json({ error: 'No pudimos actualizar la experiencia.' });
+  }
+});
+
+router.delete('/:id', async (req, res) => {
+  try {
+    const experience = await Plan.findByIdAndDelete(req.params.id);
+    if (!experience) return res.status(404).json({ error: 'Experiencia no encontrada.' });
+    await User.updateMany({ savedExperiences: req.params.id }, { $pull: { savedExperiences: req.params.id } });
+    return res.json({ message: 'Experiencia eliminada correctamente.' });
+  } catch {
+    return res.status(400).json({ error: 'No pudimos eliminar la experiencia.' });
+  }
+});
+
+router.post('/:id/comment', async (req, res) => {
+  try {
+    const { userId, userName, text } = req.body;
+    if (!String(text || '').trim()) return res.status(400).json({ error: 'Escribí un comentario.' });
+
+    const comment = {
+      id: `c_${Date.now()}`,
+      userId,
+      userName: userName || 'Usuario MOVA',
+      text: text.trim(),
+      createdAt: new Date(),
+    };
+
+    const experience = await Plan.findByIdAndUpdate(
+      req.params.id,
+      { $push: { comments: comment }, $inc: { comentarios: 1 } },
+      { new: true }
+    );
+
+    if (!experience) return res.status(404).json({ error: 'Experiencia no encontrada.' });
+    if (userId) await User.findByIdAndUpdate(userId, { $inc: { puntos: 10 } });
+
+    return res.json(experience);
+  } catch {
+    return res.status(400).json({ error: 'No pudimos guardar el comentario.' });
+  }
+});
+
+router.post('/:id/save', async (req, res) => {
+  try {
+    const { userId } = req.body;
+    if (!userId) return res.status(400).json({ error: 'Iniciá sesión para guardar experiencias.' });
+
+    const user = await User.findById(userId);
+    const experience = await Plan.findById(req.params.id);
+    if (!user || !experience) return res.status(404).json({ error: 'No encontramos la experiencia.' });
+
+    const saved = user.savedExperiences?.includes(req.params.id);
+    const userUpdate = saved
+      ? { $pull: { savedExperiences: req.params.id } }
+      : { $addToSet: { savedExperiences: req.params.id } };
+    const planUpdate = saved
+      ? { $pull: { savedBy: userId }, $inc: { guardados: -1 } }
+      : { $addToSet: { savedBy: userId }, $inc: { guardados: 1 } };
+
+    await User.findByIdAndUpdate(userId, userUpdate);
+    const updated = await Plan.findByIdAndUpdate(req.params.id, planUpdate, { new: true });
+
+    return res.json({ saved: !saved, experience: updated, message: saved ? 'Experiencia eliminada de guardados.' : 'Experiencia guardada.' });
+  } catch {
+    return res.status(400).json({ error: 'No pudimos actualizar guardados.' });
+  }
+});
+
+router.post('/:id/like', async (req, res) => {
+  try {
+    const { userId } = req.body;
+    const experience = await Plan.findById(req.params.id);
+    if (!experience) return res.status(404).json({ error: 'Experiencia no encontrada.' });
+
+    const liked = userId && experience.likedBy?.includes(userId);
+    const update = liked
+      ? { $pull: { likedBy: userId }, $inc: { likes: -1 } }
+      : { $addToSet: { likedBy: userId || `anon_${Date.now()}` }, $inc: { likes: 1 } };
+
+    const updated = await Plan.findByIdAndUpdate(req.params.id, update, { new: true });
+    return res.json(updated);
+  } catch {
+    return res.status(400).json({ error: 'No pudimos actualizar el like.' });
+  }
+});
+
+export default router;

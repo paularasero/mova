@@ -19,7 +19,15 @@ npm --prefix server install
 
 2. Crear `server/.env` a partir de `server/.env.example` y completar `MONGODB_URI`.
 
-3. Correr front y back juntos:
+3. Para producción, crear también la variable del frontend:
+
+```bash
+VITE_API_URL=https://TU-BACKEND.vercel.app/api
+```
+
+En local puede quedar como `http://localhost:4000/api`.
+
+4. Correr front y back juntos:
 
 ```bash
 npm run dev

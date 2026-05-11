@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import User from '../models/User.js';
+import Plan from '../models/Plan.js';
 
 const router = Router();
 
@@ -20,6 +21,53 @@ router.get('/', async (_req, res) => {
     res.json(users);
   } catch (error) {
     res.status(500).json({ error: 'No pudimos obtener los usuarios.' });
+  }
+});
+
+router.get('/me/profile', async (req, res) => {
+  try {
+    const userId = req.query.userId;
+    if (!userId) return res.status(400).json({ error: 'Falta identificar el usuario.' });
+
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ error: 'Usuario no encontrado.' });
+
+    const [created, saved] = await Promise.all([
+      Plan.find({ authorId: userId }).sort({ createdAt: -1 }),
+      Plan.find({ _id: { $in: user.savedExperiences || [] } }).sort({ createdAt: -1 }),
+    ]);
+
+    const receivedSaves = created.reduce((sum, plan) => sum + (plan.guardados || 0), 0);
+    const commentCount = created.reduce((sum, plan) => sum + (plan.comentarios || 0), 0);
+    const points = created.length * 20 + commentCount * 10 + receivedSaves * 5;
+
+    res.json({ user: { ...user.toJSON(), puntos: Math.max(user.puntos || 0, points) }, created, saved, stats: { created: created.length, saved: saved.length, points } });
+  } catch {
+    res.status(500).json({ error: 'No pudimos cargar tu perfil.' });
+  }
+});
+
+router.get('/me/saved', async (req, res) => {
+  try {
+    const userId = req.query.userId;
+    if (!userId) return res.status(400).json({ error: 'Falta identificar el usuario.' });
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ error: 'Usuario no encontrado.' });
+    const saved = await Plan.find({ _id: { $in: user.savedExperiences || [] } }).sort({ createdAt: -1 });
+    res.json(saved);
+  } catch {
+    res.status(500).json({ error: 'No pudimos cargar tus guardadas.' });
+  }
+});
+
+router.get('/me/experiences', async (req, res) => {
+  try {
+    const userId = req.query.userId;
+    if (!userId) return res.status(400).json({ error: 'Falta identificar el usuario.' });
+    const experiences = await Plan.find({ authorId: userId }).sort({ createdAt: -1 });
+    res.json(experiences);
+  } catch {
+    res.status(500).json({ error: 'No pudimos cargar tus experiencias.' });
   }
 });
 

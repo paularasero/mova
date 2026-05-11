@@ -11,6 +11,7 @@ const userSchema = new mongoose.Schema(
     puntos: { type: Number, default: 0 },
     seguidores: { type: Number, default: 0 },
     siguiendo: { type: Number, default: 0 },
+    savedExperiences: [{ type: String }],
     avatar: {
       type: String,
       default: 'https://images.unsplash.com/photo-1542204625-de293a2f7f7b?auto=format&fit=crop&w=300&q=80',
@@ -21,6 +22,8 @@ const userSchema = new mongoose.Schema(
     toJSON: {
       transform(_doc, ret) {
         ret.id = ret._id;
+        ret.name = ret.nombre;
+        ret.city = ret.ciudad;
         delete ret._id;
         delete ret.password;
       },

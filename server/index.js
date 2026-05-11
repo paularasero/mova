@@ -3,6 +3,8 @@ import express from 'express';
 import cors from 'cors';
 import plansRouter from './routes/plans.js';
 import usersRouter from './routes/users.js';
+import experiencesRouter from './routes/experiences.js';
+import authRouter from './routes/auth.js';
 import { connectDB } from './config/db.js';
 
 const app = express();
@@ -27,7 +29,9 @@ app.get('/api/health', (_req, res) => {
 });
 
 app.use('/api/plans', plansRouter);
+app.use('/api/experiences', experiencesRouter);
 app.use('/api/users', usersRouter);
+app.use('/api/auth', authRouter);
 
 app.use((error, _req, res, _next) => {
   console.error(error);
