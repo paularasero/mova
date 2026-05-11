@@ -1,11 +1,11 @@
 import { motion } from 'framer-motion';
 import { NavLink } from 'react-router-dom';
-import { FiBookmark, FiHome, FiSearch, FiUser } from 'react-icons/fi';
+import { FiBookmark, FiHome, FiMap, FiUser } from 'react-icons/fi';
 import { IoAdd } from 'react-icons/io5';
 
 const links = [
   { to: '/home', label: 'Home', icon: FiHome },
-  { to: '/explore', label: 'Search', icon: FiSearch },
+  { to: '/map', label: 'Mapa', icon: FiMap },
   { to: '/create', label: 'Crear', icon: IoAdd, featured: true },
   { to: '/saved', label: 'Guardados', icon: FiBookmark },
   { to: '/profile', label: 'Perfil', icon: FiUser },

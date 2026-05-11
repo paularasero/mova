@@ -1,14 +1,15 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useMemo, useState } from 'react';
-import { FiArrowUpRight, FiBookmark, FiMenu, FiSearch, FiSliders, FiUser, FiX } from 'react-icons/fi';
-import { Link } from 'react-router-dom';
+import { FiArrowUpRight, FiBookmark, FiChevronDown, FiMapPin, FiMenu, FiSearch, FiSliders, FiUser, FiX } from 'react-icons/fi';
+import { Link, useNavigate } from 'react-router-dom';
 import { apiRequest } from '../lib/api';
-import { clearCurrentUser, getCurrentUser } from '../lib/auth';
+import { clearCurrentUser, getCurrentUser, setCurrentUser } from '../lib/auth';
 
 const tabs = ['All', 'Popular', 'Recomendados', 'Cerca tuyo', 'Night', 'Chill', 'Food', 'Outdoor'];
 const categories = ['Night', 'Food', 'Chill', 'Art', 'Música', 'Rooftops', 'Outdoor'];
 const companies = ['Amigos', 'Pareja', 'Solo', 'Familia'];
 const budgets = ['$', '$$', '$$$'];
+const cities = ['Montevideo', 'Buenos Aires', 'Madrid', 'Barcelona', 'París', 'Londres', 'Nueva York', 'São Paulo', 'Santiago', 'Punta del Este', 'Colonia', 'Roma', 'Berlín', 'Lisboa', 'Tokio', 'Ciudad de México', 'Bogotá', 'Lima'];
 const menuItems = [
   ['Mi perfil', '/profile'],
   ['Guardados', '/saved'],
@@ -30,9 +31,9 @@ function matchesTab(item, tab, user) {
   return String(item.category || '').toLowerCase().includes(tab.toLowerCase());
 }
 
-function ExperienceCard({ item, index }) {
+function ExperienceCard({ item }) {
   return (
-    <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.05 }}>
+    <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }}>
       <Link to={`/plan/${item.id}`} className="group relative block h-[23rem] overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.06] shadow-[0_24px_80px_rgba(0,0,0,0.42)]">
         <img src={item.image} alt={item.title} className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105" />
         <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/18 to-black/88" />
@@ -44,18 +45,52 @@ function ExperienceCard({ item, index }) {
           <p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-[#C8FF3D]">{item.neighborhood}</p>
           <h2 className="max-w-[15rem] text-[2.1rem] font-semibold leading-[1.02] tracking-[0.005em] text-white">{item.title}</h2>
           <p className="mt-3 text-sm leading-relaxed text-white/68">{item.time} · {item.company} · {item.category}</p>
-          <span className="absolute bottom-0 right-0 grid h-14 w-14 place-items-center rounded-full bg-[#C8FF3D] text-2xl text-black shadow-[0_16px_38px_rgba(200,255,61,0.28)]">
-            <FiArrowUpRight />
-          </span>
+          <span className="absolute bottom-0 right-0 grid h-14 w-14 place-items-center rounded-full bg-[#C8FF3D] text-2xl text-black shadow-[0_16px_38px_rgba(200,255,61,0.28)]"><FiArrowUpRight /></span>
         </div>
       </Link>
     </motion.div>
   );
 }
 
+function MiniCard({ item, onSave }) {
+  return (
+    <motion.div whileTap={{ scale: 0.97 }} className="w-44 shrink-0">
+      <Link to={`/plan/${item.id}`} className="block overflow-hidden rounded-[1.35rem] border border-white/10 bg-white/[0.06]">
+        <div className="relative h-32">
+          <img src={item.image} alt={item.title} className="h-full w-full object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/5 to-black/55" />
+          <button onClick={(event) => { event.preventDefault(); onSave(item.id); }} className="absolute right-2 top-2 grid h-8 w-8 place-items-center rounded-full bg-black/45 text-[#C8FF3D] backdrop-blur-xl"><FiBookmark /></button>
+        </div>
+        <div className="p-3">
+          <h3 className="line-clamp-2 text-sm font-semibold leading-tight">{item.title}</h3>
+          <p className="mt-1 text-xs text-white/46">{item.neighborhood}, {item.city}</p>
+          <div className="mt-2 flex items-center justify-between text-[11px] text-white/50">
+            <span>{item.category}</span>
+            <span className="text-[#D9FF73]">★ {item.rating || 4.8}</span>
+          </div>
+        </div>
+      </Link>
+    </motion.div>
+  );
+}
+
+function Rail({ title, items, onSave }) {
+  if (!items.length) return null;
+  return (
+    <section className="mt-8">
+      <div className="mb-3 flex items-center justify-between">
+        <h2 className="text-lg font-semibold">{title}</h2>
+        <Link to="/explore" className="text-xs font-semibold text-white/42">Ver todo</Link>
+      </div>
+      <div className="flex gap-3 overflow-x-auto pb-2">
+        {items.map((item) => <MiniCard key={`${title}-${item.id}`} item={item} onSave={onSave} />)}
+      </div>
+    </section>
+  );
+}
+
 function FilterSheet({ open, onClose, filters, setFilters }) {
   const toggle = (key, value) => setFilters((prev) => ({ ...prev, [key]: prev[key] === value ? '' : value }));
-
   return (
     <AnimatePresence>
       {open && (
@@ -63,16 +98,7 @@ function FilterSheet({ open, onClose, filters, setFilters }) {
           <motion.button initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm" aria-label="Cerrar filtros" />
           <motion.div initial={{ y: 420 }} animate={{ y: 0 }} exit={{ y: 420 }} transition={{ type: 'spring', damping: 30, stiffness: 280 }} className="fixed bottom-0 left-1/2 z-50 w-full max-w-[430px] -translate-x-1/2 rounded-t-[2rem] border border-white/10 bg-[#0b0b0b] p-5 pb-8 text-white shadow-[0_-28px_80px_rgba(0,0,0,0.55)]">
             <div className="mx-auto mb-5 h-1 w-10 rounded-full bg-white/18" />
-            <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-semibold">Filtros</h2>
-              <button onClick={onClose} className="grid h-10 w-10 place-items-center rounded-full bg-white/[0.08]"><FiX /></button>
-            </div>
-            <label className="mt-5 block text-sm font-semibold text-white/70">Ciudad</label>
-            <select value={filters.city} onChange={(event) => setFilters((prev) => ({ ...prev, city: event.target.value }))} className="mt-2 w-full rounded-2xl border border-white/10 bg-white/[0.07] px-4 py-3 text-sm outline-none">
-              <option>Montevideo</option>
-              <option>Punta del Este</option>
-              <option>Buenos Aires</option>
-            </select>
+            <div className="flex items-center justify-between"><h2 className="text-2xl font-semibold">Filtros</h2><button onClick={onClose} className="grid h-10 w-10 place-items-center rounded-full bg-white/[0.08]"><FiX /></button></div>
             <div className="mt-5 grid grid-cols-2 gap-3">
               <label className="block text-sm font-semibold text-white/70">Fecha<input type="date" value={filters.date} onChange={(event) => setFilters((prev) => ({ ...prev, date: event.target.value }))} className="mt-2 w-full rounded-2xl border border-white/10 bg-white/[0.07] px-3 py-3 text-sm text-white outline-none" /></label>
               <label className="block text-sm font-semibold text-white/70">Horario<input type="time" value={filters.time} onChange={(event) => setFilters((prev) => ({ ...prev, time: event.target.value }))} className="mt-2 w-full rounded-2xl border border-white/10 bg-white/[0.07] px-3 py-3 text-sm text-white outline-none" /></label>
@@ -84,11 +110,7 @@ function FilterSheet({ open, onClose, filters, setFilters }) {
             ].map(([title, key, options]) => (
               <div key={title} className="mt-5">
                 <p className="mb-2 text-sm font-semibold text-white/70">{title}</p>
-                <div className="flex flex-wrap gap-2">
-                  {options.map((option) => (
-                    <button key={option} onClick={() => toggle(key, option)} className={`rounded-full px-4 py-2 text-xs font-semibold ${filters[key] === option ? 'bg-[#C8FF3D] text-black' : 'bg-white/[0.07] text-white/68'}`}>{option}</button>
-                  ))}
-                </div>
+                <div className="flex flex-wrap gap-2">{options.map((option) => <button key={option} onClick={() => toggle(key, option)} className={`rounded-full px-4 py-2 text-xs font-semibold ${filters[key] === option ? 'bg-[#C8FF3D] text-black' : 'bg-white/[0.07] text-white/68'}`}>{option}</button>)}</div>
               </div>
             ))}
             <label className="mt-5 block text-sm font-semibold text-white/70">Distancia: {filters.distance} km</label>
@@ -101,22 +123,48 @@ function FilterSheet({ open, onClose, filters, setFilters }) {
   );
 }
 
-function SideMenu({ open, onClose }) {
-  const logout = () => {
-    clearCurrentUser();
-    window.location.href = '/login';
+function CitySheet({ open, onClose, currentUser, currentCity, onSave }) {
+  const [query, setQuery] = useState('');
+  const filtered = cities.filter((city) => city.toLowerCase().includes(query.toLowerCase()));
+  const selectCity = async (city) => {
+    const updated = await apiRequest('/users/me', {
+      method: 'PUT',
+      body: JSON.stringify({ userId: currentUser?.id, city, preferences: currentUser?.preferences }),
+    });
+    setCurrentUser(updated);
+    onSave(city);
+    onClose();
   };
 
   return (
     <AnimatePresence>
       {open && (
         <>
+          <motion.button initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm" aria-label="Cerrar ciudades" />
+          <motion.div initial={{ y: 420 }} animate={{ y: 0 }} exit={{ y: 420 }} className="fixed bottom-0 left-1/2 z-50 max-h-[82vh] w-full max-w-[430px] -translate-x-1/2 overflow-hidden rounded-t-[2rem] border border-white/10 bg-[#0b0b0b] p-5 text-white">
+            <div className="mx-auto mb-5 h-1 w-10 rounded-full bg-white/18" />
+            <div className="flex items-center justify-between"><h2 className="text-2xl font-semibold">Elegí ciudad</h2><button onClick={onClose} className="grid h-10 w-10 place-items-center rounded-full bg-white/[0.08]"><FiX /></button></div>
+            <label className="mt-5 flex h-14 items-center gap-3 rounded-full bg-white/[0.07] px-4"><FiSearch className="text-white/45" /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Buscar ciudad" className="w-full bg-transparent text-sm outline-none placeholder:text-white/35" /></label>
+            <button onClick={() => selectCity(currentCity)} className="mt-4 flex w-full items-center gap-3 rounded-2xl bg-[#C8FF3D]/12 px-4 py-3 text-sm font-semibold text-[#D9FF73]"><FiMapPin /> Usar ubicación actual</button>
+            <div className="mt-4 max-h-[48vh] space-y-2 overflow-y-auto pb-3">
+              {filtered.map((city) => <button key={city} onClick={() => selectCity(city)} className={`w-full rounded-2xl px-4 py-3 text-left text-sm font-semibold ${city === currentCity ? 'bg-[#C8FF3D] text-black' : 'bg-white/[0.06] text-white/72'}`}>{city}</button>)}
+            </div>
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
+  );
+}
+
+function SideMenu({ open, onClose }) {
+  const logout = () => { clearCurrentUser(); window.location.href = '/login'; };
+  return (
+    <AnimatePresence>
+      {open && (
+        <>
           <motion.button initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} className="fixed inset-0 z-50 bg-black/72 backdrop-blur-sm" aria-label="Cerrar menú" />
           <motion.aside initial={{ x: -320 }} animate={{ x: 0 }} exit={{ x: -320 }} transition={{ type: 'spring', damping: 30, stiffness: 260 }} className="fixed bottom-0 left-0 top-0 z-50 w-[82%] max-w-[340px] border-r border-white/10 bg-[#090909]/96 p-6 text-white shadow-[28px_0_90px_rgba(0,0,0,0.55)] backdrop-blur-2xl">
-            <div className="flex items-center justify-between">
-              <p className="text-2xl font-bold">MOVA<span className="text-[#C8FF3D]">.</span></p>
-              <button onClick={onClose} className="grid h-10 w-10 place-items-center rounded-full bg-white/[0.08]"><FiX /></button>
-            </div>
+            <div className="flex items-center justify-between"><p className="text-2xl font-bold">MOVA<span className="text-[#C8FF3D]">.</span></p><button onClick={onClose} className="grid h-10 w-10 place-items-center rounded-full bg-white/[0.08]"><FiX /></button></div>
             <div className="mt-10 space-y-2">
               {menuItems.map(([label, to]) => <Link key={label} to={to} onClick={onClose} className="block rounded-2xl bg-white/[0.055] px-4 py-4 text-sm font-semibold text-white/78">{label}</Link>)}
               <button onClick={logout} className="block w-full rounded-2xl bg-red-500/10 px-4 py-4 text-left text-sm font-semibold text-[#ff7c7c]">Cerrar sesión</button>
@@ -129,46 +177,47 @@ function SideMenu({ open, onClose }) {
 }
 
 export default function Home() {
+  const navigate = useNavigate();
   const user = getCurrentUser();
   const [experiences, setExperiences] = useState([]);
   const [activeTab, setActiveTab] = useState('All');
-  const [query, setQuery] = useState('');
   const [menuOpen, setMenuOpen] = useState(false);
+  const [cityOpen, setCityOpen] = useState(false);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [status, setStatus] = useState('loading');
   const [filters, setFilters] = useState({ city: user?.city || user?.ciudad || 'Montevideo', category: '', company: '', budget: '', date: '', time: '', distance: 8 });
 
   useEffect(() => {
-    apiRequest('/experiences')
-      .then((data) => { setExperiences(data); setStatus('ready'); })
-      .catch(() => setStatus('error'));
+    apiRequest('/experiences').then((data) => { setExperiences(data); setStatus('ready'); }).catch(() => setStatus('error'));
   }, []);
 
-  const filtered = useMemo(() => {
-    return experiences.filter((item) => {
-      const text = `${item.title} ${item.description} ${item.neighborhood} ${item.category} ${(item.tags || []).join(' ')}`.toLowerCase();
-      return (!query || text.includes(query.toLowerCase()))
-        && matchesTab(item, activeTab, user)
-        && (!filters.city || item.city === filters.city)
-        && (!filters.category || String(item.category).toLowerCase().includes(filters.category.toLowerCase()))
-        && (!filters.company || item.company === filters.company)
-        && (!filters.budget || item.price === filters.budget)
-        && (!filters.date || item.date === filters.date);
-    });
-  }, [experiences, query, activeTab, filters, user]);
+  const cityExperiences = experiences.filter((item) => !filters.city || item.city === filters.city);
+  const filtered = useMemo(() => experiences.filter((item) => matchesTab(item, activeTab, user)
+    && (!filters.city || item.city === filters.city)
+    && (!filters.category || String(item.category).toLowerCase().includes(filters.category.toLowerCase()))
+    && (!filters.company || item.company === filters.company)
+    && (!filters.budget || item.price === filters.budget)
+    && (!filters.date || item.date === filters.date)), [experiences, activeTab, filters, user]);
+  const featured = filtered[0] || experiences[0];
+  const recommended = cityExperiences.filter((item) => matchesTab(item, 'Recomendados', user)).slice(0, 6);
+  const popular = [...cityExperiences].sort((a, b) => (b.likes || 0) - (a.likes || 0)).slice(0, 6);
+  const friends = cityExperiences.filter((item) => item.company === 'Amigos').slice(0, 6);
+
+  const saveExperience = async (id) => {
+    if (!user?.id) return;
+    await apiRequest(`/experiences/${id}/save`, { method: 'POST', body: JSON.stringify({ userId: user.id }) });
+  };
 
   return (
     <main className="min-h-screen bg-[#050505] text-white">
       <section className="mx-auto min-h-screen w-full max-w-[430px] overflow-hidden px-5 pb-28 pt-7">
         <header className="flex items-center justify-between">
           <button onClick={() => setMenuOpen(true)} className="grid h-11 w-11 place-items-center rounded-full bg-white/[0.08] text-xl"><FiMenu /></button>
-          <div className="text-center">
+          <button onClick={() => setCityOpen(true)} className="text-center">
             <p className="text-xs text-white/42">Ciudad actual</p>
-            <p className="text-sm font-semibold">{filters.city}</p>
-          </div>
-          <Link to="/profile" className="grid h-11 w-11 place-items-center overflow-hidden rounded-full bg-white/[0.08]">
-            {user?.avatar ? <img src={user.avatar} alt="" className="h-full w-full object-cover" /> : <FiUser />}
-          </Link>
+            <span className="inline-flex items-center gap-1 text-sm font-semibold">{filters.city}<FiChevronDown className="text-[#C8FF3D]" /></span>
+          </button>
+          <Link to="/profile" className="grid h-11 w-11 place-items-center overflow-hidden rounded-full bg-white/[0.08]">{user?.avatar ? <img src={user.avatar} alt="" className="h-full w-full object-cover" /> : <FiUser />}</Link>
         </header>
 
         <div className="mt-6">
@@ -177,29 +226,25 @@ export default function Home() {
         </div>
 
         <div className="mt-5 flex items-center gap-3">
-          <label className="flex h-14 flex-1 items-center gap-3 rounded-full border border-white/10 bg-white/[0.07] px-4 text-white/50">
-            <FiSearch className="text-lg" />
-            <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Buscar experiencias" className="w-full bg-transparent text-sm text-white outline-none placeholder:text-white/36" />
-          </label>
+          <button onClick={() => navigate('/explore')} className="flex h-14 flex-1 items-center gap-3 rounded-full border border-white/10 bg-white/[0.07] px-4 text-left text-sm text-white/40"><FiSearch className="text-lg" /> Buscar experiencias</button>
           <button onClick={() => setFiltersOpen(true)} className="grid h-14 w-14 place-items-center rounded-full border border-white/10 bg-white/[0.08] text-xl"><FiSliders /></button>
         </div>
 
         <div className="mt-5 flex gap-2 overflow-x-auto pb-2">
-          {tabs.map((tab) => (
-            <button key={tab} onClick={() => setActiveTab(tab)} className={`shrink-0 rounded-full px-4 py-2 text-sm font-semibold transition ${activeTab === tab ? 'bg-[#C8FF3D] text-black' : 'bg-white/[0.07] text-white/66'}`}>{tab}</button>
-          ))}
+          {tabs.map((tab) => <button key={tab} onClick={() => setActiveTab(tab)} className={`shrink-0 rounded-full px-4 py-2 text-sm font-semibold transition ${activeTab === tab ? 'bg-[#C8FF3D] text-black' : 'bg-white/[0.07] text-white/66'}`}>{tab}</button>)}
         </div>
 
         {status === 'loading' && <div className="mt-8 h-[23rem] animate-pulse rounded-[2rem] bg-white/[0.06]" />}
         {status === 'error' && <p className="mt-8 rounded-2xl bg-red-500/10 px-4 py-3 text-sm text-[#ff8f8f]">No se pudieron cargar las experiencias.</p>}
-
-        <div className="mt-4 space-y-5">
-          {filtered.map((experience, index) => <ExperienceCard key={experience.id} item={experience} index={index} />)}
-        </div>
-        {status === 'ready' && filtered.length === 0 && <p className="mt-8 text-sm text-white/50">No encontramos planes con esos filtros.</p>}
+        {featured && <div className="mt-4"><ExperienceCard item={featured} /></div>}
+        <Rail title="Recomendados para vos" items={recommended} onSave={saveExperience} />
+        <Rail title="Planes cerca" items={cityExperiences.slice(1, 7)} onSave={saveExperience} />
+        <Rail title="Populares esta semana" items={popular} onSave={saveExperience} />
+        <Rail title="Para ir con amigos" items={friends} onSave={saveExperience} />
       </section>
       <SideMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
       <FilterSheet open={filtersOpen} onClose={() => setFiltersOpen(false)} filters={filters} setFilters={setFilters} />
+      <CitySheet open={cityOpen} onClose={() => setCityOpen(false)} currentUser={user} currentCity={filters.city} onSave={(city) => setFilters((prev) => ({ ...prev, city }))} />
     </main>
   );
 }
