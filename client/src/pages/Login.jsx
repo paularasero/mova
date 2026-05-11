@@ -75,7 +75,7 @@ export default function Login() {
   };
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[#050505] text-white">
+    <main className="relative min-h-screen overflow-x-hidden bg-[#050505] text-white">
       <img src={loginImage} alt="" className="absolute inset-0 h-full w-full scale-105 object-cover blur-[2px]" />
       <div className="absolute inset-0 bg-black/68" />
       <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/38 to-black/94" />
@@ -116,7 +116,7 @@ export default function Login() {
                     onChange={handleChange('email')}
                     onBlur={() => setTouched((prev) => ({ ...prev, email: true }))}
                     placeholder="vos@email.com"
-                    className="h-14 w-full rounded-[1.35rem] border border-white/10 bg-[#151515]/78 px-4 text-base text-white outline-none transition placeholder:text-white/28 focus:border-[#C8FF3D]/70 focus:bg-[#191919]/88 focus:shadow-[0_0_0_4px_rgba(200,255,61,0.08)]"
+                    className="h-14 w-full rounded-[1.35rem] border border-white/10 bg-[#111111] px-4 text-base text-white outline-none transition placeholder:text-white/28 focus:border-[#C8FF3D]/70 focus:bg-[#181818] focus:shadow-[0_0_0_4px_rgba(200,255,61,0.08)]"
                   />
                   {touched.email && errors.email && <p className="mt-2 text-xs font-semibold text-[#ff7474]">{errors.email}</p>}
                 </label>
@@ -129,7 +129,7 @@ export default function Login() {
                     onChange={handleChange('password')}
                     onBlur={() => setTouched((prev) => ({ ...prev, password: true }))}
                     placeholder="Mínimo 6 caracteres"
-                    className="h-14 w-full rounded-[1.35rem] border border-white/10 bg-[#151515]/78 px-4 text-base text-white outline-none transition placeholder:text-white/28 focus:border-[#C8FF3D]/70 focus:bg-[#191919]/88 focus:shadow-[0_0_0_4px_rgba(200,255,61,0.08)]"
+                    className="h-14 w-full rounded-[1.35rem] border border-white/10 bg-[#111111] px-4 text-base text-white outline-none transition placeholder:text-white/28 focus:border-[#C8FF3D]/70 focus:bg-[#181818] focus:shadow-[0_0_0_4px_rgba(200,255,61,0.08)]"
                   />
                   {touched.password && errors.password && (
                     <p className="mt-2 text-xs font-semibold text-[#ff7474]">{errors.password}</p>
