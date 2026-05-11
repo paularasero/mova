@@ -9,14 +9,14 @@ const cities = ['Montevideo', 'Buenos Aires', 'Madrid', 'Barcelona', 'París', '
 const categories = ['Night', 'Food', 'Chill', 'Art', 'Música', 'Rooftops', 'Outdoor', 'Hidden spots'];
 const companies = ['Amigos', 'Pareja', 'Solo', 'Familia'];
 const avatars = [
-  'https://api.dicebear.com/9.x/notionists/svg?seed=MovaLime&backgroundColor=c8ff3d',
-  'https://api.dicebear.com/9.x/notionists/svg?seed=MovaNight&backgroundColor=191919',
-  'https://api.dicebear.com/9.x/notionists/svg?seed=MovaSunset&backgroundColor=f97316',
-  'https://api.dicebear.com/9.x/notionists/svg?seed=MovaSky&backgroundColor=38bdf8',
-  'https://api.dicebear.com/9.x/notionists/svg?seed=MovaRose&backgroundColor=fb7185',
-  'https://api.dicebear.com/9.x/notionists/svg?seed=MovaViolet&backgroundColor=a78bfa',
-  'https://api.dicebear.com/9.x/notionists/svg?seed=MovaMint&backgroundColor=34d399',
-  'https://api.dicebear.com/9.x/notionists/svg?seed=MovaGold&backgroundColor=facc15',
+  'https://api.dicebear.com/9.x/bottts-neutral/svg?seed=MovaLime&backgroundColor=c8ff3d',
+  'https://api.dicebear.com/9.x/bottts-neutral/svg?seed=MovaNight&backgroundColor=191919',
+  'https://api.dicebear.com/9.x/bottts-neutral/svg?seed=MovaSunset&backgroundColor=f97316',
+  'https://api.dicebear.com/9.x/bottts-neutral/svg?seed=MovaSky&backgroundColor=38bdf8',
+  'https://api.dicebear.com/9.x/bottts-neutral/svg?seed=MovaRose&backgroundColor=fb7185',
+  'https://api.dicebear.com/9.x/bottts-neutral/svg?seed=MovaViolet&backgroundColor=a78bfa',
+  'https://api.dicebear.com/9.x/bottts-neutral/svg?seed=MovaMint&backgroundColor=34d399',
+  'https://api.dicebear.com/9.x/bottts-neutral/svg?seed=MovaGold&backgroundColor=facc15',
 ];
 
 function AvatarPicker({ open, onClose, value, onSelect }) {
@@ -25,8 +25,9 @@ function AvatarPicker({ open, onClose, value, onSelect }) {
     <AnimatePresence>
       {open && (
         <>
-          <motion.button initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm" aria-label="Cerrar avatares" />
-          <motion.div initial={{ y: 420 }} animate={{ y: 0 }} exit={{ y: 420 }} className="fixed bottom-0 left-1/2 z-50 w-full max-w-[430px] -translate-x-1/2 rounded-t-[2rem] border border-white/10 bg-[#0b0b0b] p-5 pb-8 text-white">
+          <motion.button initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} className="mova-overlay" aria-label="Cerrar avatares" />
+          <div className="mova-sheet-wrap">
+          <motion.div initial={{ y: 420 }} animate={{ y: 0 }} exit={{ y: 420 }} className="mova-sheet p-5 pb-8">
             <div className="mx-auto mb-5 h-1 w-10 rounded-full bg-white/18" />
             <div className="flex items-center justify-between"><h2 className="text-2xl font-semibold">Tu avatar</h2><button onClick={onClose} className="grid h-10 w-10 place-items-center rounded-full bg-white/[0.08]"><FiX /></button></div>
             <div className="mt-5 grid grid-cols-4 gap-3">
@@ -41,6 +42,7 @@ function AvatarPicker({ open, onClose, value, onSelect }) {
               <button onClick={() => custom && onSelect(custom)} className="rounded-2xl bg-[#C8FF3D] px-4 text-sm font-bold text-black">Usar</button>
             </div>
           </motion.div>
+          </div>
         </>
       )}
     </AnimatePresence>
@@ -87,8 +89,8 @@ export default function SetupOnboarding() {
   };
 
   return (
-    <main className="min-h-screen bg-[#050505] text-white">
-      <section className="mx-auto flex min-h-screen w-full max-w-[430px] flex-col overflow-hidden px-5 pb-8 pt-8">
+    <main className="mova-screen">
+      <section className="mova-mobile flex flex-col px-5 pb-8 pt-8">
         <header>
           <p className="text-2xl font-bold">MOVA<span className="text-[#C8FF3D]">.</span></p>
           <div className="mt-6 h-1.5 overflow-hidden rounded-full bg-white/10"><motion.div animate={{ width: `${step * 20}%` }} className="h-full rounded-full bg-[#C8FF3D]" /></div>

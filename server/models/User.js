@@ -17,10 +17,11 @@ const userSchema = new mongoose.Schema(
       company: [{ type: String }],
       birthday: { type: String },
       setupComplete: { type: Boolean, default: false },
+      theme: { type: String, enum: ['light', 'dark'], default: 'light' },
     },
     avatar: {
       type: String,
-      default: 'https://images.unsplash.com/photo-1542204625-de293a2f7f7b?auto=format&fit=crop&w=300&q=80',
+      default: 'https://api.dicebear.com/9.x/bottts-neutral/svg?seed=MovaLime&backgroundColor=c8ff3d',
     },
   },
   {

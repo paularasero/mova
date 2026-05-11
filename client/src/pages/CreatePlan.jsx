@@ -23,14 +23,19 @@ function MapPicker({ open, onClose, onSelect }) {
     <AnimatePresence>
       {open && (
         <>
-          <motion.button initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm" aria-label="Cerrar mapa" />
-          <motion.div initial={{ y: 420 }} animate={{ y: 0 }} exit={{ y: 420 }} className="fixed bottom-0 left-1/2 z-50 w-full max-w-[430px] -translate-x-1/2 rounded-t-[2rem] border border-white/10 bg-[#0b0b0b] p-5 pb-8 text-white">
+          <motion.button initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} className="mova-overlay" aria-label="Cerrar mapa" />
+          <div className="mova-sheet-wrap">
+          <motion.div initial={{ y: 420 }} animate={{ y: 0 }} exit={{ y: 420 }} className="mova-sheet p-5 pb-8">
             <div className="mx-auto mb-5 h-1 w-10 rounded-full bg-white/18" />
             <div className="flex items-center justify-between">
               <h2 className="text-2xl font-semibold">Elegí ubicación</h2>
               <button onClick={onClose} className="grid h-10 w-10 place-items-center rounded-full bg-white/[0.08]"><FiX /></button>
             </div>
-            <div className="relative mt-5 h-64 overflow-hidden rounded-[1.6rem] bg-[#111]">
+            <label className="mt-5 flex h-12 items-center gap-3 rounded-2xl bg-white/[0.07] px-4 text-sm">
+              <FiMapPin className="text-[#C8FF3D]" />
+              <input placeholder="Buscar dirección" className="w-full bg-transparent outline-none placeholder:text-white/35" />
+            </label>
+            <div className="relative mt-4 h-64 overflow-hidden rounded-[1.6rem] bg-[#111]">
               <div className="absolute inset-0 opacity-60" style={{ backgroundImage: 'linear-gradient(30deg,#222 12%,transparent 12.5%,transparent 87%,#222 87.5%,#222),linear-gradient(150deg,#222 12%,transparent 12.5%,transparent 87%,#222 87.5%,#222)', backgroundSize: '78px 132px' }} />
               {options.map((item, index) => (
                 <button key={item.location} onClick={() => { onSelect(item); onClose(); }} className="absolute grid h-12 w-12 place-items-center rounded-full bg-[#C8FF3D]/20 text-[#C8FF3D]" style={{ left: `${24 + index * 22}%`, top: `${32 + index * 13}%` }}>
@@ -42,6 +47,7 @@ function MapPicker({ open, onClose, onSelect }) {
               {options.map((item) => <button key={item.location} onClick={() => { onSelect(item); onClose(); }} className="w-full rounded-2xl bg-white/[0.06] px-4 py-3 text-left text-sm font-semibold">{item.location} · {item.barrio}</button>)}
             </div>
           </motion.div>
+          </div>
         </>
       )}
     </AnimatePresence>
@@ -99,8 +105,8 @@ export default function CreatePlan() {
   };
 
   return (
-    <main className="min-h-screen bg-[#050505] text-white">
-      <section className="mx-auto min-h-screen w-full max-w-[430px] overflow-hidden px-5 pb-28 pt-7">
+    <main className="mova-screen">
+      <section className="mova-mobile px-5 pb-28 pt-7">
         <header className="flex items-center justify-between">
           <button onClick={prev} className="grid h-11 w-11 place-items-center rounded-full bg-white/[0.07] text-xl"><IoArrowBack /></button>
           <div className="text-right">

@@ -114,6 +114,7 @@ router.post('/register', async (req, res) => {
       puntos: 0,
       seguidores: 0,
       siguiendo: 0,
+      avatar: `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${encodeURIComponent(displayName)}&backgroundColor=c8ff3d`,
     });
 
     res.status(201).json(user);

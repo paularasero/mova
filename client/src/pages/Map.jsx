@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
-import { FiBookmark, FiMapPin, FiNavigation, FiSliders } from 'react-icons/fi';
+import { FiArrowLeft, FiBookmark, FiMapPin, FiNavigation, FiSearch, FiSliders } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 import { apiRequest } from '../lib/api';
 import { getCurrentUser } from '../lib/auth';
@@ -38,19 +38,27 @@ export default function Map() {
   };
 
   return (
-    <main className="min-h-screen bg-[#050505] text-white">
-      <section className="relative mx-auto min-h-screen w-full max-w-[430px] overflow-hidden bg-[#050505] pb-28">
+    <main className="mova-screen">
+      <section className="relative mova-mobile pb-28">
         <div className="absolute inset-0 bg-[#090909]" />
         <div className="absolute inset-0 opacity-70" style={{ backgroundImage: 'linear-gradient(30deg,#1b1b1b 12%,transparent 12.5%,transparent 87%,#1b1b1b 87.5%,#1b1b1b),linear-gradient(150deg,#161616 12%,transparent 12.5%,transparent 87%,#161616 87.5%,#161616),linear-gradient(90deg,rgba(200,255,61,.12) 1px,transparent 1px)', backgroundSize: '88px 150px,88px 150px,54px 54px', backgroundPosition: '0 0, 0 0, 0 0' }} />
         <div className="absolute inset-x-0 top-0 h-52 bg-gradient-to-b from-black via-black/70 to-transparent" />
 
         <header className="relative z-10 flex items-center justify-between px-5 pt-7">
+          <Link to="/home" className="grid h-11 w-11 place-items-center rounded-full bg-white/[0.08] text-xl"><FiArrowLeft /></Link>
           <div>
             <p className="text-sm text-white/50">Mapa MOVA</p>
             <h1 className="text-3xl font-semibold">Planes cerca</h1>
           </div>
           <button className="grid h-12 w-12 place-items-center rounded-full bg-white/[0.08] text-xl"><FiSliders /></button>
         </header>
+        <div className="relative z-10 mx-5 mt-4 flex h-12 items-center gap-3 rounded-full bg-white/[0.08] px-4 text-sm">
+          <FiSearch className="text-[#C8FF3D]" />
+          <input placeholder="Buscar en el mapa" className="w-full bg-transparent outline-none placeholder:text-white/40" />
+        </div>
+        <div className="relative z-10 mx-5 mt-3 flex gap-2 overflow-x-auto">
+          {['Todos', 'Night', 'Food', 'Chill', 'Outdoor'].map((chip) => <button key={chip} className="shrink-0 rounded-full bg-white/[0.08] px-3 py-1.5 text-xs font-semibold">{chip}</button>)}
+        </div>
 
         {experiences.map((experience, index) => {
           const [left, top] = pinPosition(experience, index);

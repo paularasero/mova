@@ -35,8 +35,9 @@ function FilterSheet({ open, onClose, filters, setFilters }) {
     <AnimatePresence>
       {open && (
         <>
-          <motion.button initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm" aria-label="Cerrar filtros" />
-          <motion.div initial={{ y: 420 }} animate={{ y: 0 }} exit={{ y: 420 }} className="fixed bottom-0 left-1/2 z-50 w-full max-w-[430px] -translate-x-1/2 rounded-t-[2rem] border border-white/10 bg-[#0b0b0b] p-5 pb-8 text-white">
+          <motion.button initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} className="mova-overlay" aria-label="Cerrar filtros" />
+          <div className="mova-sheet-wrap">
+          <motion.div initial={{ y: 420 }} animate={{ y: 0 }} exit={{ y: 420 }} className="mova-sheet p-5 pb-8">
             <div className="mx-auto mb-5 h-1 w-10 rounded-full bg-white/18" />
             <div className="flex items-center justify-between"><h2 className="text-2xl font-semibold">Filtros</h2><button onClick={onClose} className="grid h-10 w-10 place-items-center rounded-full bg-white/[0.08]"><FiX /></button></div>
             <label className="mt-5 block text-sm font-semibold text-white/68">Ciudad</label>
@@ -57,6 +58,7 @@ function FilterSheet({ open, onClose, filters, setFilters }) {
             ))}
             <button onClick={onClose} className="mt-6 h-14 w-full rounded-full bg-[#C8FF3D] font-bold text-black">Aplicar</button>
           </motion.div>
+          </div>
         </>
       )}
     </AnimatePresence>
@@ -96,8 +98,8 @@ export default function Explore() {
   };
 
   return (
-    <main className="min-h-screen bg-[#050505] text-white">
-      <section className="mx-auto min-h-screen w-full max-w-[430px] px-5 pb-28 pt-7">
+    <main className="mova-screen">
+      <section className="mova-mobile px-5 pb-28 pt-7">
         <header className="flex items-center justify-between">
           <div><p className="text-sm text-white/48">MOVA Search</p><h1 className="text-3xl font-semibold tracking-[0.005em]">Buscar experiencias</h1></div>
           <button onClick={() => setFiltersOpen(true)} className="grid h-12 w-12 place-items-center rounded-full bg-white/[0.08] text-xl"><FiSliders /></button>

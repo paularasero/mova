@@ -1,24 +1,15 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useMemo, useState } from 'react';
-import { FiArrowUpRight, FiBookmark, FiChevronDown, FiMapPin, FiMenu, FiSearch, FiSliders, FiUser, FiX } from 'react-icons/fi';
+import { FiArrowUpRight, FiBell, FiBookmark, FiChevronDown, FiMap, FiMapPin, FiSearch, FiSliders, FiUser, FiX } from 'react-icons/fi';
 import { Link, useNavigate } from 'react-router-dom';
 import { apiRequest } from '../lib/api';
-import { clearCurrentUser, getCurrentUser, setCurrentUser } from '../lib/auth';
+import { getCurrentUser, setCurrentUser } from '../lib/auth';
 
 const tabs = ['All', 'Popular', 'Recomendados', 'Cerca tuyo', 'Night', 'Chill', 'Food', 'Outdoor'];
 const categories = ['Night', 'Food', 'Chill', 'Art', 'Música', 'Rooftops', 'Outdoor'];
 const companies = ['Amigos', 'Pareja', 'Solo', 'Familia'];
 const budgets = ['$', '$$', '$$$'];
 const cities = ['Montevideo', 'Buenos Aires', 'Madrid', 'Barcelona', 'París', 'Londres', 'Nueva York', 'São Paulo', 'Santiago', 'Punta del Este', 'Colonia', 'Roma', 'Berlín', 'Lisboa', 'Tokio', 'Ciudad de México', 'Bogotá', 'Lima'];
-const menuItems = [
-  ['Mi perfil', '/profile'],
-  ['Guardados', '/saved'],
-  ['Actividad', '/activity'],
-  ['Mis experiencias', '/profile'],
-  ['Recompensas', '/rewards'],
-  ['Configuración', '/settings'],
-  ['Ayuda', '/messages'],
-];
 
 function matchesTab(item, tab, user) {
   if (tab === 'All') return true;
@@ -34,7 +25,7 @@ function matchesTab(item, tab, user) {
 function ExperienceCard({ item }) {
   return (
     <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }}>
-      <Link to={`/plan/${item.id}`} className="group relative block h-[23rem] overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.06] shadow-[0_24px_80px_rgba(0,0,0,0.42)]">
+      <Link to={`/plan/${item.id}`} className="photo-card group relative block h-[23rem] overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.06] shadow-[0_24px_80px_rgba(0,0,0,0.42)]">
         <img src={item.image} alt={item.title} className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105" />
         <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/18 to-black/88" />
         <div className="absolute left-5 right-5 top-5 flex items-center justify-between">
@@ -95,8 +86,9 @@ function FilterSheet({ open, onClose, filters, setFilters }) {
     <AnimatePresence>
       {open && (
         <>
-          <motion.button initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm" aria-label="Cerrar filtros" />
-          <motion.div initial={{ y: 420 }} animate={{ y: 0 }} exit={{ y: 420 }} transition={{ type: 'spring', damping: 30, stiffness: 280 }} className="fixed bottom-0 left-1/2 z-50 w-full max-w-[430px] -translate-x-1/2 rounded-t-[2rem] border border-white/10 bg-[#0b0b0b] p-5 pb-8 text-white shadow-[0_-28px_80px_rgba(0,0,0,0.55)]">
+          <motion.button initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} className="mova-overlay" aria-label="Cerrar filtros" />
+          <div className="mova-sheet-wrap">
+          <motion.div initial={{ y: 420 }} animate={{ y: 0 }} exit={{ y: 420 }} transition={{ type: 'spring', damping: 30, stiffness: 280 }} className="mova-sheet p-5 pb-8">
             <div className="mx-auto mb-5 h-1 w-10 rounded-full bg-white/18" />
             <div className="flex items-center justify-between"><h2 className="text-2xl font-semibold">Filtros</h2><button onClick={onClose} className="grid h-10 w-10 place-items-center rounded-full bg-white/[0.08]"><FiX /></button></div>
             <div className="mt-5 grid grid-cols-2 gap-3">
@@ -117,6 +109,7 @@ function FilterSheet({ open, onClose, filters, setFilters }) {
             <input type="range" min="1" max="20" value={filters.distance} onChange={(event) => setFilters((prev) => ({ ...prev, distance: event.target.value }))} className="mt-3 w-full accent-[#C8FF3D]" />
             <button onClick={onClose} className="mt-6 h-14 w-full rounded-full bg-[#C8FF3D] py-4 text-sm font-bold text-black">Aplicar filtros</button>
           </motion.div>
+          </div>
         </>
       )}
     </AnimatePresence>
@@ -140,8 +133,9 @@ function CitySheet({ open, onClose, currentUser, currentCity, onSave }) {
     <AnimatePresence>
       {open && (
         <>
-          <motion.button initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm" aria-label="Cerrar ciudades" />
-          <motion.div initial={{ y: 420 }} animate={{ y: 0 }} exit={{ y: 420 }} className="fixed bottom-0 left-1/2 z-50 max-h-[82vh] w-full max-w-[430px] -translate-x-1/2 overflow-hidden rounded-t-[2rem] border border-white/10 bg-[#0b0b0b] p-5 text-white">
+          <motion.button initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} className="mova-overlay" aria-label="Cerrar ciudades" />
+          <div className="mova-sheet-wrap">
+          <motion.div initial={{ y: 420 }} animate={{ y: 0 }} exit={{ y: 420 }} className="mova-sheet p-5">
             <div className="mx-auto mb-5 h-1 w-10 rounded-full bg-white/18" />
             <div className="flex items-center justify-between"><h2 className="text-2xl font-semibold">Elegí ciudad</h2><button onClick={onClose} className="grid h-10 w-10 place-items-center rounded-full bg-white/[0.08]"><FiX /></button></div>
             <label className="mt-5 flex h-14 items-center gap-3 rounded-full bg-white/[0.07] px-4"><FiSearch className="text-white/45" /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Buscar ciudad" className="w-full bg-transparent text-sm outline-none placeholder:text-white/35" /></label>
@@ -150,26 +144,7 @@ function CitySheet({ open, onClose, currentUser, currentCity, onSave }) {
               {filtered.map((city) => <button key={city} onClick={() => selectCity(city)} className={`w-full rounded-2xl px-4 py-3 text-left text-sm font-semibold ${city === currentCity ? 'bg-[#C8FF3D] text-black' : 'bg-white/[0.06] text-white/72'}`}>{city}</button>)}
             </div>
           </motion.div>
-        </>
-      )}
-    </AnimatePresence>
-  );
-}
-
-function SideMenu({ open, onClose }) {
-  const logout = () => { clearCurrentUser(); window.location.href = '/login'; };
-  return (
-    <AnimatePresence>
-      {open && (
-        <>
-          <motion.button initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} className="fixed inset-0 z-50 bg-black/72 backdrop-blur-sm" aria-label="Cerrar menú" />
-          <motion.aside initial={{ x: -320 }} animate={{ x: 0 }} exit={{ x: -320 }} transition={{ type: 'spring', damping: 30, stiffness: 260 }} className="fixed bottom-0 left-0 top-0 z-50 w-[82%] max-w-[340px] border-r border-white/10 bg-[#090909]/96 p-6 text-white shadow-[28px_0_90px_rgba(0,0,0,0.55)] backdrop-blur-2xl">
-            <div className="flex items-center justify-between"><p className="text-2xl font-bold">MOVA<span className="text-[#C8FF3D]">.</span></p><button onClick={onClose} className="grid h-10 w-10 place-items-center rounded-full bg-white/[0.08]"><FiX /></button></div>
-            <div className="mt-10 space-y-2">
-              {menuItems.map(([label, to]) => <Link key={label} to={to} onClick={onClose} className="block rounded-2xl bg-white/[0.055] px-4 py-4 text-sm font-semibold text-white/78">{label}</Link>)}
-              <button onClick={logout} className="block w-full rounded-2xl bg-red-500/10 px-4 py-4 text-left text-sm font-semibold text-[#ff7c7c]">Cerrar sesión</button>
-            </div>
-          </motion.aside>
+          </div>
         </>
       )}
     </AnimatePresence>
@@ -181,7 +156,6 @@ export default function Home() {
   const user = getCurrentUser();
   const [experiences, setExperiences] = useState([]);
   const [activeTab, setActiveTab] = useState('All');
-  const [menuOpen, setMenuOpen] = useState(false);
   const [cityOpen, setCityOpen] = useState(false);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [status, setStatus] = useState('loading');
@@ -209,19 +183,26 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-[#050505] text-white">
-      <section className="mx-auto min-h-screen w-full max-w-[430px] overflow-hidden px-5 pb-28 pt-7">
+    <main className="mova-screen">
+      <section className="mova-mobile px-5 pb-28 pt-7">
         <header className="flex items-center justify-between">
-          <button onClick={() => setMenuOpen(true)} className="grid h-11 w-11 place-items-center rounded-full bg-white/[0.08] text-xl"><FiMenu /></button>
-          <button onClick={() => setCityOpen(true)} className="text-center">
-            <p className="text-xs text-white/42">Ciudad actual</p>
-            <span className="inline-flex items-center gap-1 text-sm font-semibold">{filters.city}<FiChevronDown className="text-[#C8FF3D]" /></span>
-          </button>
-          <Link to="/profile" className="grid h-11 w-11 place-items-center overflow-hidden rounded-full bg-white/[0.08]">{user?.avatar ? <img src={user.avatar} alt="" className="h-full w-full object-cover" /> : <FiUser />}</Link>
+          <div className="flex items-center gap-3">
+            <Link to="/profile" className="grid h-12 w-12 place-items-center overflow-hidden rounded-full bg-white/[0.08]">{user?.avatar ? <img src={user.avatar} alt="" className="h-full w-full object-cover" /> : <FiUser />}</Link>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#C8FF3D]">Good morning</p>
+              <p className="text-lg font-semibold">Hola, {user?.nombre?.split(' ')[0] || 'Paula'}</p>
+            </div>
+          </div>
+          <Link to="/community" className="grid h-11 w-11 place-items-center rounded-full bg-white/[0.08] text-xl"><FiBell /></Link>
         </header>
 
+        <div className="mt-5">
+          <button onClick={() => setCityOpen(true)} className="inline-flex items-center gap-1 rounded-full bg-white/[0.08] px-4 py-2 text-sm font-semibold">
+            {filters.city}<FiChevronDown className="text-[#C8FF3D]" />
+          </button>
+        </div>
+
         <div className="mt-6">
-          <p className="text-sm text-white/48">Buenas noches, {user?.nombre?.split(' ')[0] || 'Paula'}</p>
           <h1 className="mt-1 text-[2rem] font-semibold leading-tight tracking-[0.005em]">Descubrí tu próximo plan.</h1>
         </div>
 
@@ -237,12 +218,26 @@ export default function Home() {
         {status === 'loading' && <div className="mt-8 h-[23rem] animate-pulse rounded-[2rem] bg-white/[0.06]" />}
         {status === 'error' && <p className="mt-8 rounded-2xl bg-red-500/10 px-4 py-3 text-sm text-[#ff8f8f]">No se pudieron cargar las experiencias.</p>}
         {featured && <div className="mt-4"><ExperienceCard item={featured} /></div>}
+        <section className="mt-8">
+          <h2 className="mb-3 text-lg font-semibold">Explorá cerca de ti</h2>
+          <Link to="/map" className="photo-card relative block h-44 overflow-hidden rounded-[1.7rem] border border-white/10 bg-[#101010]">
+            <div className="absolute inset-0 opacity-70" style={{ backgroundImage: 'linear-gradient(30deg,#252525 12%,transparent 12.5%,transparent 87%,#252525 87.5%,#252525),linear-gradient(150deg,#1a1a1a 12%,transparent 12.5%,transparent 87%,#1a1a1a 87.5%,#1a1a1a)', backgroundSize: '70px 120px' }} />
+            <div className="absolute left-10 top-8 h-2 w-28 rotate-12 rounded-full bg-[#C8FF3D]/70" />
+            <div className="absolute right-12 top-12 grid h-11 w-11 place-items-center rounded-full bg-[#C8FF3D] text-black"><FiMapPin fill="currentColor" /></div>
+            <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#C8FF3D]">Mapa</p>
+                <h3 className="mt-1 text-2xl font-semibold text-white">Planes cerca de ti</h3>
+              </div>
+              <span className="inline-flex items-center gap-2 rounded-full bg-[#C8FF3D] px-4 py-3 text-sm font-bold text-black"><FiMap /> Mapa</span>
+            </div>
+          </Link>
+        </section>
         <Rail title="Recomendados para vos" items={recommended} onSave={saveExperience} />
         <Rail title="Planes cerca" items={cityExperiences.slice(1, 7)} onSave={saveExperience} />
         <Rail title="Populares esta semana" items={popular} onSave={saveExperience} />
         <Rail title="Para ir con amigos" items={friends} onSave={saveExperience} />
       </section>
-      <SideMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
       <FilterSheet open={filtersOpen} onClose={() => setFiltersOpen(false)} filters={filters} setFilters={setFilters} />
       <CitySheet open={cityOpen} onClose={() => setCityOpen(false)} currentUser={user} currentCity={filters.city} onSave={(city) => setFilters((prev) => ({ ...prev, city }))} />
     </main>

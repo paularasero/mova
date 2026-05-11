@@ -2,6 +2,7 @@ import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Activity from './pages/Activity';
 import CreatePlan from './pages/CreatePlan';
+import Community from './pages/Community';
 import Explore from './pages/Explore';
 import Home from './pages/Home';
 import Login from './pages/Login';
@@ -41,6 +42,7 @@ export default function App() {
         <Route path="/map" element={<PrivateRoute><Map /></PrivateRoute>} />
         <Route path="/plan/:id" element={<PrivateRoute><PlanDetail /></PrivateRoute>} />
         <Route path="/create" element={<PrivateRoute><CreatePlan /></PrivateRoute>} />
+        <Route path="/community" element={<PrivateRoute><Community /></PrivateRoute>} />
         <Route path="/saved" element={<PrivateRoute><Saved /></PrivateRoute>} />
         <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
         <Route path="/rewards" element={<PrivateRoute><Rewards /></PrivateRoute>} />

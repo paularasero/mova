@@ -21,8 +21,8 @@ export default function Saved() {
   }, [user?.id]);
 
   return (
-    <main className="min-h-screen bg-[#050505] text-white">
-      <section className="mx-auto min-h-screen w-full max-w-[430px] px-5 pb-28 pt-7">
+    <main className="mova-screen">
+      <section className="mova-mobile px-5 pb-28 pt-7">
         <h1 className="text-2xl font-bold">Guardadas</h1>
         <div className="mt-5 flex gap-2">
           {tabs.map((tab) => (

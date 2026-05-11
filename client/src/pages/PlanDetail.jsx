@@ -61,15 +61,15 @@ export default function PlanDetail() {
   };
 
   if (!experience) {
-    return <main className="min-h-screen bg-[#050505] p-6 text-white/60">Cargando experiencia...</main>;
+    return <main className="mova-screen p-6 mova-muted">Cargando experiencia...</main>;
   }
 
   const saved = experience.savedBy?.includes(user?.id);
   const chips = ['Popular', '2 km', experience.category, experience.company, ...(experience.tags || []).slice(0, 2)];
 
   return (
-    <main className="min-h-screen bg-[#050505] text-white">
-      <section className="mx-auto min-h-screen w-full max-w-[430px] pb-28">
+    <main className="mova-screen">
+      <section className="mova-mobile pb-28">
         <div className="relative h-[24rem] overflow-hidden rounded-b-[2.2rem]">
           <motion.div className="flex h-full" animate={{ x: `-${activeImage * 100}%` }} transition={{ type: 'spring', damping: 28, stiffness: 220 }}>
             {gallery.map((image) => (

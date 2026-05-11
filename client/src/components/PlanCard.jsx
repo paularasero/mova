@@ -14,7 +14,7 @@ export default function PlanCard({ plan, compact = false }) {
     <motion.article whileTap={{ scale: 0.98 }}>
       <Link
         to={`/plan/${plan.id}`}
-        className={`group relative block overflow-hidden rounded-[1.35rem] border border-white/10 bg-white/[0.06] shadow-[0_18px_50px_rgba(0,0,0,0.3)] ${compact ? 'h-44' : 'h-60'}`}
+        className={`photo-card group relative block overflow-hidden rounded-[1.35rem] border border-white/10 bg-white/[0.06] shadow-[0_18px_50px_rgba(0,0,0,0.3)] ${compact ? 'h-44' : 'h-60'}`}
       >
         <img src={image} alt={title} className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105" loading="lazy" />
         <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/24 to-black/88" />

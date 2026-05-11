@@ -14,8 +14,8 @@ export default function Activity() {
   const user = getCurrentUser();
 
   return (
-    <main className="min-h-screen bg-[#050505] text-white">
-      <section className="mx-auto min-h-screen w-full max-w-[430px] px-5 pb-28 pt-8">
+    <main className="mova-screen">
+      <section className="mova-mobile px-5 pb-28 pt-8">
         <header className="flex items-center justify-between">
           <div>
             <p className="text-sm text-white/48">{user?.nombre || 'MOVA'}</p>

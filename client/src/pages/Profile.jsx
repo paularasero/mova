@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { FiMenu, FiSettings } from 'react-icons/fi';
+import { FiSettings } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 import PlanCard from '../components/PlanCard';
 import { apiRequest } from '../lib/api';
@@ -18,8 +18,8 @@ export default function Profile() {
   const list = tab === 'Publicadas' ? profile?.created || [] : profile?.saved || [];
 
   return (
-    <main className="min-h-screen bg-[#050505] text-white">
-      <section className="mx-auto min-h-screen w-full max-w-[430px] px-5 pb-28 pt-7">
+    <main className="mova-screen">
+      <section className="mova-mobile px-5 pb-28 pt-7">
         <header className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <img src={user?.avatar} alt="" className="h-10 w-10 rounded-full object-cover ring-2 ring-[#C8FF3D]" />

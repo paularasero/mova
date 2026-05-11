@@ -25,6 +25,10 @@ export function getCurrentUser() {
 
 export function setCurrentUser(user) {
   localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
+  if (user?.preferences?.theme && typeof document !== 'undefined') {
+    localStorage.setItem('mova_theme', user.preferences.theme);
+    document.documentElement.dataset.theme = user.preferences.theme;
+  }
 }
 
 export function clearCurrentUser() {
