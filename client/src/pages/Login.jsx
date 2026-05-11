@@ -80,7 +80,7 @@ export default function Login() {
       return;
     }
 
-    setSubmitError(result.error || 'No pudimos iniciar sesión. Probá nuevamente.');
+    setSubmitError(result.error || 'No pudimos iniciar sesión. Intentá nuevamente.');
   };
 
   return (

@@ -12,7 +12,7 @@ export async function apiRequest(path, options = {}) {
       ...options,
     });
   } catch {
-    throw new Error('Error al conectar con el servidor. Verificá que el backend esté funcionando.');
+    throw new Error('No pudimos conectarnos. Revisá tu conexión e intentá nuevamente.');
   }
 
   const data = await response.json().catch(() => null);

@@ -99,7 +99,7 @@ export default function Register() {
     setIsSubmitting(false);
 
     if (!result.ok) {
-      setSubmitError(result.error || 'No pudimos crear la cuenta.');
+      setSubmitError(result.error || 'No pudimos crear tu cuenta. Intentá nuevamente.');
       return;
     }
 
