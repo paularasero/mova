@@ -7,16 +7,63 @@ import { getCurrentUser, setCurrentUser } from '../lib/auth';
 
 const tabs = ['para hoy', 'gratis', 'cafés', 'arte', 'música', 'citas', 'outdoor', 'night', 'con amigos'];
 const cities = ['Montevideo', 'Buenos Aires', 'Madrid', 'Barcelona', 'París', 'Londres', 'Nueva York', 'São Paulo', 'Santiago', 'Punta del Este', 'Colonia', 'Roma', 'Berlín', 'Lisboa', 'Tokio', 'Ciudad de México', 'Bogotá', 'Lima'];
+const fallbackImage = `data:image/svg+xml;utf8,${encodeURIComponent(`
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1200">
+    <defs>
+      <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#7B61FF"/>
+        <stop offset=".48" stop-color="#202024"/>
+        <stop offset="1" stop-color="#FF9F5A"/>
+      </linearGradient>
+    </defs>
+    <rect width="900" height="1200" fill="url(#g)"/>
+    <circle cx="720" cy="210" r="150" fill="rgba(255,255,255,.16)"/>
+    <circle cx="160" cy="940" r="230" fill="rgba(255,255,255,.12)"/>
+    <text x="70" y="1040" fill="white" font-family="Inter,Arial" font-size="88" font-weight="700">MOVA</text>
+  </svg>
+`)}`;
+
+function imageOf(item) {
+  return item?.image || item?.imagen || item?.images?.[0] || fallbackImage;
+}
+
+function titleOf(item) {
+  return item?.title || item?.titulo || 'Plan MOVA';
+}
+
+function neighborhoodOf(item) {
+  return item?.neighborhood || item?.barrio || item?.location || 'Montevideo';
+}
+
+function cityOf(item) {
+  return item?.city || item?.ciudad || 'Montevideo';
+}
+
+function categoryOf(item) {
+  return item?.category || item?.categoria || 'Plan';
+}
+
+function companyOf(item) {
+  return item?.company || item?.compania || '';
+}
+
+function priceOf(item) {
+  return item?.price || item?.precio || '$';
+}
+
+function savesOf(item) {
+  return item?.saves ?? item?.guardados ?? 0;
+}
 
 function matchesTab(item, tab, user) {
-  const text = `${item.title} ${item.category} ${item.tags?.join(' ') || ''} ${item.company} ${item.price}`.toLowerCase();
+  const text = `${titleOf(item)} ${categoryOf(item)} ${item.tags?.join(' ') || ''} ${companyOf(item)} ${priceOf(item)}`.toLowerCase();
   if (tab === 'para hoy') return true;
-  if (tab === 'gratis') return item.price === '$' || text.includes('gratis');
+  if (tab === 'gratis') return priceOf(item) === '$' || text.includes('gratis');
   if (tab === 'cafés') return text.includes('café') || text.includes('cafe') || text.includes('food');
   if (tab === 'arte') return text.includes('art') || text.includes('culture');
   if (tab === 'música') return text.includes('música') || text.includes('musica') || text.includes('jazz');
-  if (tab === 'citas') return String(item.company || '').toLowerCase().includes('pareja');
-  if (tab === 'con amigos') return String(item.company || '').toLowerCase().includes('amigos');
+  if (tab === 'citas') return String(companyOf(item)).toLowerCase().includes('pareja');
+  if (tab === 'con amigos') return String(companyOf(item)).toLowerCase().includes('amigos');
   return text.includes(tab.toLowerCase());
 }
 
@@ -24,15 +71,15 @@ function FeaturedCard({ item, saved, onSave }) {
   return (
     <motion.article initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} whileTap={{ scale: 0.99 }} className="photo-card relative h-[21rem] overflow-hidden rounded-[2rem] border border-[var(--mova-border)] bg-[var(--mova-surface)] shadow-[0_18px_45px_rgba(17,17,17,0.08)]">
       <Link to={`/plan/${item.id}`} className="block h-full">
-        <img src={item.image} alt={item.title} className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105" />
+        <img src={imageOf(item)} onError={(event) => { event.currentTarget.src = fallbackImage; }} alt={titleOf(item)} className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105" />
         <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/18 to-black/88" />
         <div className="absolute bottom-5 left-5 right-5">
-          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-white/72">{item.neighborhood}</p>
-          <h2 className="max-w-[16rem] text-[2rem] font-semibold leading-[1.02] tracking-[0.005em] text-white">{item.title}</h2>
+          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-white/72">{neighborhoodOf(item)}</p>
+          <h2 className="max-w-[16rem] text-[2rem] font-semibold leading-[1.02] tracking-[0.005em] text-white">{titleOf(item)}</h2>
           <div className="mt-3 flex flex-wrap items-center gap-2 text-sm leading-relaxed text-white/74">
-            <span>{item.location || item.neighborhood}</span>
+            <span>{item.location || neighborhoodOf(item)}</span>
             <span>★ {item.rating || 4.8}</span>
-            <span className="inline-flex items-center gap-1"><FiUsers /> {item.saves || item.guardados || 0}</span>
+            <span className="inline-flex items-center gap-1"><FiUsers /> {savesOf(item)}</span>
           </div>
         </div>
       </Link>
@@ -50,19 +97,19 @@ function SmallCard({ item, saved, onSave }) {
     <motion.article whileTap={{ scale: 0.98 }} className="h-[16.5rem] w-44 shrink-0 overflow-hidden rounded-[1.55rem] border border-[var(--mova-border)] bg-[var(--mova-surface)] shadow-[0_12px_30px_rgba(17,17,17,0.05)]">
       <div className="photo-card relative h-36 overflow-hidden">
         <Link to={`/plan/${item.id}`} className="block h-full">
-          <img src={item.image} alt={item.title} className="h-full w-full object-cover" loading="lazy" />
+          <img src={imageOf(item)} onError={(event) => { event.currentTarget.src = fallbackImage; }} alt={titleOf(item)} className="h-full w-full object-cover" loading="lazy" />
           <div className="absolute inset-0 bg-gradient-to-b from-black/4 via-black/10 to-black/58" />
         </Link>
         <button onClick={() => onSave(item.id)} className={`absolute right-2 top-2 grid h-8 w-8 place-items-center rounded-full backdrop-blur-xl ${saved ? 'bg-[var(--mova-accent)] text-white' : 'bg-white/90 text-[var(--mova-accent)]'}`}>{saved ? <FiCheck /> : <FiBookmark />}</button>
         <div className="absolute bottom-3 left-3 right-3">
-          <h3 className="line-clamp-2 text-base font-semibold leading-tight text-white">{item.title}</h3>
-          <p className="mt-1 line-clamp-1 text-xs text-white/72">{item.neighborhood}</p>
+          <h3 className="line-clamp-2 text-base font-semibold leading-tight text-white">{titleOf(item)}</h3>
+          <p className="mt-1 line-clamp-1 text-xs text-white/72">{neighborhoodOf(item)}</p>
         </div>
       </div>
       <div className="space-y-3 p-3">
         <div className="flex items-center justify-between gap-2 text-[11px] text-[var(--mova-muted)]">
-          <span className="truncate">{item.category}</span>
-          <span className="inline-flex shrink-0 items-center gap-1 text-[var(--mova-accent)]"><FiUsers /> {item.saves || item.guardados || 0}</span>
+          <span className="truncate">{categoryOf(item)}</span>
+          <span className="inline-flex shrink-0 items-center gap-1 text-[var(--mova-accent)]"><FiUsers /> {savesOf(item)}</span>
         </div>
         <button className="h-9 w-full rounded-full bg-[var(--mova-accent)] text-xs font-bold text-white">Me sumo</button>
       </div>
@@ -144,23 +191,24 @@ export default function Home() {
     }).catch(() => setStatus('error'));
   }, []);
 
-  const cityMatches = experiences.filter((item) => !filters.city || item.city === filters.city);
+  const cityMatches = experiences.filter((item) => !filters.city || cityOf(item) === filters.city);
   const cityExperiences = cityMatches.length ? cityMatches : experiences;
-  const filtered = useMemo(() => experiences.filter((item) => matchesTab(item, activeTab, user)
-    && (!filters.city || item.city === filters.city)
-    && (!filters.category || String(item.category).toLowerCase().includes(filters.category.toLowerCase()))
-    && (!filters.company || item.company === filters.company)
-    && (!filters.budget || item.price === filters.budget)
-    && (!filters.date || item.date === filters.date)), [experiences, activeTab, filters, user]);
+  const filteredByTab = useMemo(() => cityExperiences.filter((item) => matchesTab(item, activeTab, user)
+    && (!filters.category || String(categoryOf(item)).toLowerCase().includes(filters.category.toLowerCase()))
+    && (!filters.company || companyOf(item) === filters.company)
+    && (!filters.budget || priceOf(item) === filters.budget)
+    && (!filters.date || item.date === filters.date || item.fecha === filters.date)), [cityExperiences, activeTab, filters, user]);
+  const filtered = filteredByTab.length ? filteredByTab : cityExperiences;
   const featured = filtered.find((item) => item.id === heroId) || filtered[0] || experiences[0];
   const withoutFeatured = cityExperiences.filter((item) => item.id !== featured?.id);
-  const popularNear = [...withoutFeatured].sort((a, b) => ((b.saves || b.guardados || 0) + (b.likes || 0)) - ((a.saves || a.guardados || 0) + (a.likes || 0))).slice(0, 8);
-  const today = withoutFeatured.slice(0, 8);
-  const friends = withoutFeatured.filter((item) => String(item.company || '').toLowerCase().includes('amigos')).slice(0, 8);
-  const cafes = withoutFeatured.filter((item) => `${item.title} ${item.category} ${item.tags?.join(' ') || ''}`.toLowerCase().includes('café') || `${item.title} ${item.category}`.toLowerCase().includes('food')).slice(0, 8);
-  const outdoor = withoutFeatured.filter((item) => `${item.category} ${item.tags?.join(' ') || ''}`.toLowerCase().includes('outdoor') || `${item.title} ${item.tags?.join(' ') || ''}`.toLowerCase().includes('playa')).slice(0, 8);
-  const night = withoutFeatured.filter((item) => `${item.category} ${item.tags?.join(' ') || ''}`.toLowerCase().includes('night') || `${item.title}`.toLowerCase().includes('bar')).slice(0, 8);
-  const free = withoutFeatured.filter((item) => item.price === '$' || `${item.tags?.join(' ') || ''}`.toLowerCase().includes('gratis')).slice(0, 8);
+  const fillRail = (items) => (items.length ? items : withoutFeatured).slice(0, 8);
+  const popularNear = fillRail([...withoutFeatured].sort((a, b) => ((b.saves || b.guardados || 0) + (b.likes || 0)) - ((a.saves || a.guardados || 0) + (a.likes || 0))));
+  const today = fillRail(withoutFeatured);
+  const friends = fillRail(withoutFeatured.filter((item) => String(companyOf(item)).toLowerCase().includes('amigos')));
+  const cafes = fillRail(withoutFeatured.filter((item) => `${titleOf(item)} ${categoryOf(item)} ${item.tags?.join(' ') || ''}`.toLowerCase().includes('café') || `${titleOf(item)} ${categoryOf(item)}`.toLowerCase().includes('food')));
+  const outdoor = fillRail(withoutFeatured.filter((item) => `${categoryOf(item)} ${item.tags?.join(' ') || ''}`.toLowerCase().includes('outdoor') || `${titleOf(item)} ${item.tags?.join(' ') || ''}`.toLowerCase().includes('playa')));
+  const night = fillRail(withoutFeatured.filter((item) => `${categoryOf(item)} ${item.tags?.join(' ') || ''}`.toLowerCase().includes('night') || `${titleOf(item)}`.toLowerCase().includes('bar')));
+  const free = fillRail(withoutFeatured.filter((item) => priceOf(item) === '$' || `${item.tags?.join(' ') || ''}`.toLowerCase().includes('gratis')));
 
   const saveExperience = async (id) => {
     if (!user?.id) return;
