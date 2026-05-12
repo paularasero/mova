@@ -55,6 +55,14 @@ function savesOf(item) {
   return item?.saves ?? item?.guardados ?? 0;
 }
 
+function interestedOf(item) {
+  return item?.interestedCount ?? item?.joinedUsers?.length ?? savesOf(item);
+}
+
+function userJoined(item, userId) {
+  return Boolean(userId && item?.joinedUsers?.includes(userId));
+}
+
 function matchesTab(item, tab, user) {
   const text = `${titleOf(item)} ${categoryOf(item)} ${item.tags?.join(' ') || ''} ${companyOf(item)} ${priceOf(item)}`.toLowerCase();
   if (tab === 'para hoy') return true;
@@ -67,57 +75,59 @@ function matchesTab(item, tab, user) {
   return text.includes(tab.toLowerCase());
 }
 
-function FeaturedCard({ item, saved, onSave }) {
+function FeaturedCard({ item, saved, joined, onSave, onJoin }) {
   return (
-    <motion.article initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} whileTap={{ scale: 0.99 }} className="photo-card relative h-[21rem] overflow-hidden rounded-[2rem] border border-[var(--mova-border)] bg-[var(--mova-surface)] shadow-[0_18px_45px_rgba(17,17,17,0.08)]">
-      <Link to={`/plan/${item.id}`} className="block h-full">
-        <img src={imageOf(item)} onError={(event) => { event.currentTarget.src = fallbackImage; }} alt={titleOf(item)} className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/18 to-black/88" />
-        <div className="absolute bottom-5 left-5 right-5">
-          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-white/72">{neighborhoodOf(item)}</p>
-          <h2 className="max-w-[16rem] text-[2rem] font-semibold leading-[1.02] tracking-[0.005em] text-white">{titleOf(item)}</h2>
-          <div className="mt-3 flex flex-wrap items-center gap-2 text-sm leading-relaxed text-white/74">
-            <span>{item.location || neighborhoodOf(item)}</span>
-            <span>★ {item.rating || 4.8}</span>
-            <span className="inline-flex items-center gap-1"><FiUsers /> {savesOf(item)}</span>
-          </div>
-        </div>
-      </Link>
-      <div className="absolute left-5 right-5 top-5 flex items-center justify-between">
-        <span className="rounded-full bg-black/35 px-3 py-1.5 text-xs font-semibold text-white/82 backdrop-blur-xl">Popular hoy</span>
-        <button onClick={() => onSave(item.id)} className={`grid h-10 w-10 place-items-center rounded-full backdrop-blur-xl ${saved ? 'bg-[var(--mova-accent)] text-white' : 'bg-white/90 text-[var(--mova-accent)]'}`}>{saved ? <FiCheck /> : <FiBookmark />}</button>
+    <motion.article initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} whileTap={{ scale: 0.99 }} className="overflow-hidden rounded-[2rem] border border-[var(--mova-border)] bg-[var(--mova-surface)] shadow-[0_18px_45px_rgba(17,17,17,0.08)]">
+      <div className="photo-card relative h-[18.5rem] overflow-hidden">
+        <Link to={`/plan/${item.id}`} className="block h-full">
+          <img src={imageOf(item)} onError={(event) => { event.currentTarget.src = fallbackImage; }} alt={titleOf(item)} className="h-full w-full object-cover transition duration-700 hover:scale-105" />
+        </Link>
+        <button onClick={() => onSave(item.id)} className={`absolute right-4 top-4 grid h-11 w-11 place-items-center rounded-full backdrop-blur-xl ${saved ? 'bg-[var(--mova-accent)] text-white' : 'bg-white/90 text-[var(--mova-accent)]'}`}>{saved ? <FiCheck /> : <FiBookmark />}</button>
       </div>
-      <button className="absolute bottom-5 right-5 rounded-full bg-[var(--mova-accent)] px-4 py-2 text-xs font-bold text-white shadow-[0_16px_34px_rgba(123,97,255,0.32)]">Me sumo</button>
+      <div className="space-y-4 p-5">
+        <div className="flex items-center justify-between gap-3">
+          <span className="rounded-full bg-[var(--mova-card)] px-3 py-1.5 text-xs font-semibold text-[var(--mova-muted)]">Popular hoy</span>
+          <span className="text-sm font-semibold text-[var(--mova-accent)]">★ {item.rating || 4.8}</span>
+        </div>
+        <Link to={`/plan/${item.id}`} className="block">
+          <h2 className="line-clamp-2 text-[1.65rem] font-semibold leading-[1.08] tracking-[0.005em]">{titleOf(item)}</h2>
+          <div className="mt-3 grid gap-1 text-sm text-[var(--mova-muted)]">
+            <span>{neighborhoodOf(item)}</span>
+            <span>{categoryOf(item)}</span>
+            <span className="inline-flex items-center gap-1 text-[var(--mova-accent)]"><FiUsers /> {interestedOf(item)} personas</span>
+          </div>
+        </Link>
+        <button onClick={() => onJoin(item.id)} className={`h-11 w-full rounded-full text-sm font-bold transition ${joined ? 'bg-[var(--mova-card)] text-[var(--mova-accent)] ring-1 ring-[var(--mova-accent)]' : 'bg-[var(--mova-accent)] text-white shadow-[0_16px_34px_rgba(123,97,255,0.26)]'}`}>{joined ? 'Te sumaste' : 'Me sumo'}</button>
+      </div>
     </motion.article>
   );
 }
 
-function SmallCard({ item, saved, onSave }) {
+function SmallCard({ item, saved, joined, onSave, onJoin }) {
   return (
-    <motion.article whileTap={{ scale: 0.98 }} className="h-[16.5rem] w-44 shrink-0 overflow-hidden rounded-[1.55rem] border border-[var(--mova-border)] bg-[var(--mova-surface)] shadow-[0_12px_30px_rgba(17,17,17,0.05)]">
+    <motion.article whileTap={{ scale: 0.98 }} className="h-[20rem] w-44 shrink-0 overflow-hidden rounded-[1.55rem] border border-[var(--mova-border)] bg-[var(--mova-surface)] shadow-[0_12px_30px_rgba(17,17,17,0.05)]">
       <div className="photo-card relative h-36 overflow-hidden">
         <Link to={`/plan/${item.id}`} className="block h-full">
           <img src={imageOf(item)} onError={(event) => { event.currentTarget.src = fallbackImage; }} alt={titleOf(item)} className="h-full w-full object-cover" loading="lazy" />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/4 via-black/10 to-black/58" />
         </Link>
         <button onClick={() => onSave(item.id)} className={`absolute right-2 top-2 grid h-8 w-8 place-items-center rounded-full backdrop-blur-xl ${saved ? 'bg-[var(--mova-accent)] text-white' : 'bg-white/90 text-[var(--mova-accent)]'}`}>{saved ? <FiCheck /> : <FiBookmark />}</button>
-        <div className="absolute bottom-3 left-3 right-3">
-          <h3 className="line-clamp-2 text-base font-semibold leading-tight text-white">{titleOf(item)}</h3>
-          <p className="mt-1 line-clamp-1 text-xs text-white/72">{neighborhoodOf(item)}</p>
-        </div>
       </div>
-      <div className="space-y-3 p-3">
-        <div className="flex items-center justify-between gap-2 text-[11px] text-[var(--mova-muted)]">
-          <span className="truncate">{categoryOf(item)}</span>
-          <span className="inline-flex shrink-0 items-center gap-1 text-[var(--mova-accent)]"><FiUsers /> {savesOf(item)}</span>
+      <div className="flex h-[11rem] flex-col justify-between p-3">
+        <Link to={`/plan/${item.id}`} className="block">
+          <h3 className="line-clamp-2 min-h-[2.5rem] text-base font-semibold leading-tight">{titleOf(item)}</h3>
+          <div className="mt-2 grid gap-1 text-[11px] leading-snug text-[var(--mova-muted)]">
+            <span className="truncate">{neighborhoodOf(item)}</span>
+            <span className="truncate">{categoryOf(item)}</span>
+            <span className="inline-flex items-center gap-1 text-[var(--mova-accent)]"><FiUsers /> {interestedOf(item)} personas</span>
+          </div>
+        </Link>
+        <button onClick={() => onJoin(item.id)} className={`h-9 w-full rounded-full text-xs font-bold transition ${joined ? 'bg-[var(--mova-card)] text-[var(--mova-accent)] ring-1 ring-[var(--mova-accent)]' : 'bg-[var(--mova-accent)] text-white'}`}>{joined ? 'Te sumaste' : 'Me sumo'}</button>
         </div>
-        <button className="h-9 w-full rounded-full bg-[var(--mova-accent)] text-xs font-bold text-white">Me sumo</button>
-      </div>
     </motion.article>
   );
 }
 
-function Rail({ title, items, savedIds, onSave }) {
+function Rail({ title, items, userId, savedIds, joinedIds, onSave, onJoin }) {
   if (!items.length) return null;
   return (
     <section className="mt-8">
@@ -127,7 +137,7 @@ function Rail({ title, items, savedIds, onSave }) {
       </div>
       <div className="mova-scrollbar-none flex gap-3 overflow-x-auto pb-2">
         {items.map((item) => (
-          <SmallCard key={`${title}-${item.id}`} item={item} saved={savedIds.has(item.id)} onSave={onSave} />
+          <SmallCard key={`${title}-${item.id}`} item={item} saved={savedIds.has(item.id)} joined={joinedIds.has(item.id) || userJoined(item, userId)} onSave={onSave} onJoin={onJoin} />
         ))}
       </div>
     </section>
@@ -179,17 +189,19 @@ export default function Home() {
   const [status, setStatus] = useState('loading');
   const [filters, setFilters] = useState({ city: user?.city || user?.ciudad || 'Montevideo', category: '', company: '', budget: '', date: '', time: '', distance: 8 });
   const [savedIds, setSavedIds] = useState(new Set(user?.savedExperiences || []));
+  const [joinedIds, setJoinedIds] = useState(new Set());
 
   useEffect(() => {
     apiRequest('/experiences').then((data) => {
       setExperiences(data);
+      setJoinedIds(new Set(data.filter((item) => userJoined(item, user?.id)).map((item) => item.id)));
       const candidates = [...data]
-        .sort((a, b) => ((b.saves || b.guardados || 0) + (b.likes || 0)) - ((a.saves || a.guardados || 0) + (a.likes || 0)))
+        .sort((a, b) => ((interestedOf(b) || 0) + (b.likes || 0)) - ((interestedOf(a) || 0) + (a.likes || 0)))
         .slice(0, 6);
       setHeroId(candidates[Math.floor(Math.random() * Math.max(candidates.length, 1))]?.id || data[0]?.id || null);
       setStatus('ready');
     }).catch(() => setStatus('error'));
-  }, []);
+  }, [user?.id]);
 
   const cityMatches = experiences.filter((item) => !filters.city || cityOf(item) === filters.city);
   const cityExperiences = cityMatches.length ? cityMatches : experiences;
@@ -202,7 +214,7 @@ export default function Home() {
   const featured = filtered.find((item) => item.id === heroId) || filtered[0] || experiences[0];
   const withoutFeatured = cityExperiences.filter((item) => item.id !== featured?.id);
   const fillRail = (items) => (items.length ? items : withoutFeatured).slice(0, 8);
-  const popularNear = fillRail([...withoutFeatured].sort((a, b) => ((b.saves || b.guardados || 0) + (b.likes || 0)) - ((a.saves || a.guardados || 0) + (a.likes || 0))));
+  const popularNear = fillRail([...withoutFeatured].sort((a, b) => ((interestedOf(b) || 0) + (b.likes || 0)) - ((interestedOf(a) || 0) + (a.likes || 0))));
   const today = fillRail(withoutFeatured);
   const friends = fillRail(withoutFeatured.filter((item) => String(companyOf(item)).toLowerCase().includes('amigos')));
   const cafes = fillRail(withoutFeatured.filter((item) => `${titleOf(item)} ${categoryOf(item)} ${item.tags?.join(' ') || ''}`.toLowerCase().includes('café') || `${titleOf(item)} ${categoryOf(item)}`.toLowerCase().includes('food')));
@@ -220,6 +232,18 @@ export default function Home() {
     setSavedIds((prev) => {
       const next = new Set(prev);
       if (data.saved) next.add(id);
+      else next.delete(id);
+      return next;
+    });
+    setExperiences((prev) => prev.map((item) => (item.id === id ? { ...item, ...data.experience } : item)));
+  };
+
+  const joinExperience = async (id) => {
+    if (!user?.id) return;
+    const data = await apiRequest(`/experiences/${id}/join`, { method: 'POST', body: JSON.stringify({ userId: user.id }) });
+    setJoinedIds((prev) => {
+      const next = new Set(prev);
+      if (data.joined) next.add(id);
       else next.delete(id);
       return next;
     });
@@ -255,14 +279,14 @@ export default function Home() {
 
         {status === 'loading' && <div className="mt-8 h-[23rem] animate-pulse rounded-[2rem] bg-white/[0.06]" />}
         {status === 'error' && <p className="mt-8 rounded-2xl bg-red-500/10 px-4 py-3 text-sm text-[#ff8f8f]">No se pudieron cargar las experiencias.</p>}
-        {featured && <div className="mt-4"><FeaturedCard item={featured} saved={savedIds.has(featured.id)} onSave={saveExperience} /></div>}
-        <Rail title="Populares cerca" items={popularNear} savedIds={savedIds} onSave={saveExperience} />
-        <Rail title="Para hoy" items={today} savedIds={savedIds} onSave={saveExperience} />
-        <Rail title="Con amigos" items={friends} savedIds={savedIds} onSave={saveExperience} />
-        <Rail title="Cafés" items={cafes} savedIds={savedIds} onSave={saveExperience} />
-        <Rail title="Outdoor" items={outdoor} savedIds={savedIds} onSave={saveExperience} />
-        <Rail title="Night" items={night} savedIds={savedIds} onSave={saveExperience} />
-        <Rail title="Gratis" items={free} savedIds={savedIds} onSave={saveExperience} />
+        {featured && <div className="mt-4"><FeaturedCard item={featured} saved={savedIds.has(featured.id)} joined={joinedIds.has(featured.id) || userJoined(featured, user?.id)} onSave={saveExperience} onJoin={joinExperience} /></div>}
+        <Rail title="Populares cerca" items={popularNear} userId={user?.id} savedIds={savedIds} joinedIds={joinedIds} onSave={saveExperience} onJoin={joinExperience} />
+        <Rail title="Para hoy" items={today} userId={user?.id} savedIds={savedIds} joinedIds={joinedIds} onSave={saveExperience} onJoin={joinExperience} />
+        <Rail title="Con amigos" items={friends} userId={user?.id} savedIds={savedIds} joinedIds={joinedIds} onSave={saveExperience} onJoin={joinExperience} />
+        <Rail title="Cafés" items={cafes} userId={user?.id} savedIds={savedIds} joinedIds={joinedIds} onSave={saveExperience} onJoin={joinExperience} />
+        <Rail title="Outdoor" items={outdoor} userId={user?.id} savedIds={savedIds} joinedIds={joinedIds} onSave={saveExperience} onJoin={joinExperience} />
+        <Rail title="Night" items={night} userId={user?.id} savedIds={savedIds} joinedIds={joinedIds} onSave={saveExperience} onJoin={joinExperience} />
+        <Rail title="Gratis" items={free} userId={user?.id} savedIds={savedIds} joinedIds={joinedIds} onSave={saveExperience} onJoin={joinExperience} />
       </section>
       <CitySheet open={cityOpen} onClose={() => setCityOpen(false)} currentUser={user} currentCity={filters.city} onSave={(city) => setFilters((prev) => ({ ...prev, city }))} />
     </main>

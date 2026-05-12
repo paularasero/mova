@@ -10,8 +10,78 @@ const categories = ['Night', 'Food', 'Chill', 'Art', 'Música', 'Rooftops', 'Out
 const companies = ['Amigos', 'Pareja', 'Solo', 'Familia'];
 const cities = ['Montevideo', 'Buenos Aires', 'Madrid', 'Barcelona', 'París', 'Londres', 'Nueva York', 'São Paulo', 'Santiago', 'Punta del Este', 'Colonia'];
 const budgets = ['$', '$$', '$$$'];
+const cityCenters = {
+  Montevideo: [-34.9011, -56.1645],
+  'Buenos Aires': [-34.6037, -58.3816],
+  Madrid: [40.4168, -3.7038],
+  Barcelona: [41.3874, 2.1686],
+  París: [48.8566, 2.3522],
+  Londres: [51.5072, -0.1276],
+  'Nueva York': [40.7128, -74.006],
+  'São Paulo': [-23.5558, -46.6396],
+  Santiago: [-33.4489, -70.6693],
+  'Punta del Este': [-34.9368, -54.9346],
+  Colonia: [-34.4626, -57.8398],
+};
 
-function SearchCard({ item, saved, onSave, tall = false }) {
+function titleOf(item) {
+  return item?.title || item?.titulo || 'Plan MOVA';
+}
+
+function descriptionOf(item) {
+  return item?.description || item?.descripcion || '';
+}
+
+function neighborhoodOf(item) {
+  return item?.neighborhood || item?.barrio || item?.location || '';
+}
+
+function cityOf(item) {
+  return item?.city || item?.ciudad || 'Montevideo';
+}
+
+function categoryOf(item) {
+  return item?.category || item?.categoria || '';
+}
+
+function companyOf(item) {
+  return item?.company || item?.compania || '';
+}
+
+function priceOf(item) {
+  return item?.price || item?.precio || '';
+}
+
+function timeOf(item) {
+  return item?.time || item?.horario || '';
+}
+
+function dateOf(item) {
+  return item?.date || item?.fecha || '';
+}
+
+function interestedOf(item) {
+  return item?.interestedCount ?? item?.joinedUsers?.length ?? item?.saves ?? item?.guardados ?? 0;
+}
+
+function userJoined(item, userId) {
+  return Boolean(userId && item?.joinedUsers?.includes(userId));
+}
+
+function distanceKm(item, city) {
+  const center = cityCenters[city] || cityCenters.Montevideo;
+  const lat = Number(item?.lat);
+  const lng = Number(item?.lng);
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return 0;
+  const toRad = (value) => (value * Math.PI) / 180;
+  const earthKm = 6371;
+  const dLat = toRad(lat - center[0]);
+  const dLng = toRad(lng - center[1]);
+  const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(center[0])) * Math.cos(toRad(lat)) * Math.sin(dLng / 2) ** 2;
+  return earthKm * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+function SearchCard({ item, saved, joined, onSave, onJoin, tall = false }) {
   return (
     <motion.article initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} whileTap={{ scale: 0.98 }} className={`overflow-hidden rounded-[1.55rem] border border-[var(--mova-border)] bg-[var(--mova-surface)] shadow-[0_12px_30px_rgba(17,17,17,0.05)] ${tall ? 'row-span-2' : ''}`}>
       <div className={`photo-card relative overflow-hidden ${tall ? 'aspect-[0.78]' : 'aspect-[1.02]'}`}>
@@ -19,25 +89,30 @@ function SearchCard({ item, saved, onSave, tall = false }) {
           <img src={item.image} alt="" className="h-full w-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-b from-black/5 via-black/10 to-black/70" />
           <div className="absolute bottom-3 left-3 right-3">
-            <h3 className="line-clamp-2 text-base font-semibold leading-tight text-white">{item.title}</h3>
-            <p className="mt-1 line-clamp-1 text-xs text-white/72">{item.neighborhood}</p>
+            <h3 className="line-clamp-2 text-base font-semibold leading-tight text-white">{titleOf(item)}</h3>
+            <p className="mt-1 line-clamp-1 text-xs text-white/72">{neighborhoodOf(item)}</p>
           </div>
         </Link>
         <button onClick={() => onSave(item.id)} className={`absolute right-2 top-2 grid h-8 w-8 place-items-center rounded-full backdrop-blur-xl ${saved ? 'bg-[var(--mova-accent)] text-white' : 'bg-white/90 text-[var(--mova-accent)]'}`}>{saved ? <FiCheck /> : <FiBookmark />}</button>
       </div>
       <div className="space-y-3 p-3">
         <div className="flex items-center justify-between gap-2 text-[11px] text-[var(--mova-muted)]">
-          <span className="truncate">{item.category}</span>
-          <span className="inline-flex shrink-0 items-center gap-1 text-[var(--mova-accent)]"><FiUsers /> {item.saves || item.guardados || 0}</span>
+          <span className="truncate">{categoryOf(item)}</span>
+          <span className="inline-flex shrink-0 items-center gap-1 text-[var(--mova-accent)]"><FiUsers /> {interestedOf(item)}</span>
         </div>
-        <button className="h-9 w-full rounded-full bg-[var(--mova-accent)] text-xs font-bold text-white">Me sumo</button>
+        <button onClick={() => onJoin(item.id)} className={`h-9 w-full rounded-full text-xs font-bold transition ${joined ? 'bg-[var(--mova-card)] text-[var(--mova-accent)] ring-1 ring-[var(--mova-accent)]' : 'bg-[var(--mova-accent)] text-white'}`}>{joined ? 'Te sumaste' : 'Me sumo'}</button>
       </div>
     </motion.article>
   );
 }
 
-function FilterModal({ open, onClose, filters, setFilters }) {
+function FilterModal({ open, onClose, filters, setFilters, onClear }) {
   const set = (field, value) => setFilters((prev) => ({ ...prev, [field]: prev[field] === value ? '' : value }));
+  const clear = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    onClear();
+  };
   return (
     <AnimatePresence>
       {open && (
@@ -49,6 +124,7 @@ function FilterModal({ open, onClose, filters, setFilters }) {
                 <h2 className="text-3xl font-semibold">Filtros</h2>
                 <button onClick={onClose} className="grid h-11 w-11 place-items-center rounded-full bg-[var(--mova-card)] text-xl"><FiX /></button>
               </div>
+              <button type="button" onClick={clear} className="mt-4 h-11 w-full rounded-full border border-[var(--mova-border)] bg-[var(--mova-card)] text-sm font-bold text-[var(--mova-text)]">Limpiar filtros</button>
               <div className="mt-6 grid grid-cols-2 gap-3">
                 <label className="block text-sm font-semibold text-[var(--mova-muted)]">Fecha<input type="date" value={filters.date} onChange={(event) => setFilters((prev) => ({ ...prev, date: event.target.value }))} className="mt-2 w-full rounded-2xl border border-[var(--mova-border)] bg-[var(--mova-card)] px-3 py-3 text-sm text-[var(--mova-text)] outline-none" /></label>
                 <label className="block text-sm font-semibold text-[var(--mova-muted)]">Horario<input type="time" value={filters.time} onChange={(event) => setFilters((prev) => ({ ...prev, time: event.target.value }))} className="mt-2 w-full rounded-2xl border border-[var(--mova-border)] bg-[var(--mova-card)] px-3 py-3 text-sm text-[var(--mova-text)] outline-none" /></label>
@@ -67,7 +143,10 @@ function FilterModal({ open, onClose, filters, setFilters }) {
               ))}
               <label className="mt-6 block text-sm font-semibold text-[var(--mova-muted)]">Distancia: {filters.distance} km</label>
               <input type="range" min="1" max="20" value={filters.distance} onChange={(event) => setFilters((prev) => ({ ...prev, distance: event.target.value }))} className="mt-3 w-full accent-[var(--mova-accent)]" />
-              <button onClick={onClose} className="mt-7 h-14 w-full rounded-full bg-[var(--mova-accent)] font-bold text-white">Aplicar filtros</button>
+              <div className="mt-7 grid gap-3">
+                <button type="button" onClick={onClose} className="h-14 w-full rounded-full bg-[var(--mova-accent)] font-bold text-white">Aplicar filtros</button>
+                <button type="button" onPointerDown={clear} onClick={clear} className="h-12 w-full rounded-full border border-[var(--mova-border)] bg-[var(--mova-card)] text-sm font-bold text-[var(--mova-text)]">Restablecer</button>
+              </div>
             </motion.div>
           </div>
         </>
@@ -78,27 +157,48 @@ function FilterModal({ open, onClose, filters, setFilters }) {
 
 export default function Explore() {
   const user = getCurrentUser();
+  const defaultFilters = { city: user?.city || user?.ciudad || 'Montevideo', category: '', company: '', budget: '', date: '', time: '', distance: 8 };
   const [experiences, setExperiences] = useState([]);
   const [query, setQuery] = useState('');
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [status, setStatus] = useState('loading');
   const [savedIds, setSavedIds] = useState(new Set(user?.savedExperiences || []));
-  const [filters, setFilters] = useState({ city: user?.city || user?.ciudad || 'Montevideo', category: '', company: '', budget: '', date: '', time: '', distance: 8 });
+  const [joinedIds, setJoinedIds] = useState(new Set());
+  const [filters, setFilters] = useState(defaultFilters);
 
   useEffect(() => {
-    apiRequest('/experiences').then((data) => { setExperiences(data); setStatus('ready'); }).catch(() => setStatus('error'));
-  }, []);
+    apiRequest('/experiences').then((data) => {
+      setExperiences(data);
+      setJoinedIds(new Set(data.filter((item) => userJoined(item, user?.id)).map((item) => item.id)));
+      setStatus('ready');
+    }).catch(() => setStatus('error'));
+  }, [user?.id]);
 
   const results = useMemo(() => experiences.filter((item) => {
-    const text = `${item.title} ${item.description} ${item.neighborhood} ${item.category} ${(item.tags || []).join(' ')}`.toLowerCase();
+    const text = `${titleOf(item)} ${descriptionOf(item)} ${neighborhoodOf(item)} ${cityOf(item)} ${categoryOf(item)} ${companyOf(item)} ${(item.tags || []).join(' ')}`.toLowerCase();
+    const itemDistance = distanceKm(item, filters.city);
     return (!query || text.includes(query.toLowerCase()))
-      && (!filters.city || item.city === filters.city)
-      && (!filters.category || String(item.category).toLowerCase().includes(filters.category.toLowerCase()))
-      && (!filters.company || item.company === filters.company)
-      && (!filters.budget || item.price === filters.budget)
-      && (!filters.date || item.date === filters.date)
-      && (!filters.time || item.time === filters.time);
+      && (!filters.city || cityOf(item) === filters.city)
+      && (!filters.category || String(categoryOf(item)).toLowerCase().includes(filters.category.toLowerCase()))
+      && (!filters.company || companyOf(item) === filters.company)
+      && (!filters.budget || priceOf(item) === filters.budget)
+      && (!filters.date || dateOf(item) === filters.date)
+      && (!filters.time || timeOf(item) === filters.time)
+      && (!filters.distance || itemDistance <= Number(filters.distance));
   }), [experiences, query, filters]);
+
+  const activeFilters = useMemo(() => {
+    const labels = [];
+    if (query) labels.push(['query', query]);
+    if (filters.city) labels.push(['city', filters.city]);
+    if (filters.date) labels.push(['date', filters.date]);
+    if (filters.time) labels.push(['time', filters.time]);
+    if (filters.category) labels.push(['category', filters.category]);
+    if (filters.company) labels.push(['company', filters.company]);
+    if (filters.budget) labels.push(['budget', filters.budget]);
+    if (Number(filters.distance) !== Number(defaultFilters.distance)) labels.push(['distance', `${filters.distance} km`]);
+    return labels;
+  }, [query, filters, defaultFilters.distance]);
 
   const saveExperience = async (id) => {
     if (!user?.id) return;
@@ -114,6 +214,24 @@ export default function Explore() {
       return next;
     });
     setExperiences((prev) => prev.map((item) => (item.id === id ? { ...item, ...data.experience } : item)));
+  };
+
+  const joinExperience = async (id) => {
+    if (!user?.id) return;
+    const data = await apiRequest(`/experiences/${id}/join`, { method: 'POST', body: JSON.stringify({ userId: user.id }) });
+    setJoinedIds((prev) => {
+      const next = new Set(prev);
+      if (data.joined) next.add(id);
+      else next.delete(id);
+      return next;
+    });
+    setExperiences((prev) => prev.map((item) => (item.id === id ? { ...item, ...data.experience } : item)));
+  };
+
+  const clearFilters = () => {
+    setQuery('');
+    setFilters(defaultFilters);
+    setFiltersOpen(false);
   };
 
   return (
@@ -133,15 +251,24 @@ export default function Explore() {
           <div className="mova-scrollbar-none flex gap-2 overflow-x-auto pb-2">{popular.map((chip) => <button key={chip} onClick={() => setQuery(chip)} className={`shrink-0 rounded-full px-4 py-2 text-xs font-semibold ${query === chip ? 'bg-[var(--mova-accent)] text-white' : 'bg-[var(--mova-surface)] text-[var(--mova-muted)]'}`}>{chip}</button>)}</div>
         </section>
 
+        {activeFilters.length > 0 && (
+          <div className="mova-scrollbar-none mt-3 flex gap-2 overflow-x-auto pb-1">
+            <button onClick={clearFilters} className="shrink-0 rounded-full bg-[var(--mova-text)] px-3 py-1.5 text-xs font-semibold text-[var(--mova-bg)]">Limpiar filtros</button>
+            {activeFilters.map(([key, value]) => (
+              <span key={`${key}-${value}`} className="shrink-0 rounded-full bg-[var(--mova-accent-soft)] px-3 py-1.5 text-xs font-semibold text-[var(--mova-accent)]">{value}</span>
+            ))}
+          </div>
+        )}
+
         {status === 'error' && <p className="mt-6 text-sm text-[#ff8f8f]">No se pudieron cargar las experiencias.</p>}
         <section className="mt-4">
           <div className="grid grid-cols-2 gap-3">
-            {results.map((item, index) => <SearchCard key={item.id} item={item} saved={savedIds.has(item.id)} onSave={saveExperience} tall={index % 4 === 1 || index % 4 === 2} />)}
+            {results.map((item, index) => <SearchCard key={item.id} item={item} saved={savedIds.has(item.id)} joined={joinedIds.has(item.id) || userJoined(item, user?.id)} onSave={saveExperience} onJoin={joinExperience} tall={index % 4 === 1 || index % 4 === 2} />)}
           </div>
         </section>
-        {status === 'ready' && results.length === 0 && <p className="mt-8 text-sm text-[var(--mova-muted)]">No encontramos experiencias con esos filtros.</p>}
+        {status === 'ready' && results.length === 0 && <p className="mt-8 text-sm text-[var(--mova-muted)]">No encontramos planes con esos filtros</p>}
       </section>
-      <FilterModal open={filtersOpen} onClose={() => setFiltersOpen(false)} filters={filters} setFilters={setFilters} />
+      <FilterModal open={filtersOpen} onClose={() => setFiltersOpen(false)} filters={filters} setFilters={setFilters} onClear={clearFilters} />
     </main>
   );
 }

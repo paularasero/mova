@@ -78,7 +78,8 @@ body {
 .mova-overlay {
   position: fixed;
   inset: 0;
-  z-index: 50;
+  z-index: 900;
+  pointer-events: none;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -89,22 +90,22 @@ body {
 .mova-sheet-wrap {
   position: fixed;
   inset: 0;
-  z-index: 50;
+  z-index: 950;
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  pointer-events: none;
+  pointer-events: auto;
 }
 
 .mova-modal-wrap {
   position: fixed;
   inset: 0;
-  z-index: 50;
+  z-index: 950;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 16px;
-  pointer-events: none;
+  pointer-events: auto;
 }
 
 .mova-sheet {
@@ -124,7 +125,7 @@ body {
   width: calc(100% - 32px);
   max-width: 398px;
   max-height: 86vh;
-  overflow: hidden;
+  overflow-y: auto;
   border-radius: 28px;
   border: 1px solid var(--mova-border);
   background: var(--mova-surface);

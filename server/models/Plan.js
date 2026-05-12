@@ -34,6 +34,7 @@ const planSchema = new mongoose.Schema(
     ],
     savedBy: [{ type: String }],
     likedBy: [{ type: String }],
+    joinedUsers: [{ type: String }],
     lat: { type: Number },
     lng: { type: Number },
     createdAt: { type: Date, default: Date.now },
@@ -57,6 +58,8 @@ const planSchema = new mongoose.Schema(
         ret.location = ret.location || ret.barrio;
         ret.author = ret.usuario;
         ret.saves = ret.guardados;
+        ret.joinedUsers = ret.joinedUsers || [];
+        ret.interestedCount = (ret.guardados || 0) + ret.joinedUsers.length;
         ret.commentCount = ret.comentarios;
         delete ret._id;
       },

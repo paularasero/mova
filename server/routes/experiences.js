@@ -272,6 +272,31 @@ router.post('/:id/save', async (req, res) => {
   }
 });
 
+router.post('/:id/join', async (req, res) => {
+  try {
+    const { userId } = req.body;
+    if (!userId) return res.status(400).json({ error: 'Iniciá sesión para sumarte a un plan.' });
+
+    const user = await User.findById(userId);
+    const experience = await Plan.findById(req.params.id);
+    if (!user || !experience) return res.status(404).json({ error: 'No encontramos la experiencia.' });
+
+    const joined = experience.joinedUsers?.includes(userId);
+    const update = joined
+      ? { $pull: { joinedUsers: userId } }
+      : { $addToSet: { joinedUsers: userId } };
+
+    const updated = await Plan.findByIdAndUpdate(req.params.id, update, { returnDocument: 'after' });
+    return res.json({
+      joined: !joined,
+      experience: updated,
+      message: joined ? 'Ya no estás sumada al plan.' : 'Te sumaste al plan.',
+    });
+  } catch {
+    return res.status(400).json({ error: 'No pudimos actualizar tu participación.' });
+  }
+});
+
 router.post('/:id/like', async (req, res) => {
   try {
     const { userId } = req.body;
