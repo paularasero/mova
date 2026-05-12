@@ -101,16 +101,16 @@ export default function PlanDetail() {
           <section className="mt-5 rounded-[1.55rem] border border-white/10 bg-white/[0.055] p-4">
             <div className="flex items-start justify-between gap-4">
               <h1 className="text-[2rem] font-semibold leading-[1.04] tracking-[0.005em]">{experience.title}</h1>
-              <p className="shrink-0 text-xl font-semibold text-[#C8FF3D]">{experience.price}</p>
+              <p className="shrink-0 text-xl font-semibold text-[var(--mova-accent)]">{experience.price}</p>
             </div>
             <div className="mt-4 grid gap-2 text-sm text-white/62">
-              <p className="flex items-center gap-2"><FiClock className="text-[#C8FF3D]" /> {experience.date} · {experience.time}</p>
-              <p className="flex items-center gap-2"><FiMapPin className="text-[#C8FF3D]" /> {experience.location || experience.neighborhood}, {experience.city}</p>
-              <p className="flex items-center gap-2"><FiStar className="text-[#C8FF3D]" /> Ideal para {experience.company}</p>
+              <p className="flex items-center gap-2"><FiClock className="text-[var(--mova-accent)]" /> {experience.date} · {experience.time}</p>
+              <p className="flex items-center gap-2"><FiMapPin className="text-[var(--mova-accent)]" /> {experience.location || experience.neighborhood}, {experience.city}</p>
+              <p className="flex items-center gap-2"><FiStar className="text-[var(--mova-accent)]" /> Ideal para {experience.company}</p>
             </div>
           </section>
 
-          {message && <p className="mt-4 rounded-2xl bg-[#C8FF3D]/10 px-4 py-3 text-sm font-semibold text-[#D9FF73]">{message}</p>}
+          {message && <p className="mt-4 rounded-2xl bg-[var(--mova-accent-soft)] px-4 py-3 text-sm font-semibold text-[var(--mova-accent)]">{message}</p>}
 
           <section className="mt-7">
             <h2 className="text-lg font-semibold">About</h2>
@@ -119,7 +119,7 @@ export default function PlanDetail() {
           </section>
 
           <div className="mt-6 flex gap-3">
-            <motion.button whileTap={{ scale: 0.97 }} onClick={save} className="h-14 flex-1 rounded-full bg-[#C8FF3D] text-sm font-bold text-black">
+            <motion.button whileTap={{ scale: 0.97 }} onClick={save} className="h-14 flex-1 rounded-full bg-[var(--mova-accent)] text-sm font-bold text-white">
               {saved ? 'Quitar de guardadas' : 'Guardar experiencia'}
             </motion.button>
             <button onClick={like} className="flex h-14 items-center gap-2 rounded-full bg-white/[0.08] px-4 text-sm font-semibold text-white"><FiHeart /> {experience.likes}</button>
@@ -140,7 +140,7 @@ export default function PlanDetail() {
             <h2 className="text-lg font-semibold">Comentarios</h2>
             <form onSubmit={sendComment} className="mt-3 flex gap-2">
               <input value={comment} onChange={(event) => setComment(event.target.value)} placeholder="Sumá tu comentario..." className="h-12 flex-1 rounded-full bg-white/[0.07] px-4 text-sm text-white outline-none placeholder:text-white/35" />
-              <button className="grid h-12 w-12 place-items-center rounded-full bg-[#C8FF3D] text-black"><FiSend /></button>
+              <button className="grid h-12 w-12 place-items-center rounded-full bg-[var(--mova-accent)] text-white"><FiSend /></button>
             </form>
             <div className="mt-4 space-y-3">
               {(experience.comments || []).map((item) => (

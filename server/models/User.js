@@ -19,7 +19,7 @@ const userSchema = new mongoose.Schema(
       company: [{ type: String }],
       birthday: { type: String },
       setupComplete: { type: Boolean, default: false },
-      theme: { type: String, enum: ['light', 'dark'], default: 'dark' },
+      theme: { type: String, enum: ['light', 'dark'], default: 'light' },
     },
     avatar: {
       type: String,

@@ -29,7 +29,7 @@ const slides = [
 function Logo({ className = '' }) {
   return (
     <p className={`text-[1.72rem] font-bold tracking-[-0.01em] text-white ${className}`}>
-      MOVA<span className="text-[#C8FF3D]">.</span>
+      MOVA<span className="text-[var(--mova-accent)]">.</span>
     </p>
   );
 }
@@ -75,7 +75,7 @@ export default function Onboarding() {
             </motion.div>
             <div className="absolute bottom-12 h-[2px] w-44 overflow-hidden rounded-full bg-white/10">
               <motion.div
-                className="h-full rounded-full bg-[#C8FF3D]"
+                className="h-full rounded-full bg-[var(--mova-accent)]"
                 initial={{ x: '-100%' }}
                 animate={{ x: '0%' }}
                 transition={{ duration: 1.85, ease: 'easeInOut' }}
@@ -106,7 +106,7 @@ export default function Onboarding() {
 
               <div className="absolute inset-0 bg-black/30" />
               <div className="absolute inset-0 bg-gradient-to-b from-black/82 via-black/36 to-black/96" />
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_68%,rgba(200,255,61,0.10),transparent_42%)]" />
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_68%,rgba(123,97,255,0.10),transparent_42%)]" />
 
               <header className="relative z-10 flex items-center justify-between px-6 pt-8">
                 <Logo />
@@ -127,7 +127,7 @@ export default function Onboarding() {
                     exit={{ opacity: 0, x: -24, filter: 'blur(8px)' }}
                     transition={{ duration: 0.48, ease: [0.16, 1, 0.3, 1] }}
                   >
-                    <p className="mb-3 text-xs font-semibold uppercase tracking-[0.24em] text-[#C8FF3D]">
+                    <p className="mb-3 text-xs font-semibold uppercase tracking-[0.24em] text-[var(--mova-accent)]">
                       Experiencias urbanas
                     </p>
                     <h1 className="max-w-[21rem] text-[2.38rem] font-bold leading-[1.04] tracking-[-0.018em] text-white">
@@ -146,7 +146,7 @@ export default function Onboarding() {
                   className="mt-10 flex h-16 w-full items-center justify-between rounded-full border border-white/12 bg-white/12 px-5 pl-6 text-left text-base font-semibold text-white shadow-[0_24px_80px_rgba(0,0,0,0.45)] backdrop-blur-2xl transition hover:bg-white/16"
                 >
                   <span>{activeSlide.button}</span>
-                  <span className="grid h-11 w-11 place-items-center rounded-full bg-[#C8FF3D] text-2xl font-bold text-black shadow-[0_0_28px_rgba(200,255,61,0.42)]">
+                  <span className="grid h-11 w-11 place-items-center rounded-full bg-[var(--mova-accent)] text-2xl font-bold text-white shadow-[0_0_28px_rgba(123,97,255,0.42)]">
                     →
                   </span>
                 </motion.button>
@@ -161,7 +161,7 @@ export default function Onboarding() {
                       aria-label={`Ir al paso ${index + 1}`}
                     >
                       <motion.span
-                        className="block h-full rounded-full bg-[#C8FF3D]"
+                        className="block h-full rounded-full bg-[var(--mova-accent)]"
                         initial={false}
                         animate={{ scaleX: index <= activeIndex ? 1 : 0 }}
                         style={{ originX: 0 }}

@@ -15,7 +15,7 @@ function isValidEmail(value) {
 function Logo() {
   return (
     <p className="text-[1.75rem] font-bold tracking-[-0.01em] text-white">
-      MOVA<span className="text-[#C8FF3D]">.</span>
+      MOVA<span className="text-[var(--mova-accent)]">.</span>
     </p>
   );
 }
@@ -134,7 +134,7 @@ export default function Register() {
             className="rounded-[1.75rem] bg-black/32 p-4 shadow-[0_28px_90px_rgba(0,0,0,0.55)] backdrop-blur-xl"
           >
             <div className="mb-4">
-              <p className="mb-2 text-xs font-semibold uppercase tracking-[0.24em] text-[#C8FF3D]">Nueva cuenta</p>
+              <p className="mb-2 text-xs font-semibold uppercase tracking-[0.24em] text-[var(--mova-accent)]">Nueva cuenta</p>
               <h1 className="text-[2.28rem] font-bold leading-[1.05] tracking-[-0.018em] text-white">
                 Creá tu cuenta
               </h1>
@@ -152,7 +152,7 @@ export default function Register() {
                     onBlur={() => setTouched((prev) => ({ ...prev, name: true }))}
                     placeholder="Tu nombre"
                     style={{ backgroundColor: 'rgba(13, 13, 13, 0.88)' }}
-                    className="w-full rounded-[1.18rem] border border-white/10 bg-[#0d0d0d]/86 px-4 py-3.5 text-base text-white outline-none transition placeholder:text-white/38 focus:border-[#C8FF3D]/70 focus:bg-[#161616] focus:shadow-[0_0_0_4px_rgba(200,255,61,0.08)]"
+                    className="w-full rounded-[1.18rem] border border-white/10 bg-[#0d0d0d]/86 px-4 py-3.5 text-base text-white outline-none transition placeholder:text-white/38 focus:border-[var(--mova-accent)] focus:bg-[#161616] focus:shadow-[0_0_0_4px_rgba(123,97,255,0.08)]"
                   />
                   {touched.name && errors.name && <p className="mt-2 text-xs font-semibold text-[#ff7474]">{errors.name}</p>}
                 </label>
@@ -166,7 +166,7 @@ export default function Register() {
                     onBlur={() => setTouched((prev) => ({ ...prev, email: true }))}
                     placeholder="vos@email.com"
                     style={{ backgroundColor: 'rgba(13, 13, 13, 0.88)' }}
-                    className="w-full rounded-[1.18rem] border border-white/10 bg-[#0d0d0d]/86 px-4 py-3.5 text-base text-white outline-none transition placeholder:text-white/38 focus:border-[#C8FF3D]/70 focus:bg-[#161616] focus:shadow-[0_0_0_4px_rgba(200,255,61,0.08)]"
+                    className="w-full rounded-[1.18rem] border border-white/10 bg-[#0d0d0d]/86 px-4 py-3.5 text-base text-white outline-none transition placeholder:text-white/38 focus:border-[var(--mova-accent)] focus:bg-[#161616] focus:shadow-[0_0_0_4px_rgba(123,97,255,0.08)]"
                   />
                   {touched.email && errors.email && <p className="mt-2 text-xs font-semibold text-[#ff7474]">{errors.email}</p>}
                 </label>
@@ -180,7 +180,7 @@ export default function Register() {
                     onBlur={() => setTouched((prev) => ({ ...prev, password: true }))}
                     placeholder="Mínimo 6 caracteres"
                     style={{ backgroundColor: 'rgba(13, 13, 13, 0.88)' }}
-                    className="w-full rounded-[1.18rem] border border-white/10 bg-[#0d0d0d]/86 px-4 py-3.5 text-base text-white outline-none transition placeholder:text-white/38 focus:border-[#C8FF3D]/70 focus:bg-[#161616] focus:shadow-[0_0_0_4px_rgba(200,255,61,0.08)]"
+                    className="w-full rounded-[1.18rem] border border-white/10 bg-[#0d0d0d]/86 px-4 py-3.5 text-base text-white outline-none transition placeholder:text-white/38 focus:border-[var(--mova-accent)] focus:bg-[#161616] focus:shadow-[0_0_0_4px_rgba(123,97,255,0.08)]"
                   />
                   {touched.password && errors.password && (
                     <p className="mt-2 text-xs font-semibold text-[#ff7474]">{errors.password}</p>
@@ -196,7 +196,7 @@ export default function Register() {
                     onBlur={() => setTouched((prev) => ({ ...prev, confirmPassword: true }))}
                     placeholder="Repetí tu contraseña"
                     style={{ backgroundColor: 'rgba(13, 13, 13, 0.88)' }}
-                    className="w-full rounded-[1.18rem] border border-white/10 bg-[#0d0d0d]/86 px-4 py-3.5 text-base text-white outline-none transition placeholder:text-white/38 focus:border-[#C8FF3D]/70 focus:bg-[#161616] focus:shadow-[0_0_0_4px_rgba(200,255,61,0.08)]"
+                    className="w-full rounded-[1.18rem] border border-white/10 bg-[#0d0d0d]/86 px-4 py-3.5 text-base text-white outline-none transition placeholder:text-white/38 focus:border-[var(--mova-accent)] focus:bg-[#161616] focus:shadow-[0_0_0_4px_rgba(123,97,255,0.08)]"
                   />
                   {touched.confirmPassword && errors.confirmPassword && (
                     <p className="mt-2 text-xs font-semibold text-[#ff7474]">{errors.confirmPassword}</p>
@@ -210,7 +210,7 @@ export default function Register() {
                 </p>
               )}
               {submitSuccess && (
-                <p className="mt-4 rounded-2xl border border-[#C8FF3D]/20 bg-[#C8FF3D]/10 px-4 py-3 text-sm font-semibold text-[#D9FF73]">
+                <p className="mt-4 rounded-2xl border border-[var(--mova-accent)] bg-[var(--mova-accent-soft)] px-4 py-3 text-sm font-semibold text-[var(--mova-accent)]">
                   {submitSuccess}
                 </p>
               )}
@@ -219,7 +219,7 @@ export default function Register() {
                 type="submit"
                 whileTap={{ scale: 0.98 }}
                 disabled={isSubmitting}
-                className={`mt-6 h-14 w-full rounded-full bg-[#C8FF3D] text-base font-bold text-black shadow-[0_18px_44px_rgba(200,255,61,0.28)] transition hover:brightness-105 disabled:cursor-wait ${
+                className={`mt-6 h-14 w-full rounded-full bg-[var(--mova-accent)] text-base font-bold text-white shadow-[0_18px_44px_rgba(123,97,255,0.28)] transition hover:brightness-105 disabled:cursor-wait ${
                   !isValid || isSubmitting ? 'opacity-70' : ''
                 }`}
               >
@@ -241,7 +241,7 @@ export default function Register() {
 
             <p className="mt-5 text-center text-sm font-semibold text-white/58">
               ¿Ya tenés cuenta?{' '}
-              <Link to="/login" className="text-[#C8FF3D] transition hover:text-white">
+              <Link to="/login" className="text-[var(--mova-accent)] transition hover:text-white">
                 Iniciar sesión
               </Link>
             </p>

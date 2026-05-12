@@ -31,7 +31,7 @@ function AvatarPicker({ open, onClose, value, onSelect }) {
             <div className="mx-auto mb-5 h-1 w-10 rounded-full bg-white/18" />
             <div className="flex items-center justify-between"><h2 className="text-2xl font-semibold">Tu avatar</h2><button onClick={onClose} className="grid h-10 w-10 place-items-center rounded-full bg-white/[0.08]"><FiX /></button></div>
             <div className="mt-5 grid grid-cols-4 gap-3">
-              {avatars.map((avatar) => <button key={avatar} onClick={() => onSelect(avatar)} className={`grid h-16 place-items-center overflow-hidden rounded-2xl border ${value === avatar ? 'border-[#C8FF3D]' : 'border-white/10'} bg-white/[0.06]`}><img src={avatar} alt="" className="h-full w-full object-cover" /></button>)}
+              {avatars.map((avatar) => <button key={avatar} onClick={() => onSelect(avatar)} className={`grid h-16 place-items-center overflow-hidden rounded-2xl border ${value === avatar ? 'border-[var(--mova-accent)]' : 'border-white/10'} bg-white/[0.06]`}><img src={avatar} alt="" className="h-full w-full object-cover" /></button>)}
             </div>
             <div className="mt-5 grid grid-cols-2 gap-3">
               <button className="flex items-center justify-center gap-2 rounded-2xl bg-white/[0.07] px-3 py-4 text-sm font-semibold text-white/70"><FiCamera /> Tomar foto</button>
@@ -39,7 +39,7 @@ function AvatarPicker({ open, onClose, value, onSelect }) {
             </div>
             <div className="mt-4 flex gap-2">
               <input value={custom} onChange={(event) => setCustom(event.target.value)} placeholder="O pegá URL de foto" className="h-12 flex-1 rounded-2xl bg-white/[0.07] px-4 text-sm outline-none placeholder:text-white/35" />
-              <button onClick={() => custom && onSelect(custom)} className="rounded-2xl bg-[#C8FF3D] px-4 text-sm font-bold text-black">Usar</button>
+              <button onClick={() => custom && onSelect(custom)} className="rounded-2xl bg-[var(--mova-accent)] px-4 text-sm font-bold text-white">Usar</button>
             </div>
           </motion.div>
           </div>
@@ -92,8 +92,8 @@ export default function SetupOnboarding() {
     <main className="mova-screen">
       <section className="mova-mobile flex flex-col px-5 pb-8 pt-8">
         <header>
-          <p className="text-2xl font-bold">MOVA<span className="text-[#C8FF3D]">.</span></p>
-          <div className="mt-6 h-1.5 overflow-hidden rounded-full bg-white/10"><motion.div animate={{ width: `${step * 20}%` }} className="h-full rounded-full bg-[#C8FF3D]" /></div>
+          <p className="text-2xl font-bold">MOVA<span className="text-[var(--mova-accent)]">.</span></p>
+          <div className="mt-6 h-1.5 overflow-hidden rounded-full bg-white/10"><motion.div animate={{ width: `${step * 20}%` }} className="h-full rounded-full bg-[var(--mova-accent)]" /></div>
         </header>
 
         <motion.div key={step} initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} className="mt-10 flex-1">
@@ -102,20 +102,20 @@ export default function SetupOnboarding() {
               <h1 className="text-[2.15rem] font-semibold leading-tight">Elegí tu ciudad base.</h1>
               <p className="mt-3 text-sm text-white/52">Podés buscar cualquier ciudad. La usamos para recomendar planes cerca.</p>
               <label className="mt-6 flex h-14 items-center gap-3 rounded-full bg-white/[0.07] px-4"><FiSearch className="text-white/45" /><input value={cityQuery} onChange={(event) => setCityQuery(event.target.value)} placeholder="Buscar ciudad" className="w-full bg-transparent text-sm outline-none placeholder:text-white/35" /></label>
-              <button onClick={() => setForm((prev) => ({ ...prev, city: 'Montevideo' }))} className="mt-4 flex w-full items-center gap-3 rounded-2xl bg-[#C8FF3D]/12 px-4 py-3 text-sm font-semibold text-[#D9FF73]"><FiMapPin /> Usar ubicación actual</button>
-              <div className="mt-4 max-h-[44vh] space-y-2 overflow-y-auto pb-2">{filteredCities.map((city) => <button key={city} onClick={() => setForm((prev) => ({ ...prev, city }))} className={`flex w-full items-center justify-between rounded-2xl px-4 py-3 text-left font-semibold ${form.city === city ? 'bg-[#C8FF3D] text-black' : 'bg-white/[0.07] text-white'}`}>{city}{form.city === city && <FiCheck />}</button>)}</div>
+              <button onClick={() => setForm((prev) => ({ ...prev, city: 'Montevideo' }))} className="mt-4 flex w-full items-center gap-3 rounded-2xl bg-[var(--mova-accent-soft)] px-4 py-3 text-sm font-semibold text-[var(--mova-accent)]"><FiMapPin /> Usar ubicación actual</button>
+              <div className="mt-4 max-h-[44vh] space-y-2 overflow-y-auto pb-2">{filteredCities.map((city) => <button key={city} onClick={() => setForm((prev) => ({ ...prev, city }))} className={`flex w-full items-center justify-between rounded-2xl px-4 py-3 text-left font-semibold ${form.city === city ? 'bg-[var(--mova-accent)] text-white' : 'bg-white/[0.07] text-white'}`}>{city}{form.city === city && <FiCheck />}</button>)}</div>
             </>
           )}
           {step === 2 && (
             <>
               <h1 className="text-[2.15rem] font-semibold leading-tight">¿Qué planes te gustan?</h1>
-              <div className="mt-8 grid grid-cols-2 gap-3">{categories.map((item) => <button key={item} onClick={() => toggle('favoriteCategories', item)} className={`h-24 rounded-3xl border text-sm font-semibold ${form.favoriteCategories.includes(item) ? 'border-[#C8FF3D] bg-[#C8FF3D]/12 text-[#D9FF73]' : 'border-white/10 bg-white/[0.07] text-white/70'}`}>{item}</button>)}</div>
+              <div className="mt-8 grid grid-cols-2 gap-3">{categories.map((item) => <button key={item} onClick={() => toggle('favoriteCategories', item)} className={`h-24 rounded-3xl border text-sm font-semibold ${form.favoriteCategories.includes(item) ? 'border-[var(--mova-accent)] bg-[var(--mova-accent-soft)] text-[var(--mova-accent)]' : 'border-white/10 bg-white/[0.07] text-white/70'}`}>{item}</button>)}</div>
             </>
           )}
           {step === 3 && (
             <>
               <h1 className="text-[2.15rem] font-semibold leading-tight">¿Con quién solés salir?</h1>
-              <div className="mt-8 space-y-3">{companies.map((item) => <button key={item} onClick={() => toggle('company', item)} className={`flex w-full items-center justify-between rounded-3xl px-5 py-5 text-left font-semibold ${form.company.includes(item) ? 'bg-[#C8FF3D] text-black' : 'bg-white/[0.07] text-white'}`}>{item}{form.company.includes(item) && <FiCheck />}</button>)}</div>
+              <div className="mt-8 space-y-3">{companies.map((item) => <button key={item} onClick={() => toggle('company', item)} className={`flex w-full items-center justify-between rounded-3xl px-5 py-5 text-left font-semibold ${form.company.includes(item) ? 'bg-[var(--mova-accent)] text-white' : 'bg-white/[0.07] text-white'}`}>{item}{form.company.includes(item) && <FiCheck />}</button>)}</div>
             </>
           )}
           {step === 4 && (
@@ -139,7 +139,7 @@ export default function SetupOnboarding() {
 
         <div className="mt-8 flex gap-3">
           {step > 1 && <button onClick={() => setStep((value) => value - 1)} className="h-14 w-24 rounded-full bg-white/[0.08] font-semibold text-white/72">Atrás</button>}
-          <motion.button whileTap={{ scale: 0.98 }} onClick={step === 5 ? finish : () => setStep((value) => value + 1)} disabled={saving} className="h-14 flex-1 rounded-full bg-[#C8FF3D] font-bold text-black">
+          <motion.button whileTap={{ scale: 0.98 }} onClick={step === 5 ? finish : () => setStep((value) => value + 1)} disabled={saving} className="h-14 flex-1 rounded-full bg-[var(--mova-accent)] font-bold text-white">
             {step === 5 ? (saving ? 'Guardando...' : 'Entrar a MOVA') : 'Continuar'}
           </motion.button>
         </div>

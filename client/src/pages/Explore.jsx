@@ -19,7 +19,7 @@ function ResultCard({ item, onSave }) {
         <div className="min-w-0 flex-1">
           <div className="flex items-start justify-between gap-2">
             <h3 className="text-sm font-semibold leading-tight">{item.title}</h3>
-            <button onClick={(event) => { event.preventDefault(); onSave(item.id); }} className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-white/[0.08] text-[#C8FF3D]"><FiBookmark /></button>
+            <button onClick={(event) => { event.preventDefault(); onSave(item.id); }} className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-white/[0.08] text-[var(--mova-accent)]"><FiBookmark /></button>
           </div>
           <p className="mt-1 text-xs text-white/45">{item.neighborhood}, {item.city}</p>
           <div className="mt-3 flex gap-2 text-[11px] text-white/52"><span>{item.category}</span><span>★ {item.rating || 4.8}</span><span>{item.price}</span></div>
@@ -44,7 +44,7 @@ function FilterSheet({ open, onClose, filters, setFilters }) {
             <select value={filters.city} onChange={(event) => setFilters((prev) => ({ ...prev, city: event.target.value }))} className="mt-2 w-full rounded-2xl bg-white/[0.07] px-4 py-3 text-sm outline-none">{cities.map((city) => <option key={city}>{city}</option>)}</select>
             <div className="mt-4 grid grid-cols-2 gap-3">
               <input type="date" value={filters.date} onChange={(event) => setFilters((prev) => ({ ...prev, date: event.target.value }))} className="rounded-2xl bg-white/[0.07] px-4 py-3 text-sm outline-none" />
-              <input type="range" min="1" max="20" value={filters.distance} onChange={(event) => setFilters((prev) => ({ ...prev, distance: event.target.value }))} className="accent-[#C8FF3D]" />
+              <input type="range" min="1" max="20" value={filters.distance} onChange={(event) => setFilters((prev) => ({ ...prev, distance: event.target.value }))} className="accent-[var(--mova-accent)]" />
             </div>
             {[
               ['Categoría', 'category', categories],
@@ -53,10 +53,10 @@ function FilterSheet({ open, onClose, filters, setFilters }) {
             ].map(([title, field, items]) => (
               <div key={title} className="mt-5">
                 <p className="mb-2 text-sm font-semibold text-white/68">{title}</p>
-                <div className="flex flex-wrap gap-2">{items.map((item) => <button key={item} onClick={() => set(field, item)} className={`rounded-full px-4 py-2 text-xs font-semibold ${filters[field] === item ? 'bg-[#C8FF3D] text-black' : 'bg-white/[0.07] text-white/68'}`}>{item}</button>)}</div>
+                <div className="flex flex-wrap gap-2">{items.map((item) => <button key={item} onClick={() => set(field, item)} className={`rounded-full px-4 py-2 text-xs font-semibold ${filters[field] === item ? 'bg-[var(--mova-accent)] text-white' : 'bg-white/[0.07] text-white/68'}`}>{item}</button>)}</div>
               </div>
             ))}
-            <button onClick={onClose} className="mt-6 h-14 w-full rounded-full bg-[#C8FF3D] font-bold text-black">Aplicar</button>
+            <button onClick={onClose} className="mt-6 h-14 w-full rounded-full bg-[var(--mova-accent)] font-bold text-white">Aplicar</button>
           </motion.div>
           </div>
         </>
@@ -111,7 +111,7 @@ export default function Explore() {
 
         <section className="mt-6">
           <h2 className="mb-3 text-sm font-semibold text-white/72">Búsquedas populares</h2>
-          <div className="flex flex-wrap gap-2">{popular.map((chip) => <button key={chip} onClick={() => applyChip(chip)} className={`rounded-full px-4 py-2 text-xs font-semibold ${query === chip ? 'bg-[#C8FF3D] text-black' : 'bg-white/[0.07] text-white/70'}`}>{chip}</button>)}</div>
+          <div className="flex flex-wrap gap-2">{popular.map((chip) => <button key={chip} onClick={() => applyChip(chip)} className={`rounded-full px-4 py-2 text-xs font-semibold ${query === chip ? 'bg-[var(--mova-accent)] text-white' : 'bg-white/[0.07] text-white/70'}`}>{chip}</button>)}</div>
         </section>
         <section className="mt-6">
           <h2 className="mb-3 text-sm font-semibold text-white/72">Recientes</h2>

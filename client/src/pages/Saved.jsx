@@ -26,7 +26,7 @@ export default function Saved() {
         <h1 className="text-2xl font-bold">Guardadas</h1>
         <div className="mt-5 flex gap-2">
           {tabs.map((tab) => (
-            <button key={tab} onClick={() => setActive(tab)} className={`rounded-full px-4 py-2 text-xs font-semibold ${active === tab ? 'bg-[#C8FF3D] text-black' : 'bg-white/[0.07] text-white/62'}`}>{tab}</button>
+            <button key={tab} onClick={() => setActive(tab)} className={`rounded-full px-4 py-2 text-xs font-semibold ${active === tab ? 'bg-[var(--mova-accent)] text-white' : 'bg-white/[0.07] text-white/62'}`}>{tab}</button>
           ))}
         </div>
         {status === 'error' && <p className="mt-6 text-sm text-[#ff8f8f]">No pudimos cargar tus guardadas.</p>}

@@ -27,7 +27,7 @@ export function setCurrentUser(user) {
   localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
   if (user?.preferences?.theme && typeof document !== 'undefined') {
     const savedTheme = localStorage.getItem('mova_theme');
-    const nextTheme = savedTheme || 'dark';
+    const nextTheme = savedTheme || user.preferences.theme || 'light';
     localStorage.setItem('mova_theme', nextTheme);
     document.documentElement.dataset.theme = nextTheme;
   }

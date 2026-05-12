@@ -17,7 +17,7 @@ export default function Messages() {
             <p className="text-sm text-white/48">MOVA social</p>
             <h1 className="text-2xl font-semibold tracking-[0.01em]">Mensajes</h1>
           </div>
-          <button className="grid h-11 w-11 place-items-center rounded-full bg-[#C8FF3D] text-black">
+          <button className="grid h-11 w-11 place-items-center rounded-full bg-[var(--mova-accent)] text-white">
             <FiEdit3 />
           </button>
         </header>
@@ -45,7 +45,7 @@ export default function Messages() {
                 <p className="mt-1 truncate text-sm text-white/48">{chat.text}</p>
               </div>
               {chat.unread > 0 && (
-                <span className="grid h-6 min-w-6 place-items-center rounded-full bg-[#C8FF3D] px-2 text-xs font-bold text-black">
+                <span className="grid h-6 min-w-6 place-items-center rounded-full bg-[var(--mova-accent)] px-2 text-xs font-bold text-white">
                   {chat.unread}
                 </span>
               )}

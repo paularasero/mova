@@ -15,9 +15,9 @@ const cities = ['Montevideo', 'Punta del Este', 'Buenos Aires'];
 const barrios = ['Ciudad Vieja', 'Pocitos', 'Parque Rodó', 'Cordón', 'Carrasco', 'Centro'];
 const fallback = 'https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=1400&q=85';
 const MONTEVIDEO = [-34.9011, -56.1645];
-const limeIcon = L.divIcon({
+const accentIcon = L.divIcon({
   className: '',
-  html: '<div style="width:32px;height:32px;border-radius:999px;background:#C8FF3D;box-shadow:0 0 0 8px rgba(200,255,61,.16);border:2px solid rgba(0,0,0,.18)"></div>',
+  html: '<div style="width:32px;height:32px;border-radius:999px;background:var(--mova-accent);box-shadow:0 0 0 8px rgba(123,97,255,.16);border:2px solid rgba(255,255,255,.9)"></div>',
   iconSize: [32, 32],
   iconAnchor: [16, 16],
 });
@@ -61,20 +61,20 @@ function MapPicker({ open, onClose, onSelect }) {
               <button onClick={onClose} className="grid h-10 w-10 place-items-center rounded-full bg-white/[0.08]"><FiX /></button>
             </div>
             <label className="mt-5 flex h-12 items-center gap-3 rounded-2xl bg-white/[0.07] px-4 text-sm">
-              <FiMapPin className="text-[#C8FF3D]" />
+              <FiMapPin className="text-[var(--mova-accent)]" />
               <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Buscar dirección" className="w-full bg-transparent outline-none placeholder:text-white/35" />
             </label>
             <div className="relative mt-4 h-64 overflow-hidden rounded-[1.6rem] bg-[#111]">
               <MapContainer center={MONTEVIDEO} zoom={13} className="h-full w-full">
                 <TileLayer attribution='&copy; OpenStreetMap' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                 <ClickToSelect onSelect={(coords) => setPicked((prev) => ({ ...prev, ...coords, location: 'Punto seleccionado en mapa' }))} />
-                <Marker position={[picked.lat, picked.lng]} icon={limeIcon} />
+                <Marker position={[picked.lat, picked.lng]} icon={accentIcon} />
               </MapContainer>
             </div>
             <div className="mt-4 space-y-2">
               {filtered.map((item) => <button key={item.location} onClick={() => choose(item)} className="w-full rounded-2xl bg-white/[0.06] px-4 py-3 text-left text-sm font-semibold">{item.location} · {item.barrio}</button>)}
             </div>
-            <button onClick={() => { onSelect(picked); onClose(); }} className="mt-4 h-12 w-full rounded-full bg-[#C8FF3D] text-sm font-bold text-black">Guardar ubicación</button>
+            <button onClick={() => { onSelect(picked); onClose(); }} className="mt-4 h-12 w-full rounded-full bg-[var(--mova-accent)] text-sm font-bold text-white">Guardar ubicación</button>
           </motion.div>
           </div>
         </>
@@ -140,7 +140,7 @@ export default function CreatePlan() {
           <button onClick={prev} className="grid h-11 w-11 place-items-center rounded-full bg-white/[0.07] text-xl"><IoArrowBack /></button>
           <div className="text-right">
             <p className="text-xs text-white/38">Paso {step} de 4</p>
-            <div className="mt-2 h-1.5 w-28 overflow-hidden rounded-full bg-white/10"><motion.div animate={{ width: progress }} className="h-full rounded-full bg-[#C8FF3D]" /></div>
+            <div className="mt-2 h-1.5 w-28 overflow-hidden rounded-full bg-white/10"><motion.div animate={{ width: progress }} className="h-full rounded-full bg-[var(--mova-accent)]" /></div>
           </div>
         </header>
 
@@ -150,7 +150,7 @@ export default function CreatePlan() {
               <h1 className="text-[2rem] font-semibold leading-tight tracking-[0.005em]">¿Qué tipo de experiencia querés compartir?</h1>
               <div className="mt-6 grid grid-cols-2 gap-3">
                 {categories.map((type) => (
-                  <motion.button whileTap={{ scale: 0.96 }} key={type} onClick={() => setForm((prev) => ({ ...prev, category: type, tags: Array.from(new Set([...prev.tags, type.toLowerCase()])) }))} className={`relative h-28 overflow-hidden rounded-[1.4rem] border p-4 text-left font-semibold ${form.category === type ? 'border-[#C8FF3D] bg-[#C8FF3D]/10 text-[#D9FF73]' : 'border-white/10 bg-white/[0.06] text-white'}`}>
+                  <motion.button whileTap={{ scale: 0.96 }} key={type} onClick={() => setForm((prev) => ({ ...prev, category: type, tags: Array.from(new Set([...prev.tags, type.toLowerCase()])) }))} className={`relative h-28 overflow-hidden rounded-[1.4rem] border p-4 text-left font-semibold ${form.category === type ? 'border-[var(--mova-accent)] bg-[var(--mova-accent-soft)] text-[var(--mova-accent)]' : 'border-[var(--mova-border)] bg-[var(--mova-card)] text-[var(--mova-text)]'}`}>
                     <span className="absolute bottom-4 left-4">{type}</span>
                   </motion.button>
                 ))}
@@ -164,7 +164,7 @@ export default function CreatePlan() {
               <p className="mt-2 text-sm text-white/52">Pegá varias URLs. Queda listo para reemplazar por Cloudinary más adelante.</p>
               <div className="mt-5 flex gap-2">
                 <input value={imageUrl} onChange={(event) => setImageUrl(event.target.value)} placeholder="URL de imagen" className="h-12 flex-1 rounded-2xl bg-white/[0.07] px-4 text-sm outline-none placeholder:text-white/35" />
-                <button onClick={addImage} className="grid h-12 w-12 place-items-center rounded-2xl bg-[#C8FF3D] text-black"><FiPlus /></button>
+                <button onClick={addImage} className="grid h-12 w-12 place-items-center rounded-2xl bg-[var(--mova-accent)] text-white"><FiPlus /></button>
               </div>
               <div className="mt-5 grid grid-cols-2 gap-3">
                 {form.images.map((image) => (
@@ -189,14 +189,14 @@ export default function CreatePlan() {
                   <input list="barrios" value={form.neighborhood} onChange={update('neighborhood')} placeholder="Barrio" className="rounded-2xl bg-white/[0.07] px-4 py-3.5 text-sm outline-none placeholder:text-white/35" />
                   <datalist id="barrios">{barrios.map((item) => <option key={item} value={item} />)}</datalist>
                 </div>
-                <button onClick={() => setMapOpen(true)} className="flex w-full items-center gap-3 rounded-2xl bg-white/[0.07] px-4 py-3.5 text-left text-sm text-white/74"><FiMapPin className="text-[#C8FF3D]" /> {form.location || 'Seleccionar ubicación en mapa'}</button>
+                <button onClick={() => setMapOpen(true)} className="flex w-full items-center gap-3 rounded-2xl bg-white/[0.07] px-4 py-3.5 text-left text-sm text-white/74"><FiMapPin className="text-[var(--mova-accent)]" /> {form.location || 'Seleccionar ubicación en mapa'}</button>
                 <div className="grid grid-cols-2 gap-3">
                   <input type="date" value={form.date} onChange={update('date')} className="rounded-2xl bg-white/[0.07] px-4 py-3.5 text-sm outline-none" />
                   <input type="time" value={form.time} onChange={update('time')} className="rounded-2xl bg-white/[0.07] px-4 py-3.5 text-sm outline-none" />
                 </div>
                 <div>
                   <p className="mb-2 text-sm font-semibold text-white/62">Compañía ideal</p>
-                  <div className="flex flex-wrap gap-2">{companies.map((item) => <button key={item} onClick={() => setForm((prev) => ({ ...prev, company: item }))} className={`rounded-full px-4 py-2 text-xs font-semibold ${form.company === item ? 'bg-[#C8FF3D] text-black' : 'bg-white/[0.07] text-white/68'}`}>{item}</button>)}</div>
+                  <div className="flex flex-wrap gap-2">{companies.map((item) => <button key={item} onClick={() => setForm((prev) => ({ ...prev, company: item }))} className={`rounded-full px-4 py-2 text-xs font-semibold ${form.company === item ? 'bg-[var(--mova-accent)] text-white' : 'bg-white/[0.07] text-white/68'}`}>{item}</button>)}</div>
                 </div>
                 <select value={form.price} onChange={update('price')} className="w-full rounded-2xl bg-white/[0.07] px-4 py-3.5 text-sm outline-none"><option>$</option><option>$$</option><option>$$$</option></select>
               </div>
@@ -209,7 +209,7 @@ export default function CreatePlan() {
               <div className="mt-5 overflow-hidden rounded-[1.8rem] border border-white/10 bg-white/[0.06]">
                 <img src={cover} alt="" className="h-64 w-full object-cover" />
                 <div className="p-4">
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#C8FF3D]">{form.category}</p>
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--mova-accent)]">{form.category}</p>
                   <h2 className="mt-2 text-3xl font-semibold leading-tight">{form.title || 'Título de la experiencia'}</h2>
                   <p className="mt-2 text-sm text-white/55">{form.neighborhood || 'Barrio'} · {form.time || '21:00'} · {form.company}</p>
                   <p className="mt-4 text-sm leading-relaxed text-white/68">{form.description || 'Descripción de la experiencia.'}</p>
@@ -219,8 +219,8 @@ export default function CreatePlan() {
           )}
         </motion.div>
 
-        {message && <p className="mt-5 rounded-2xl bg-[#C8FF3D]/10 px-4 py-3 text-sm font-semibold text-[#D9FF73]">{message}</p>}
-        <motion.button whileTap={{ scale: 0.98 }} onClick={step === 4 ? publish : next} className="mt-6 h-14 w-full rounded-full bg-[#C8FF3D] font-bold text-black">
+        {message && <p className="mt-5 rounded-2xl bg-[var(--mova-accent-soft)] px-4 py-3 text-sm font-semibold text-[var(--mova-accent)]">{message}</p>}
+        <motion.button whileTap={{ scale: 0.98 }} onClick={step === 4 ? publish : next} className="mt-6 h-14 w-full rounded-full bg-[var(--mova-accent)] font-bold text-white">
           {step === 4 ? 'Publicar experiencia' : 'Siguiente'}
         </motion.button>
       </section>

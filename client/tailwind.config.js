@@ -4,9 +4,9 @@ export default {
   theme: {
     extend: {
       colors: {
-        limeAccent: '#D7FF4A',
-        surface: '#F5F6F7',
-        ink: '#101113',
+        limeAccent: '#7B61FF',
+        surface: '#F8F8F6',
+        ink: '#111111',
       },
       borderRadius: {
         '4xl': '2rem',

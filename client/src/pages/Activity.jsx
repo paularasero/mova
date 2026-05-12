@@ -33,7 +33,7 @@ export default function Activity() {
               transition={{ delay: index * 0.05 }}
               className="flex gap-3 rounded-[1.4rem] border border-white/8 bg-white/[0.055] p-4"
             >
-              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-[#C8FF3D]/14 text-[#C8FF3D]">
+              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-[var(--mova-accent-soft)] text-[var(--mova-accent)]">
                 <item.icon />
               </span>
               <div className="min-w-0 flex-1">
@@ -45,7 +45,7 @@ export default function Activity() {
           ))}
         </div>
 
-        <Link to="/home" className="mt-6 block rounded-full bg-[#C8FF3D] py-3 text-center text-sm font-semibold text-black">
+        <Link to="/home" className="mt-6 block rounded-full bg-[var(--mova-accent)] py-3 text-center text-sm font-semibold text-white">
           Volver a explorar
         </Link>
       </section>

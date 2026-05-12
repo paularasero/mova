@@ -55,15 +55,15 @@ export default function Settings() {
         <section className="mova-card mt-7 rounded-[1.4rem] p-4">
           <p className="text-sm font-semibold">Tema de la app</p>
           <div className="mt-3 grid grid-cols-2 gap-2">
-            <button onClick={() => changeTheme('light')} className={`flex items-center justify-center gap-2 rounded-2xl px-4 py-3 text-sm font-semibold ${theme === 'light' ? 'bg-[#C8FF3D] text-black' : 'mova-card mova-muted'}`}><FiSun /> Modo claro</button>
-            <button onClick={() => changeTheme('dark')} className={`flex items-center justify-center gap-2 rounded-2xl px-4 py-3 text-sm font-semibold ${theme === 'dark' ? 'bg-[#C8FF3D] text-black' : 'mova-card mova-muted'}`}><FiMoon /> Modo oscuro</button>
+            <button onClick={() => changeTheme('light')} className={`flex items-center justify-center gap-2 rounded-2xl px-4 py-3 text-sm font-semibold ${theme === 'light' ? 'bg-[var(--mova-accent)] text-white' : 'mova-card mova-muted'}`}><FiSun /> Modo claro</button>
+            <button onClick={() => changeTheme('dark')} className={`flex items-center justify-center gap-2 rounded-2xl px-4 py-3 text-sm font-semibold ${theme === 'dark' ? 'bg-[var(--mova-accent)] text-white' : 'mova-card mova-muted'}`}><FiMoon /> Modo oscuro</button>
           </div>
         </section>
 
         <div className="mt-5 space-y-3">
           {items.map((item) => (
             <button key={item.label} className="mova-card flex w-full items-center gap-3 rounded-2xl px-4 py-4 text-left">
-              <item.icon className="text-[#C8FF3D]" />
+              <item.icon className="text-[var(--mova-accent)]" />
               <span className="flex-1 text-sm font-semibold">{item.label}</span>
               {item.value && <span className="text-xs mova-muted">{item.value}</span>}
               <FiChevronRight className="mova-muted" />

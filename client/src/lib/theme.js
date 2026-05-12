@@ -1,7 +1,7 @@
 const THEME_KEY = 'mova_theme';
 
 export function getTheme() {
-  return localStorage.getItem(THEME_KEY) || 'dark';
+  return localStorage.getItem(THEME_KEY) || 'light';
 }
 
 export function applyTheme(theme) {
