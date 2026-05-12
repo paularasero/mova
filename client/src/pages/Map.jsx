@@ -3,7 +3,7 @@ import L from 'leaflet';
 import { MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet';
 import { motion } from 'framer-motion';
 import { useEffect, useMemo, useState } from 'react';
-import { FiArrowLeft, FiBookmark, FiMapPin, FiSearch, FiSliders } from 'react-icons/fi';
+import { FiArrowLeft, FiBookmark, FiChevronDown, FiClock, FiHeart, FiMapPin, FiNavigation, FiSearch, FiSliders } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 import { apiRequest } from '../lib/api';
 import { getCurrentUser } from '../lib/auth';
@@ -125,11 +125,11 @@ export default function Map() {
         <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-44 bg-gradient-to-b from-black/64 to-transparent" />
         <header className="pointer-events-auto relative z-20 flex items-center justify-between px-5 pt-7 text-white">
           <Link to="/home" className="grid h-11 w-11 place-items-center rounded-full bg-black/36 text-xl backdrop-blur-xl"><FiArrowLeft /></Link>
-          <div className="text-center">
-            <p className="text-xs text-white/68">Mapa real</p>
-            <h1 className="text-xl font-semibold">{city}</h1>
+          <button className="inline-flex h-11 items-center gap-2 rounded-full bg-black/42 px-5 text-sm font-bold backdrop-blur-xl">{city}<FiChevronDown className="text-[#C8FF3D]" /></button>
+          <div className="flex gap-2">
+            <button className="grid h-11 w-11 place-items-center rounded-full bg-black/36 text-xl backdrop-blur-xl"><FiNavigation /></button>
+            <button className="grid h-11 w-11 place-items-center rounded-full bg-black/36 text-xl backdrop-blur-xl"><FiSliders /></button>
           </div>
-          <button className="grid h-11 w-11 place-items-center rounded-full bg-black/36 text-xl backdrop-blur-xl"><FiSliders /></button>
         </header>
 
         <div className="pointer-events-auto relative z-20 mx-5 mt-4 flex h-12 items-center gap-3 rounded-full bg-black/42 px-4 text-sm text-white backdrop-blur-xl">
@@ -143,34 +143,39 @@ export default function Map() {
         </div>
 
         {selected && (
-          <motion.div key={selected.id} initial={{ y: 100, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="absolute bottom-24 left-4 right-4 z-20 rounded-[1.6rem] border border-white/10 bg-[var(--mova-surface)]/95 p-3 text-[var(--mova-text)] shadow-[0_22px_60px_rgba(0,0,0,.24)] backdrop-blur-2xl">
+          <motion.div key={selected.id} initial={{ y: 80, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="absolute bottom-56 left-4 right-4 z-20 rounded-[1.6rem] border border-white/10 bg-[var(--mova-surface)]/95 p-3 text-[var(--mova-text)] shadow-[0_22px_60px_rgba(0,0,0,.24)] backdrop-blur-2xl">
             <div className="flex gap-3">
               <Link to={`/plan/${selected.id}`} className="flex min-w-0 flex-1 gap-3">
                 <img src={selected.image} alt="" className="h-24 w-24 rounded-2xl object-cover" />
                 <div className="min-w-0 flex-1">
                   <h2 className="font-semibold leading-tight">{selected.title}</h2>
-                  <p className="mt-1 text-xs opacity-55">{selected.location || selected.neighborhood}</p>
-                  <div className="mt-2 flex flex-wrap gap-2 text-[11px] opacity-65"><span>{selected.category}</span><span>★ {selected.rating || 4.8}</span></div>
-                  <span className="mt-3 inline-flex rounded-full bg-[#C8FF3D] px-3 py-1.5 text-xs font-bold text-black">Ver plan</span>
+                  <p className="mt-1 flex items-center gap-1 text-xs opacity-55"><FiMapPin /> {selected.location || selected.neighborhood}</p>
+                  <div className="mt-2 flex flex-wrap gap-2 text-[11px] opacity-65"><span className="flex items-center gap-1"><FiClock /> {selected.date || selected.fecha} · {selected.time || selected.horario}</span><span>{selected.category}</span></div>
+                  <div className="mt-3 flex gap-2">
+                    <button className="rounded-full bg-white/[0.08] px-3 py-1.5 text-xs font-bold">Más tarde</button>
+                    <button className="rounded-full bg-[#C8FF3D] px-3 py-1.5 text-xs font-bold text-black">Voy</button>
+                  </div>
                 </div>
               </Link>
-              <button onClick={() => save(selected.id)} className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[#C8FF3D]/18 text-[#78a000]"><FiBookmark /></button>
+              <button onClick={() => save(selected.id)} className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[#C8FF3D]/18 text-[#78a000]"><FiHeart /></button>
             </div>
             {message && <p className="mt-3 text-xs font-semibold text-[#78a000]">{message}</p>}
-            <section className="mt-4 border-t border-[var(--mova-border)] pt-4">
-              <h3 className="mb-3 text-sm font-semibold">Planes cerca de ti</h3>
-              <div className="flex gap-3 overflow-x-auto pb-1">
-                {filtered.slice(0, 6).map((item, index) => (
-                  <button key={item.id} onClick={() => setSelected(item)} className="photo-card relative h-24 w-32 shrink-0 overflow-hidden rounded-2xl">
-                    <img src={item.image} alt="" className="h-full w-full object-cover" />
-                    <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/78" />
-                    <span className="absolute bottom-2 left-2 right-2 text-left text-xs font-semibold leading-tight text-white">{item.title}</span>
-                  </button>
-                ))}
-              </div>
-            </section>
           </motion.div>
         )}
+
+        <section className="absolute bottom-24 left-0 right-0 z-20 px-5">
+          <h3 className="mb-3 text-sm font-semibold text-white drop-shadow">Planes cerca de ti</h3>
+          <div className="flex gap-3 overflow-x-auto pb-1">
+            {filtered.slice(0, 8).map((item) => (
+              <button key={item.id} onClick={() => setSelected(item)} className={`photo-card relative h-28 w-44 shrink-0 overflow-hidden rounded-2xl border text-left ${selected?.id === item.id ? 'border-[#C8FF3D]' : 'border-white/10'}`}>
+                <img src={item.image} alt="" className="h-full w-full object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/82" />
+                <span className="absolute bottom-7 left-3 right-3 line-clamp-1 text-xs font-semibold text-white">{item.title}</span>
+                <span className="absolute bottom-3 left-3 right-3 line-clamp-1 text-[10px] text-white/65">{item.neighborhood} · {item.category}</span>
+              </button>
+            ))}
+          </div>
+        </section>
 
         <div className="absolute left-5 top-40 z-20 rounded-full bg-black/42 px-3 py-2 text-xs text-white/80 backdrop-blur-xl">
           <FiMapPin className="mr-1 inline text-[#C8FF3D]" /> {filtered.length} planes

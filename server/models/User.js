@@ -11,13 +11,15 @@ const userSchema = new mongoose.Schema(
     puntos: { type: Number, default: 0 },
     seguidores: { type: Number, default: 0 },
     siguiendo: { type: Number, default: 0 },
+    followers: [{ type: String }],
+    following: [{ type: String }],
     savedExperiences: [{ type: String }],
     preferences: {
       favoriteCategories: [{ type: String }],
       company: [{ type: String }],
       birthday: { type: String },
       setupComplete: { type: Boolean, default: false },
-      theme: { type: String, enum: ['light', 'dark'], default: 'light' },
+      theme: { type: String, enum: ['light', 'dark'], default: 'dark' },
     },
     avatar: {
       type: String,
@@ -31,6 +33,8 @@ const userSchema = new mongoose.Schema(
         ret.id = ret._id;
         ret.name = ret.nombre;
         ret.city = ret.ciudad;
+        ret.followersCount = ret.followers?.length || ret.seguidores || 0;
+        ret.followingCount = ret.following?.length || ret.siguiendo || 0;
         ret.setupComplete = Boolean(ret.preferences?.setupComplete);
         delete ret._id;
         delete ret.password;

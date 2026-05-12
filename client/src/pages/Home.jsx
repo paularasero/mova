@@ -45,17 +45,17 @@ function ExperienceCard({ item }) {
 
 function MiniCard({ item, onSave }) {
   return (
-    <motion.div whileTap={{ scale: 0.97 }} className="w-44 shrink-0">
-      <Link to={`/plan/${item.id}`} className="block overflow-hidden rounded-[1.35rem] border border-white/10 bg-white/[0.06]">
-        <div className="relative h-32">
+    <motion.div whileTap={{ scale: 0.97 }} className="h-60 w-44 shrink-0">
+      <Link to={`/plan/${item.id}`} className="flex h-full flex-col overflow-hidden rounded-[1.35rem] border border-white/10 bg-white/[0.06]">
+        <div className="relative h-32 shrink-0">
           <img src={item.image} alt={item.title} className="h-full w-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-b from-black/5 to-black/55" />
           <button onClick={(event) => { event.preventDefault(); onSave(item.id); }} className="absolute right-2 top-2 grid h-8 w-8 place-items-center rounded-full bg-black/45 text-[#C8FF3D] backdrop-blur-xl"><FiBookmark /></button>
         </div>
-        <div className="p-3">
-          <h3 className="line-clamp-2 text-sm font-semibold leading-tight">{item.title}</h3>
-          <p className="mt-1 text-xs text-white/46">{item.neighborhood}, {item.city}</p>
-          <div className="mt-2 flex items-center justify-between text-[11px] text-white/50">
+        <div className="flex min-h-0 flex-1 flex-col p-3">
+          <h3 className="line-clamp-2 min-h-[2.1rem] text-sm font-semibold leading-tight">{item.title}</h3>
+          <p className="mt-1 truncate text-xs text-white/46">{item.neighborhood}, {item.city}</p>
+          <div className="mt-auto flex items-center justify-between gap-2 text-[11px] text-white/50">
             <span>{item.category}</span>
             <span className="text-[#D9FF73]">★ {item.rating || 4.8}</span>
           </div>
@@ -186,21 +186,19 @@ export default function Home() {
     <main className="mova-screen">
       <section className="mova-mobile px-5 pb-28 pt-7">
         <header className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Link to="/profile" className="grid h-12 w-12 place-items-center overflow-hidden rounded-full bg-white/[0.08]">{user?.avatar ? <img src={user.avatar} alt="" className="h-full w-full object-cover" /> : <FiUser />}</Link>
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#C8FF3D]">Good morning</p>
-              <p className="text-lg font-semibold">Hola, {user?.nombre?.split(' ')[0] || 'Paula'}</p>
-            </div>
+          <div>
+            <p className="text-xl font-semibold">Hola, {user?.nombre?.split(' ')[0] || 'Paula'} 👋</p>
+            <button onClick={() => setCityOpen(true)} className="mt-1 inline-flex items-center gap-1 text-sm font-semibold text-[var(--mova-muted)]">
+              Te encontrás en <span className="text-[var(--mova-text)]">{filters.city}</span><FiChevronDown className="text-[#8ab500]" />
+            </button>
           </div>
-          <Link to="/community" className="grid h-11 w-11 place-items-center rounded-full bg-white/[0.08] text-xl"><FiBell /></Link>
+          <div className="flex items-center gap-2">
+            <Link to="/community" className="grid h-11 w-11 place-items-center rounded-full bg-white/[0.08] text-xl"><FiBell /></Link>
+            <Link to="/profile" className="grid h-12 w-12 place-items-center overflow-hidden rounded-full bg-white/[0.08] ring-1 ring-white/10">
+              {user?.avatar ? <img src={user.avatar} alt="" className="h-full w-full object-cover" /> : <FiUser />}
+            </Link>
+          </div>
         </header>
-
-        <div className="mt-5">
-          <button onClick={() => setCityOpen(true)} className="inline-flex items-center gap-1 rounded-full bg-white/[0.08] px-4 py-2 text-sm font-semibold">
-            {filters.city}<FiChevronDown className="text-[#C8FF3D]" />
-          </button>
-        </div>
 
         <div className="mt-6">
           <h1 className="mt-1 text-[2rem] font-semibold leading-tight tracking-[0.005em]">Descubrí tu próximo plan.</h1>
@@ -218,21 +216,6 @@ export default function Home() {
         {status === 'loading' && <div className="mt-8 h-[23rem] animate-pulse rounded-[2rem] bg-white/[0.06]" />}
         {status === 'error' && <p className="mt-8 rounded-2xl bg-red-500/10 px-4 py-3 text-sm text-[#ff8f8f]">No se pudieron cargar las experiencias.</p>}
         {featured && <div className="mt-4"><ExperienceCard item={featured} /></div>}
-        <section className="mt-8">
-          <h2 className="mb-3 text-lg font-semibold">Explorá cerca de ti</h2>
-          <Link to="/map" className="photo-card relative block h-44 overflow-hidden rounded-[1.7rem] border border-white/10 bg-[#101010]">
-            <div className="absolute inset-0 opacity-70" style={{ backgroundImage: 'linear-gradient(30deg,#252525 12%,transparent 12.5%,transparent 87%,#252525 87.5%,#252525),linear-gradient(150deg,#1a1a1a 12%,transparent 12.5%,transparent 87%,#1a1a1a 87.5%,#1a1a1a)', backgroundSize: '70px 120px' }} />
-            <div className="absolute left-10 top-8 h-2 w-28 rotate-12 rounded-full bg-[#C8FF3D]/70" />
-            <div className="absolute right-12 top-12 grid h-11 w-11 place-items-center rounded-full bg-[#C8FF3D] text-black"><FiMapPin fill="currentColor" /></div>
-            <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#C8FF3D]">Mapa</p>
-                <h3 className="mt-1 text-2xl font-semibold text-white">Planes cerca de ti</h3>
-              </div>
-              <span className="inline-flex items-center gap-2 rounded-full bg-[#C8FF3D] px-4 py-3 text-sm font-bold text-black"><FiMap /> Mapa</span>
-            </div>
-          </Link>
-        </section>
         <Rail title="Recomendados para vos" items={recommended} onSave={saveExperience} />
         <Rail title="Planes cerca" items={cityExperiences.slice(1, 7)} onSave={saveExperience} />
         <Rail title="Populares esta semana" items={popular} onSave={saveExperience} />

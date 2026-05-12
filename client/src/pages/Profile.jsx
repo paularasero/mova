@@ -1,61 +1,80 @@
 import { useEffect, useState } from 'react';
-import { FiSettings } from 'react-icons/fi';
+import { FiEdit3, FiMenu, FiStar } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 import PlanCard from '../components/PlanCard';
 import { apiRequest } from '../lib/api';
 import { getCurrentUser } from '../lib/auth';
 
+const tabs = ['Publicadas', 'Guardadas', 'Reseñas'];
+
 export default function Profile() {
   const current = getCurrentUser();
   const [profile, setProfile] = useState(null);
-  const [tab, setTab] = useState('Guardadas');
+  const [tab, setTab] = useState('Publicadas');
 
   useEffect(() => {
     apiRequest(`/users/me/profile?userId=${current?.id}`).then(setProfile).catch(() => setProfile(null));
   }, [current?.id]);
 
   const user = profile?.user || current;
-  const list = tab === 'Publicadas' ? profile?.created || [] : profile?.saved || [];
+  const created = profile?.created || [];
+  const saved = profile?.saved || [];
+  const stats = profile?.stats || {};
+  const list = tab === 'Publicadas' ? created : tab === 'Guardadas' ? saved : [];
+  const points = stats.points || user?.puntos || 0;
 
   return (
     <main className="mova-screen">
-      <section className="mova-mobile px-5 pb-28 pt-7">
+      <section className="mova-mobile px-5 pb-32 pt-7">
         <header className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <img src={user?.avatar} alt="" className="h-10 w-10 rounded-full object-cover ring-2 ring-[#C8FF3D]" />
-            <div>
-              <p className="text-sm font-semibold">{user?.nombre}</p>
-              <p className="text-xs text-white/45">Urban Explorer</p>
-            </div>
-          </div>
-          <Link to="/settings" className="grid h-10 w-10 place-items-center rounded-full bg-white/[0.07]"><FiSettings /></Link>
+          <Link to="/settings" className="grid h-11 w-11 place-items-center rounded-full bg-white/[0.07]"><FiEdit3 /></Link>
+          <p className="text-sm font-semibold text-[var(--mova-muted)]">Perfil</p>
+          <Link to="/settings" className="grid h-11 w-11 place-items-center rounded-full bg-white/[0.07]"><FiMenu /></Link>
         </header>
 
-        <div className="mt-7 rounded-[1.6rem] bg-white/[0.06] p-5">
-          <div className="flex items-center gap-4">
-            <img src={user?.avatar} alt="" className="h-20 w-20 rounded-full object-cover ring-2 ring-[#C8FF3D]" />
-            <div>
-              <h1 className="text-xl font-bold">{user?.nombre}</h1>
-              <p className="text-sm text-white/52">@{user?.username}</p>
-              <p className="mt-2 rounded-full bg-[#C8FF3D]/12 px-3 py-1 text-xs font-semibold text-[#D9FF73]">Urban Explorer</p>
-            </div>
+        <section className="mt-6 text-center">
+          <div className="mx-auto grid h-28 w-28 place-items-center overflow-hidden rounded-full bg-white/[0.08] ring-2 ring-[#C8FF3D] ring-offset-4 ring-offset-[var(--mova-bg)]">
+            <img src={user?.avatar} alt="" className="h-full w-full object-cover" />
           </div>
-          <div className="mt-6 grid grid-cols-3 text-center">
-            <div><p className="text-xl font-bold">{profile?.stats?.points || user?.puntos || 0}</p><p className="text-xs text-white/45">Puntos</p></div>
-            <div><p className="text-xl font-bold">{profile?.stats?.created || 0}</p><p className="text-xs text-white/45">Creadas</p></div>
-            <div><p className="text-xl font-bold">{profile?.stats?.saved || 0}</p><p className="text-xs text-white/45">Guardadas</p></div>
+          <h1 className="mt-5 text-2xl font-semibold">{user?.nombre || user?.name || 'Paula'}</h1>
+          <p className="mt-1 text-sm text-[var(--mova-muted)]">@{user?.username || 'movauser'}</p>
+          <div className="mx-auto mt-3 inline-flex items-center gap-2 rounded-full bg-[#C8FF3D]/14 px-4 py-2 text-xs font-bold text-[#9dcc00]">
+            <FiStar /> Urban Explorer · Nivel {Math.max(1, Math.floor(points / 500) + 1)}
           </div>
-        </div>
+          <button className="mt-4 rounded-full border border-[var(--mova-border)] bg-[var(--mova-card)] px-5 py-2 text-sm font-semibold">Editar perfil</button>
+        </section>
 
-        <div className="mt-5 flex gap-2">
-          {['Guardadas', 'Publicadas', 'Reseñas'].map((item) => (
-            <button key={item} onClick={() => setTab(item)} className={`rounded-full px-4 py-2 text-xs font-semibold ${tab === item ? 'bg-[#C8FF3D] text-black' : 'bg-white/[0.07] text-white/62'}`}>{item}</button>
+        <section className="mt-7 grid grid-cols-3 rounded-[1.6rem] border border-[var(--mova-border)] bg-[var(--mova-card)] py-4 text-center">
+          <div><p className="text-xl font-bold">{created.length}</p><p className="text-xs text-[var(--mova-muted)]">Posts</p></div>
+          <div><p className="text-xl font-bold">{stats.followers || user?.followersCount || user?.seguidores || 0}</p><p className="text-xs text-[var(--mova-muted)]">Seguidores</p></div>
+          <div><p className="text-xl font-bold">{stats.following || user?.followingCount || user?.siguiendo || 0}</p><p className="text-xs text-[var(--mova-muted)]">Seguidos</p></div>
+        </section>
+
+        <section className="mt-6 flex gap-3 overflow-x-auto pb-2">
+          {[
+            ['Puntos', points],
+            ['Creadas', created.length],
+            ['Guardadas', saved.length],
+            ['Reseñas', created.reduce((sum, item) => sum + (item.commentCount || item.comentarios || 0), 0)],
+          ].map(([label, value]) => (
+            <article key={label} className="min-w-32 rounded-[1.35rem] border border-[var(--mova-border)] bg-[var(--mova-card)] p-4">
+              <p className="text-2xl font-semibold">{value}</p>
+              <p className="mt-1 text-xs font-semibold text-[var(--mova-muted)]">{label}</p>
+            </article>
+          ))}
+        </section>
+
+        <div className="mt-6 flex gap-2">
+          {tabs.map((item) => (
+            <button key={item} onClick={() => setTab(item)} className={`rounded-full px-4 py-2 text-xs font-semibold ${tab === item ? 'bg-[#C8FF3D] text-black' : 'bg-white/[0.07] text-[var(--mova-muted)]'}`}>{item}</button>
           ))}
         </div>
+
         <div className="mt-5 grid grid-cols-2 gap-3">
           {list.map((experience) => <PlanCard key={experience.id} plan={experience} compact />)}
         </div>
-        {list.length === 0 && <p className="mt-6 text-sm text-white/45">No hay contenido para mostrar.</p>}
+        {tab === 'Reseñas' && <p className="mt-6 rounded-2xl bg-white/[0.06] px-4 py-4 text-sm text-[var(--mova-muted)]">Tus reseñas van a aparecer acá cuando comentes experiencias.</p>}
+        {tab !== 'Reseñas' && list.length === 0 && <p className="mt-6 rounded-2xl bg-white/[0.06] px-4 py-4 text-sm text-[var(--mova-muted)]">No hay contenido para mostrar.</p>}
       </section>
     </main>
   );

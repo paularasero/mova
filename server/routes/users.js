@@ -24,6 +24,19 @@ router.get('/', async (_req, res) => {
   }
 });
 
+router.get('/search', async (req, res) => {
+  try {
+    const query = String(req.query.q || '').trim();
+    const filter = query
+      ? { $or: [{ nombre: new RegExp(query, 'i') }, { username: new RegExp(query, 'i') }, { ciudad: new RegExp(query, 'i') }] }
+      : {};
+    const users = await User.find(filter).sort({ puntos: -1, nombre: 1 }).limit(24);
+    res.json(users);
+  } catch {
+    res.status(500).json({ error: 'No pudimos buscar usuarios.' });
+  }
+});
+
 router.get('/me/profile', async (req, res) => {
   try {
     const userId = req.query.userId;
@@ -41,7 +54,19 @@ router.get('/me/profile', async (req, res) => {
     const commentCount = created.reduce((sum, plan) => sum + (plan.comentarios || 0), 0);
     const points = created.length * 20 + commentCount * 10 + receivedSaves * 5;
 
-    res.json({ user: { ...user.toJSON(), puntos: Math.max(user.puntos || 0, points) }, created, saved, stats: { created: created.length, saved: saved.length, points } });
+    const normalized = user.toJSON();
+    res.json({
+      user: { ...normalized, puntos: Math.max(user.puntos || 0, points) },
+      created,
+      saved,
+      stats: {
+        created: created.length,
+        saved: saved.length,
+        points,
+        followers: normalized.followersCount,
+        following: normalized.followingCount,
+      },
+    });
   } catch {
     res.status(500).json({ error: 'No pudimos cargar tu perfil.' });
   }
@@ -88,6 +113,47 @@ router.put('/me', async (req, res) => {
     return res.json(user);
   } catch {
     return res.status(400).json({ error: 'No pudimos actualizar tu perfil.' });
+  }
+});
+
+router.post('/:id/follow', async (req, res) => {
+  try {
+    const targetId = req.params.id;
+    const { userId } = req.body;
+
+    if (!userId) return res.status(400).json({ error: 'Falta identificar el usuario.' });
+    if (userId === targetId) return res.status(400).json({ error: 'No podés seguirte a vos misma.' });
+
+    const [currentUser, targetUser] = await Promise.all([
+      User.findById(userId),
+      User.findById(targetId),
+    ]);
+
+    if (!currentUser || !targetUser) return res.status(404).json({ error: 'Usuario no encontrado.' });
+
+    const isFollowing = currentUser.following?.includes(targetId);
+    if (isFollowing) {
+      currentUser.following = (currentUser.following || []).filter((id) => id !== targetId);
+      targetUser.followers = (targetUser.followers || []).filter((id) => id !== userId);
+      currentUser.siguiendo = Math.max((currentUser.siguiendo || 1) - 1, currentUser.following.length);
+      targetUser.seguidores = Math.max((targetUser.seguidores || 1) - 1, targetUser.followers.length);
+    } else {
+      currentUser.following = [...new Set([...(currentUser.following || []), targetId])];
+      targetUser.followers = [...new Set([...(targetUser.followers || []), userId])];
+      currentUser.siguiendo = Math.max((currentUser.siguiendo || 0) + 1, currentUser.following.length);
+      targetUser.seguidores = Math.max((targetUser.seguidores || 0) + 1, targetUser.followers.length);
+    }
+
+    await Promise.all([currentUser.save(), targetUser.save()]);
+
+    res.json({
+      following: !isFollowing,
+      message: isFollowing ? 'Dejaste de seguir a este usuario.' : 'Ahora seguís a este usuario.',
+      user: currentUser,
+      target: targetUser,
+    });
+  } catch {
+    res.status(500).json({ error: 'No pudimos actualizar el seguimiento.' });
   }
 });
 
