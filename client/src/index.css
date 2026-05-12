@@ -96,6 +96,17 @@ body {
   pointer-events: none;
 }
 
+.mova-modal-wrap {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  pointer-events: none;
+}
+
 .mova-sheet {
   pointer-events: auto;
   width: 100%;
