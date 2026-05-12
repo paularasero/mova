@@ -29,11 +29,15 @@ function FeaturedCard({ item, saved, onSave }) {
         <div className="absolute bottom-5 left-5 right-5">
           <p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-white/72">{item.neighborhood}</p>
           <h2 className="max-w-[16rem] text-[2rem] font-semibold leading-[1.02] tracking-[0.005em] text-white">{item.title}</h2>
-          <p className="mt-3 flex items-center gap-2 text-sm leading-relaxed text-white/72"><FiUsers /> {item.saves || item.guardados || 0} personas interesadas</p>
+          <div className="mt-3 flex flex-wrap items-center gap-2 text-sm leading-relaxed text-white/74">
+            <span>{item.location || item.neighborhood}</span>
+            <span>★ {item.rating || 4.8}</span>
+            <span className="inline-flex items-center gap-1"><FiUsers /> {item.saves || item.guardados || 0}</span>
+          </div>
         </div>
       </Link>
       <div className="absolute left-5 right-5 top-5 flex items-center justify-between">
-        <span className="rounded-full bg-black/35 px-3 py-1.5 text-xs font-semibold text-white/82 backdrop-blur-xl">{item.price}</span>
+        <span className="rounded-full bg-black/35 px-3 py-1.5 text-xs font-semibold text-white/82 backdrop-blur-xl">Popular hoy</span>
         <button onClick={() => onSave(item.id)} className={`grid h-10 w-10 place-items-center rounded-full backdrop-blur-xl ${saved ? 'bg-[var(--mova-accent)] text-white' : 'bg-white/90 text-[var(--mova-accent)]'}`}>{saved ? <FiCheck /> : <FiBookmark />}</button>
       </div>
       <button className="absolute bottom-5 right-5 rounded-full bg-[var(--mova-accent)] px-4 py-2 text-xs font-bold text-white shadow-[0_16px_34px_rgba(123,97,255,0.32)]">Me sumo</button>
@@ -41,10 +45,10 @@ function FeaturedCard({ item, saved, onSave }) {
   );
 }
 
-function MosaicCard({ item, saved, onSave, tall = false }) {
+function SmallCard({ item, saved, onSave }) {
   return (
-    <motion.article whileTap={{ scale: 0.98 }} className={`min-h-0 overflow-hidden rounded-[1.55rem] border border-[var(--mova-border)] bg-[var(--mova-surface)] shadow-[0_12px_30px_rgba(17,17,17,0.05)] ${tall ? 'row-span-2' : ''}`}>
-      <div className={`photo-card relative overflow-hidden ${tall ? 'aspect-[0.82]' : 'aspect-[1.02]'}`}>
+    <motion.article whileTap={{ scale: 0.98 }} className="h-[16.5rem] w-44 shrink-0 overflow-hidden rounded-[1.55rem] border border-[var(--mova-border)] bg-[var(--mova-surface)] shadow-[0_12px_30px_rgba(17,17,17,0.05)]">
+      <div className="photo-card relative h-36 overflow-hidden">
         <Link to={`/plan/${item.id}`} className="block h-full">
           <img src={item.image} alt={item.title} className="h-full w-full object-cover" loading="lazy" />
           <div className="absolute inset-0 bg-gradient-to-b from-black/4 via-black/10 to-black/58" />
@@ -60,22 +64,23 @@ function MosaicCard({ item, saved, onSave, tall = false }) {
           <span className="truncate">{item.category}</span>
           <span className="inline-flex shrink-0 items-center gap-1 text-[var(--mova-accent)]"><FiUsers /> {item.saves || item.guardados || 0}</span>
         </div>
-        <div className="flex gap-2">
-          <button onClick={() => onSave(item.id)} className={`h-9 flex-1 rounded-full text-xs font-bold ${saved ? 'bg-[var(--mova-accent-soft)] text-[var(--mova-accent)]' : 'bg-[var(--mova-card)] text-[var(--mova-muted)]'}`}>{saved ? 'Guardado' : 'Guardar'}</button>
-          <button className="h-9 flex-1 rounded-full bg-[var(--mova-accent)] text-xs font-bold text-white">Me sumo</button>
-        </div>
+        <button className="h-9 w-full rounded-full bg-[var(--mova-accent)] text-xs font-bold text-white">Me sumo</button>
       </div>
     </motion.article>
   );
 }
 
-function EditorialGrid({ items, savedIds, onSave }) {
+function Rail({ title, items, savedIds, onSave }) {
   if (!items.length) return null;
   return (
-    <section className="mt-7">
-      <div className="grid grid-cols-2 auto-rows-[minmax(0,auto)] gap-3">
-        {items.map((item, index) => (
-          <MosaicCard key={item.id} item={item} saved={savedIds.has(item.id)} onSave={onSave} tall={index % 5 === 1 || index % 5 === 4} />
+    <section className="mt-8">
+      <div className="mb-3 flex items-center justify-between">
+        <h2 className="text-xl font-semibold tracking-[0.005em]">{title}</h2>
+        <Link to="/explore" className="text-xs font-semibold text-[var(--mova-muted)]">Ver todo</Link>
+      </div>
+      <div className="mova-scrollbar-none flex gap-3 overflow-x-auto pb-2">
+        {items.map((item) => (
+          <SmallCard key={`${title}-${item.id}`} item={item} saved={savedIds.has(item.id)} onSave={onSave} />
         ))}
       </div>
     </section>
@@ -122,24 +127,40 @@ export default function Home() {
   const user = getCurrentUser();
   const [experiences, setExperiences] = useState([]);
   const [activeTab, setActiveTab] = useState('para hoy');
+  const [heroId, setHeroId] = useState(null);
   const [cityOpen, setCityOpen] = useState(false);
   const [status, setStatus] = useState('loading');
   const [filters, setFilters] = useState({ city: user?.city || user?.ciudad || 'Montevideo', category: '', company: '', budget: '', date: '', time: '', distance: 8 });
   const [savedIds, setSavedIds] = useState(new Set(user?.savedExperiences || []));
 
   useEffect(() => {
-    apiRequest('/experiences').then((data) => { setExperiences(data); setStatus('ready'); }).catch(() => setStatus('error'));
+    apiRequest('/experiences').then((data) => {
+      setExperiences(data);
+      const candidates = [...data]
+        .sort((a, b) => ((b.saves || b.guardados || 0) + (b.likes || 0)) - ((a.saves || a.guardados || 0) + (a.likes || 0)))
+        .slice(0, 6);
+      setHeroId(candidates[Math.floor(Math.random() * Math.max(candidates.length, 1))]?.id || data[0]?.id || null);
+      setStatus('ready');
+    }).catch(() => setStatus('error'));
   }, []);
 
-  const cityExperiences = experiences.filter((item) => !filters.city || item.city === filters.city);
+  const cityMatches = experiences.filter((item) => !filters.city || item.city === filters.city);
+  const cityExperiences = cityMatches.length ? cityMatches : experiences;
   const filtered = useMemo(() => experiences.filter((item) => matchesTab(item, activeTab, user)
     && (!filters.city || item.city === filters.city)
     && (!filters.category || String(item.category).toLowerCase().includes(filters.category.toLowerCase()))
     && (!filters.company || item.company === filters.company)
     && (!filters.budget || item.price === filters.budget)
     && (!filters.date || item.date === filters.date)), [experiences, activeTab, filters, user]);
-  const featured = filtered[0] || experiences[0];
-  const mosaic = filtered.slice(1, 11);
+  const featured = filtered.find((item) => item.id === heroId) || filtered[0] || experiences[0];
+  const withoutFeatured = cityExperiences.filter((item) => item.id !== featured?.id);
+  const popularNear = [...withoutFeatured].sort((a, b) => ((b.saves || b.guardados || 0) + (b.likes || 0)) - ((a.saves || a.guardados || 0) + (a.likes || 0))).slice(0, 8);
+  const today = withoutFeatured.slice(0, 8);
+  const friends = withoutFeatured.filter((item) => String(item.company || '').toLowerCase().includes('amigos')).slice(0, 8);
+  const cafes = withoutFeatured.filter((item) => `${item.title} ${item.category} ${item.tags?.join(' ') || ''}`.toLowerCase().includes('café') || `${item.title} ${item.category}`.toLowerCase().includes('food')).slice(0, 8);
+  const outdoor = withoutFeatured.filter((item) => `${item.category} ${item.tags?.join(' ') || ''}`.toLowerCase().includes('outdoor') || `${item.title} ${item.tags?.join(' ') || ''}`.toLowerCase().includes('playa')).slice(0, 8);
+  const night = withoutFeatured.filter((item) => `${item.category} ${item.tags?.join(' ') || ''}`.toLowerCase().includes('night') || `${item.title}`.toLowerCase().includes('bar')).slice(0, 8);
+  const free = withoutFeatured.filter((item) => item.price === '$' || `${item.tags?.join(' ') || ''}`.toLowerCase().includes('gratis')).slice(0, 8);
 
   const saveExperience = async (id) => {
     if (!user?.id) return;
@@ -177,7 +198,7 @@ export default function Home() {
         </div>
 
         <div className="mt-5">
-          <button onClick={() => navigate('/explore')} className="flex h-14 flex-1 items-center gap-3 rounded-full border border-[var(--mova-border)] bg-[var(--mova-surface)] px-4 text-left text-sm text-[var(--mova-muted)] shadow-[0_10px_30px_rgba(17,17,17,0.04)]"><FiSearch className="text-lg" /> Buscar experiencias</button>
+          <button onClick={() => navigate('/explore')} className="box-border flex h-14 w-full max-w-full items-center gap-3 rounded-full border border-[var(--mova-border)] bg-[var(--mova-surface)] px-4 text-left text-sm text-[var(--mova-muted)] shadow-[0_10px_30px_rgba(17,17,17,0.04)]"><FiSearch className="text-lg" /> Buscar experiencias</button>
         </div>
 
         <div className="mova-scrollbar-none mt-5 flex gap-2 overflow-x-auto pb-2">
@@ -187,7 +208,13 @@ export default function Home() {
         {status === 'loading' && <div className="mt-8 h-[23rem] animate-pulse rounded-[2rem] bg-white/[0.06]" />}
         {status === 'error' && <p className="mt-8 rounded-2xl bg-red-500/10 px-4 py-3 text-sm text-[#ff8f8f]">No se pudieron cargar las experiencias.</p>}
         {featured && <div className="mt-4"><FeaturedCard item={featured} saved={savedIds.has(featured.id)} onSave={saveExperience} /></div>}
-        <EditorialGrid items={mosaic} savedIds={savedIds} onSave={saveExperience} />
+        <Rail title="Populares cerca" items={popularNear} savedIds={savedIds} onSave={saveExperience} />
+        <Rail title="Para hoy" items={today} savedIds={savedIds} onSave={saveExperience} />
+        <Rail title="Con amigos" items={friends} savedIds={savedIds} onSave={saveExperience} />
+        <Rail title="Cafés" items={cafes} savedIds={savedIds} onSave={saveExperience} />
+        <Rail title="Outdoor" items={outdoor} savedIds={savedIds} onSave={saveExperience} />
+        <Rail title="Night" items={night} savedIds={savedIds} onSave={saveExperience} />
+        <Rail title="Gratis" items={free} savedIds={savedIds} onSave={saveExperience} />
       </section>
       <CitySheet open={cityOpen} onClose={() => setCityOpen(false)} currentUser={user} currentCity={filters.city} onSave={(city) => setFilters((prev) => ({ ...prev, city }))} />
     </main>
