@@ -124,7 +124,6 @@ function FilterModal({ open, onClose, filters, setFilters, onClear }) {
                 <h2 className="text-3xl font-semibold">Filtros</h2>
                 <button onClick={onClose} className="grid h-11 w-11 place-items-center rounded-full bg-[var(--mova-card)] text-xl"><FiX /></button>
               </div>
-              <button type="button" onClick={clear} className="mt-4 h-11 w-full rounded-full border border-[var(--mova-border)] bg-[var(--mova-card)] text-sm font-bold text-[var(--mova-text)]">Limpiar filtros</button>
               <div className="mt-6 grid grid-cols-2 gap-3">
                 <label className="block text-sm font-semibold text-[var(--mova-muted)]">Fecha<input type="date" value={filters.date} onChange={(event) => setFilters((prev) => ({ ...prev, date: event.target.value }))} className="mt-2 w-full rounded-2xl border border-[var(--mova-border)] bg-[var(--mova-card)] px-3 py-3 text-sm text-[var(--mova-text)] outline-none" /></label>
                 <label className="block text-sm font-semibold text-[var(--mova-muted)]">Horario<input type="time" value={filters.time} onChange={(event) => setFilters((prev) => ({ ...prev, time: event.target.value }))} className="mt-2 w-full rounded-2xl border border-[var(--mova-border)] bg-[var(--mova-card)] px-3 py-3 text-sm text-[var(--mova-text)] outline-none" /></label>
@@ -253,7 +252,6 @@ export default function Explore() {
 
         {activeFilters.length > 0 && (
           <div className="mova-scrollbar-none mt-3 flex gap-2 overflow-x-auto pb-1">
-            <button onClick={clearFilters} className="shrink-0 rounded-full bg-[var(--mova-text)] px-3 py-1.5 text-xs font-semibold text-[var(--mova-bg)]">Limpiar filtros</button>
             {activeFilters.map(([key, value]) => (
               <span key={`${key}-${value}`} className="shrink-0 rounded-full bg-[var(--mova-accent-soft)] px-3 py-1.5 text-xs font-semibold text-[var(--mova-accent)]">{value}</span>
             ))}

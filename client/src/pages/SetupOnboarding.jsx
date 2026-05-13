@@ -28,15 +28,15 @@ function AvatarPicker({ open, onClose, value, onSelect }) {
           <div className="mova-modal-wrap">
           <motion.div initial={{ opacity: 0, scale: 0.96, y: 18 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.96, y: 18 }} className="mova-modal relative z-10 overflow-hidden p-5">
             <div className="pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-[2rem] bg-[#FF74C8]/20 blur-xl" />
-            <div className="pointer-events-none absolute -bottom-8 left-8 h-24 w-32 rotate-[-14deg] rounded-[1rem] bg-[#7DFF72]/16 blur-lg" />
+            <div className="pointer-events-none absolute -bottom-8 left-8 h-24 w-32 rotate-[-14deg] rounded-[1rem] bg-[#85B96B]/16 blur-lg" />
             <div className="relative flex items-center justify-between"><h2 className="text-2xl font-semibold">Tu avatar</h2><button onClick={onClose} className="grid h-9 w-9 place-items-center rounded-[0.55rem] bg-white/[0.08]"><FiX /></button></div>
             <p className="relative mt-2 text-sm text-white/52">Elegí un avatar gráfico o subí una imagen desde tu galería.</p>
             <div className="relative mt-5 grid grid-cols-4 gap-3">
-              {avatars.map((avatar) => <button key={avatar} onClick={() => onSelect(avatar)} className={`grid h-16 place-items-center overflow-hidden rounded-[0.9rem] border ${value === avatar ? 'border-[#7DFF72]' : 'border-white/10'} bg-white/[0.06]`}><img src={avatar} alt="" className="h-full w-full object-cover" /></button>)}
+              {avatars.map((avatar) => <button key={avatar} onClick={() => onSelect(avatar)} className={`grid h-16 place-items-center overflow-hidden rounded-[0.9rem] border ${value === avatar ? 'border-[#85B96B]' : 'border-white/10'} bg-white/[0.06]`}><img src={avatar} alt="" className="h-full w-full object-cover" /></button>)}
             </div>
             <div className="relative mt-5 grid grid-cols-2 gap-3">
               <button className="flex items-center justify-center gap-2 rounded-[0.85rem] bg-white/[0.07] px-3 py-4 text-sm font-semibold text-white/70"><FiUpload /> Galería</button>
-              <button onClick={() => onSelect(avatars[0])} className="flex items-center justify-center gap-2 rounded-[0.85rem] bg-[#7DFF72] px-3 py-4 text-sm font-black text-[#0B0B0F]"><FiUser /> Elegir avatar</button>
+              <button onClick={() => onSelect(avatars[0])} className="flex items-center justify-center gap-2 rounded-[0.85rem] bg-[#85B96B] px-3 py-4 text-sm font-black text-[#0B0B0F]"><FiUser /> Elegir avatar</button>
             </div>
           </motion.div>
           </div>
@@ -109,7 +109,7 @@ export default function SetupOnboarding() {
           {step === 2 && (
             <>
               <h1 className="text-[2.15rem] font-semibold leading-tight">¿Qué planes te gustan?</h1>
-              <div className="mt-8 grid grid-cols-2 gap-3">{categories.map((item, index) => <button key={item} onClick={() => toggle('favoriteCategories', item)} className={`relative h-24 overflow-hidden rounded-[1rem] border text-sm font-semibold ${form.favoriteCategories.includes(item) ? 'border-[#7DFF72] bg-[var(--mova-accent-soft)] text-[#7DFF72]' : 'border-white/10 bg-white/[0.07] text-white/70'}`}><span className={`absolute -right-3 -top-3 h-12 w-12 rounded-[0.75rem] ${index % 3 === 0 ? 'bg-[#FF74C8]/20' : index % 3 === 1 ? 'bg-[#67C8FF]/18' : 'bg-[#FFD84D]/18'}`} />{item}</button>)}</div>
+              <div className="mt-8 grid grid-cols-2 gap-3">{categories.map((item, index) => <button key={item} onClick={() => toggle('favoriteCategories', item)} className={`relative h-24 overflow-hidden rounded-[1rem] border text-sm font-semibold ${form.favoriteCategories.includes(item) ? 'border-[#85B96B] bg-[var(--mova-accent-soft)] text-[#9BC27B]' : 'border-white/10 bg-white/[0.07] text-white/70'}`}><span className={`absolute -right-3 -top-3 h-12 w-12 rounded-[0.75rem] ${index % 3 === 0 ? 'bg-[#FF8A3D]/20' : index % 3 === 1 ? 'bg-[#67C8FF]/18' : 'bg-[#FFD84D]/18'}`} />{item}</button>)}</div>
             </>
           )}
           {step === 3 && (

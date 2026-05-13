@@ -161,11 +161,12 @@ export default function CreatePlan() {
           {step === 2 && (
             <>
               <h1 className="text-[2rem] font-semibold">Agregá fotos</h1>
-              <p className="mt-2 text-sm text-white/52">Pegá varias URLs. Queda listo para reemplazar por Cloudinary más adelante.</p>
-              <div className="mt-5 flex gap-2">
-                <input value={imageUrl} onChange={(event) => setImageUrl(event.target.value)} placeholder="URL de imagen" className="h-12 flex-1 rounded-[0.85rem] bg-white/[0.07] px-4 text-sm outline-none placeholder:text-white/35" />
-                <button onClick={addImage} className="grid h-12 w-12 place-items-center rounded-[0.85rem] bg-[var(--mova-accent)] text-[#0B0B0F]"><FiPlus /></button>
+              <p className="mt-2 text-sm text-white/52">Sumá fotos del plan. La subida real queda lista para conectar a galería/cámara.</p>
+              <div className="mt-5 grid grid-cols-2 gap-3">
+                <button onClick={() => setImageUrl(fallback)} className="flex h-12 items-center justify-center gap-2 rounded-[0.85rem] bg-white/[0.07] text-sm font-semibold text-white/72"><FiCamera /> Subir foto</button>
+                <button onClick={() => setImageUrl(fallback)} className="flex h-12 items-center justify-center gap-2 rounded-[0.85rem] bg-[var(--mova-accent)] text-sm font-black text-[#0B0B0F]"><FiPlus /> Galería</button>
               </div>
+              {imageUrl && <button onClick={addImage} className="mt-3 h-11 w-full rounded-[0.85rem] border border-white/10 bg-white/[0.06] text-sm font-semibold">Agregar foto seleccionada</button>}
               <div className="mt-5 grid grid-cols-2 gap-3">
                 {form.images.map((image) => (
                   <div key={image} className="relative h-36 overflow-hidden rounded-[0.95rem]">
@@ -173,7 +174,7 @@ export default function CreatePlan() {
                     <button onClick={() => removeImage(image)} className="absolute right-2 top-2 grid h-8 w-8 place-items-center rounded-[0.65rem] bg-black/55"><FiX /></button>
                   </div>
                 ))}
-                <button onClick={() => setImageUrl(fallback)} className="grid h-36 place-items-center rounded-[0.95rem] border border-dashed border-white/18 bg-white/[0.045] text-white/45"><FiCamera /></button>
+                <button onClick={() => setImageUrl(fallback)} className="grid h-36 place-items-center rounded-[0.95rem] border border-dashed border-white/18 bg-white/[0.045] text-center text-sm font-semibold text-white/45"><span><FiCamera className="mx-auto mb-2" />Tomar foto</span></button>
               </div>
             </>
           )}

@@ -89,7 +89,7 @@ function FeaturedCard({ item, saved, joined, onSave, onJoin }) {
         <button onClick={() => onSave(item.id)} className={`absolute right-4 top-4 grid h-10 w-10 place-items-center rounded-[0.65rem] backdrop-blur-xl ${saved ? 'bg-[#FF74C8] text-[#0B0B0F]' : 'bg-white/90 text-[#0B0B0F]'}`}>{saved ? <FiCheck /> : <FiBookmark />}</button>
         <div className="absolute bottom-0 left-0 right-0 p-5">
           <Link to={`/plan/${item.id}`} className="block">
-            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.16em] text-[#9eb8a0]">{neighborhoodOf(item)} · {categoryOf(item)}</p>
+            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.16em] text-[#9BC27B]">{neighborhoodOf(item)} · {categoryOf(item)}</p>
             <h2 className="max-w-[17rem] text-[2rem] font-semibold leading-[1.02] tracking-[0.005em] text-white">{titleOf(item)}</h2>
           </Link>
         </div>
@@ -128,14 +128,16 @@ function SmallCard({ item, saved, joined, onSave, onJoin }) {
 
 function EditorialBanner() {
   return (
-    <motion.section initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-80px' }} className="relative mt-9 overflow-hidden rounded-[1.05rem] border border-white/12 bg-[#111117] p-5 shadow-[0_18px_52px_rgba(0,0,0,.28)]">
-      <div className="pointer-events-none absolute -right-8 -top-8 h-28 w-28 rounded-[1.6rem] bg-[#67C8FF]/24 blur-xl" />
-      <div className="pointer-events-none absolute bottom-5 right-8 h-10 w-28 rotate-[-18deg] rounded-[0.55rem] bg-gradient-to-r from-[#FF74C8] to-[#FFD84D] opacity-90" />
-      <div className="pointer-events-none absolute -bottom-10 -left-10 h-32 w-32 rounded-full bg-[#9D7BFF]/22 blur-lg" />
-      <span className="relative rounded-[0.35rem] border border-white/14 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-white/70">MOVA Signal</span>
-      <h2 className="relative mt-5 max-w-[15rem] text-[1.65rem] font-semibold leading-[1.05]">Planes nuevos esta noche</h2>
-      <p className="relative mt-2 max-w-[16rem] text-sm leading-relaxed text-white/52">Gente buscando grupo, música cerca y lugares que se activan después del sunset.</p>
-      <Link to="/explore" className="relative mt-5 inline-flex rounded-[0.65rem] bg-white px-4 py-2 text-sm font-black text-[#0B0B0F]">Explorar</Link>
+    <motion.section initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-80px' }} className="relative mt-9 overflow-hidden rounded-[1.05rem] border border-white/10 bg-[#111117] p-5 shadow-[0_18px_52px_rgba(0,0,0,.28)]">
+      <div className="pointer-events-none absolute -right-10 -top-10 h-36 w-36 rounded-full bg-[#FF8A3D]/28 blur-xl" />
+      <div className="pointer-events-none absolute right-6 top-8 h-24 w-24 rounded-full border border-[#67C8FF]/35" />
+      <div className="pointer-events-none absolute bottom-7 right-7 h-12 w-32 rotate-[-18deg] rounded-[0.7rem] bg-gradient-to-r from-[#FF8A3D] via-[#FF74C8] to-[#9D7BFF] opacity-90" />
+      <div className="pointer-events-none absolute -bottom-12 -left-8 h-36 w-36 rounded-[2rem] bg-[#85B96B]/18 blur-lg" />
+      <div className="pointer-events-none absolute bottom-14 right-24 h-16 w-16 rounded-full bg-[#FFD84D]/18" />
+      <span className="relative rounded-[0.35rem] border border-white/14 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-white/70">MOVA Studio</span>
+      <h2 className="relative mt-5 max-w-[14rem] text-[1.85rem] font-semibold leading-[1.03]">Creá tu propio plan</h2>
+      <p className="relative mt-2 max-w-[15rem] text-sm leading-relaxed text-white/52">Armá una salida, invitá gente y mové tu ciudad desde una idea simple.</p>
+      <Link to="/create" className="relative mt-5 inline-flex rounded-[0.65rem] bg-white px-4 py-2 text-sm font-black text-[#0B0B0F]">Crear ahora</Link>
     </motion.section>
   );
 }

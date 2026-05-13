@@ -3,7 +3,7 @@ import L from 'leaflet';
 import { MapContainer, Marker, TileLayer, useMap } from 'react-leaflet';
 import { motion } from 'framer-motion';
 import { useEffect, useMemo, useState } from 'react';
-import { FiCheck, FiChevronDown, FiClock, FiHeart, FiMapPin, FiNavigation, FiSliders, FiX } from 'react-icons/fi';
+import { FiBookmark, FiCheck, FiChevronDown, FiClock, FiMapPin, FiNavigation, FiSliders, FiX } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 import { apiRequest } from '../lib/api';
 import { getCurrentUser } from '../lib/auth';
@@ -13,11 +13,11 @@ const cities = ['Montevideo', 'Buenos Aires', 'Madrid', 'Barcelona', 'París', '
 const categories = ['Todos', 'Night', 'Food', 'Chill', 'Outdoor', 'Música', 'Arte'];
 const categoryColors = {
   night: '#9D7BFF',
-  food: '#FF7A2F',
+  food: '#FF8A3D',
   café: '#FFD84D',
   cafe: '#FFD84D',
   chill: '#67C8FF',
-  outdoor: '#7DFF72',
+  outdoor: '#85B96B',
   música: '#FF74C8',
   musica: '#FF74C8',
   arte: '#FFD84D',
@@ -38,16 +38,16 @@ const fallbackCoordinates = {
 function categoryColor(category = '') {
   const normalized = String(category).toLowerCase();
   const match = Object.entries(categoryColors).find(([key]) => normalized.includes(key));
-  return match?.[1] || '#7DFF72';
+  return match?.[1] || '#85B96B';
 }
 
 function makeIcon(category) {
   const color = categoryColor(category);
   return L.divIcon({
   className: '',
-    html: `<div style="width:30px;height:30px;border-radius:13px 13px 13px 5px;background:${color};transform:rotate(-10deg);box-shadow:0 0 0 7px ${color}24,0 14px 30px rgba(0,0,0,.28);display:grid;place-items:center;border:1.5px solid rgba(245,245,245,.86)"><span style="width:12px;height:8px;border-radius:999px;background:#0B0B0F;display:block;transform:rotate(28deg) skewX(-12deg);opacity:.82"></span></div>`,
-    iconSize: [30, 30],
-    iconAnchor: [15, 15],
+    html: `<div style="position:relative;width:30px;height:30px;border-radius:50%;background:${color};box-shadow:0 0 0 7px ${color}22,0 14px 30px rgba(0,0,0,.28);border:2px solid rgba(245,245,245,.86)"><span style="position:absolute;left:7px;top:7px;width:14px;height:14px;border-radius:50%;background:rgba(11,11,15,.24);display:block"></span></div>`,
+    iconSize: [32, 32],
+    iconAnchor: [16, 16],
   });
 }
 
@@ -105,7 +105,7 @@ function CityPicker({ open, value, onClose, onSelect }) {
           <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Buscar ciudad" className="mt-5 h-12 w-full rounded-[0.9rem] border border-white/10 bg-white/[0.06] px-4 text-sm outline-none placeholder:text-white/35" />
           <div className="mt-4 max-h-72 space-y-2 overflow-y-auto">
             {filtered.map((city) => (
-              <button key={city} onClick={() => onSelect(city)} className={`flex w-full items-center justify-between rounded-[0.85rem] px-4 py-3 text-left text-sm font-semibold ${city === value ? 'bg-[#7DFF72] text-[#0B0B0F]' : 'bg-white/[0.06] text-white/78'}`}>
+              <button key={city} onClick={() => onSelect(city)} className={`flex w-full items-center justify-between rounded-[0.85rem] px-4 py-3 text-left text-sm font-semibold ${city === value ? 'bg-[#85B96B] text-[#0B0B0F]' : 'bg-white/[0.06] text-white/78'}`}>
                 {city}{city === value && <FiCheck />}
               </button>
             ))}
@@ -195,7 +195,7 @@ export default function Map() {
 
         <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-36 bg-gradient-to-b from-black/68 to-transparent" />
         <header className="pointer-events-auto relative z-20 flex items-center justify-between px-5 pt-7 text-[var(--mova-text)]">
-          <button onClick={() => setCityOpen(true)} className="inline-flex h-10 items-center gap-2 rounded-[0.7rem] border border-white/10 bg-[#101015]/82 px-4 text-sm font-semibold text-white shadow-[0_12px_32px_rgba(0,0,0,.24)] backdrop-blur-md">{city}<FiChevronDown className="text-[#7DFF72]" /></button>
+          <button onClick={() => setCityOpen(true)} className="inline-flex h-10 items-center gap-2 rounded-[0.7rem] border border-white/10 bg-[#101015]/82 px-4 text-sm font-semibold text-white shadow-[0_12px_32px_rgba(0,0,0,.24)] backdrop-blur-md">{city}<FiChevronDown className="text-[#9BC27B]" /></button>
           <div className="flex gap-2">
             <button onClick={requestLocation} className="grid h-10 w-10 place-items-center rounded-[0.7rem] border border-white/10 bg-white/90 text-lg text-[#0B0B0F] shadow-[0_12px_32px_rgba(0,0,0,.22)] backdrop-blur-md"><FiNavigation /></button>
             <button onClick={() => setFiltersOpen(true)} className="grid h-10 w-10 place-items-center rounded-[0.7rem] border border-white/10 bg-[#101015]/88 text-lg text-white/84 shadow-[0_12px_32px_rgba(0,0,0,.22)] backdrop-blur-md"><FiSliders /></button>
@@ -211,12 +211,12 @@ export default function Map() {
                   <Link to={`/plan/${selected.id}`}><h2 className="line-clamp-1 text-sm font-semibold leading-tight">{selected.title}</h2></Link>
                   <p className="mt-1 flex items-center gap-1 text-[11px] text-white/52"><FiMapPin /> {selected.neighborhood || selected.location}</p>
                   <p className="mt-1 flex items-center gap-1 text-[11px] text-white/52"><FiClock /> {selected.date || selected.fecha || 'Hoy'} · {selected.time || selected.horario || '21:00'}</p>
-                  <button type="button" onClick={() => join(selected.id)} className={`mt-2 rounded-[0.55rem] px-3 py-1.5 text-[11px] font-black ${joinedIds.has(selected.id) ? 'bg-[#67C8FF] text-[#0B0B0F]' : 'bg-[#7DFF72] text-[#0B0B0F]'}`}>{joinedIds.has(selected.id) ? 'Te sumaste' : 'Me sumo'}</button>
+                  <button type="button" onClick={() => join(selected.id)} className={`mt-2 rounded-[0.55rem] px-3 py-1.5 text-[11px] font-black ${joinedIds.has(selected.id) ? 'bg-[#67C8FF] text-[#0B0B0F]' : 'bg-[#85B96B] text-[#0B0B0F]'}`}>{joinedIds.has(selected.id) ? 'Te sumaste' : 'Me sumo'}</button>
                 </div>
               </div>
-              <button onClick={() => save(selected.id)} className="grid h-9 w-9 shrink-0 place-items-center rounded-[0.65rem] bg-[#FF74C8] text-[#0B0B0F]"><FiHeart /></button>
+              <button onClick={() => save(selected.id)} className="grid h-9 w-9 shrink-0 place-items-center rounded-[0.65rem] bg-white text-[#0B0B0F]"><FiBookmark /></button>
             </div>
-            {message && <p className="mt-2 text-[11px] font-semibold text-[#7DFF72]">{message}</p>}
+            {message && <p className="mt-2 text-[11px] font-semibold text-[#9BC27B]">{message}</p>}
           </motion.div>
         )}
 
@@ -227,7 +227,7 @@ export default function Map() {
           </div>
           <div className="mova-scrollbar-none flex gap-3 overflow-x-auto pb-1">
             {filtered.slice(0, 6).map((item) => (
-              <button key={item.id} onClick={() => setSelected(item)} className={`photo-card relative h-24 w-40 shrink-0 overflow-hidden rounded-[1rem] border text-left ${selected?.id === item.id ? 'border-[#7DFF72]' : 'border-white/10'}`}>
+              <button key={item.id} onClick={() => setSelected(item)} className={`photo-card relative h-24 w-40 shrink-0 overflow-hidden rounded-[1rem] border text-left ${selected?.id === item.id ? 'border-[#9BC27B]' : 'border-white/10'}`}>
                 <img src={item.image} alt="" className="h-full w-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/82" />
                 <span className="absolute bottom-7 left-3 right-3 line-clamp-1 text-[12px] font-semibold text-white">{item.title}</span>
@@ -251,7 +251,7 @@ export default function Map() {
                   <button key={chip} onClick={() => setActiveCategory(chip)} className={`rounded-[0.6rem] px-3 py-2 text-xs font-black ${activeCategory === chip ? 'bg-[#9D7BFF] text-white' : 'bg-white/[0.07] text-white/62'}`}>{chip}</button>
                 ))}
               </div>
-              <button onClick={() => setFiltersOpen(false)} className="mt-6 h-12 w-full rounded-[0.9rem] bg-[#7DFF72] text-sm font-black text-[#0B0B0F]">Aplicar filtros</button>
+              <button onClick={() => setFiltersOpen(false)} className="mt-6 h-12 w-full rounded-[0.9rem] bg-[#85B96B] text-sm font-black text-[#0B0B0F]">Aplicar filtros</button>
             </motion.div>
           </div>
         )}

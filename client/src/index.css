@@ -15,9 +15,9 @@
   --mova-muted: rgba(245, 245, 245, 0.58);
   --mova-border: rgba(255, 255, 255, 0.12);
   --mova-overlay: rgba(0, 0, 0, 0.78);
-  --mova-accent: #ff74c8;
-  --mova-accent-soft: rgba(255, 116, 200, 0.17);
-  --mova-green: #7dff72;
+  --mova-accent: #ff8a3d;
+  --mova-accent-soft: rgba(255, 138, 61, 0.16);
+  --mova-green: #85b96b;
   --mova-orange: #ff7a2f;
   --mova-blue: #67c8ff;
   --mova-yellow: #ffd84d;
@@ -32,8 +32,8 @@
   --mova-muted: rgba(245, 245, 245, 0.58);
   --mova-border: rgba(255, 255, 255, 0.12);
   --mova-overlay: rgba(0, 0, 0, 0.78);
-  --mova-accent: #ff74c8;
-  --mova-accent-soft: rgba(255, 116, 200, 0.17);
+  --mova-accent: #ff8a3d;
+  --mova-accent-soft: rgba(255, 138, 61, 0.16);
 }
 
 [data-theme='light'] {
@@ -50,13 +50,19 @@
 
 * {
   -webkit-tap-highlight-color: transparent;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+*::-webkit-scrollbar {
+  display: none;
 }
 
 body {
   margin: 0;
   min-height: 100vh;
   background:
-    radial-gradient(circle at 12% 0%, rgba(255, 116, 200, 0.12), transparent 28rem),
+    radial-gradient(circle at 12% 0%, rgba(255, 138, 61, 0.14), transparent 28rem),
     radial-gradient(circle at 88% 8%, rgba(103, 200, 255, 0.1), transparent 24rem),
     var(--mova-bg);
   color: var(--mova-text);
@@ -65,8 +71,8 @@ body {
 .mova-screen {
   min-height: 100vh;
   background:
-    radial-gradient(circle at 18% -8%, rgba(255, 116, 200, 0.09), transparent 19rem),
-    radial-gradient(circle at 96% 16%, rgba(125, 255, 114, 0.07), transparent 16rem),
+    radial-gradient(circle at 18% -8%, rgba(255, 138, 61, 0.1), transparent 19rem),
+    radial-gradient(circle at 96% 16%, rgba(133, 185, 107, 0.07), transparent 16rem),
     radial-gradient(circle at 0% 88%, rgba(157, 123, 255, 0.08), transparent 18rem),
     var(--mova-bg);
   color: var(--mova-text);
@@ -205,7 +211,7 @@ body {
   border-radius: 1.25rem;
   border: 1px solid var(--mova-border);
   background:
-    radial-gradient(circle at 16% 0%, rgba(255, 116, 200, 0.08), transparent 8rem),
+    radial-gradient(circle at 16% 0%, rgba(255, 138, 61, 0.08), transparent 8rem),
     radial-gradient(circle at 100% 14%, rgba(103, 200, 255, 0.07), transparent 7rem),
     var(--mova-card);
   box-shadow: 0 16px 44px rgba(0, 0, 0, 0.26);

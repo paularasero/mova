@@ -247,8 +247,12 @@ export default function PlanDetail() {
                 <Stars value={rating} onChange={setRating} />
               </div>
               <textarea value={comment} onChange={(event) => setComment(event.target.value)} placeholder="Contá cómo estuvo, con quién fuiste o qué llevar..." rows="3" className="mt-3 w-full resize-none rounded-[0.8rem] bg-white/[0.06] px-4 py-3 text-sm outline-none placeholder:text-white/34" />
-              <input value={photoUrl} onChange={(event) => setPhotoUrl(event.target.value)} placeholder="URL de foto opcional" className="mt-2 h-11 w-full rounded-[0.8rem] bg-white/[0.06] px-4 text-sm outline-none placeholder:text-white/34" />
-              <button className="mt-3 inline-flex h-11 items-center gap-2 rounded-[0.75rem] bg-white px-4 text-sm font-black text-[#0B0B0F]"><FiSend /> Publicar</button>
+              <div className="mt-3 flex gap-2">
+                <button type="button" onClick={() => setPhotoUrl(fallbackReviewPhoto)} className="h-11 rounded-[0.75rem] bg-white/[0.07] px-4 text-sm font-semibold text-white/68">Subir foto</button>
+                <button type="button" onClick={() => setPhotoUrl(fallbackReviewPhoto)} className="h-11 rounded-[0.75rem] bg-white/[0.07] px-4 text-sm font-semibold text-white/68">Galería</button>
+                <button className="ml-auto inline-flex h-11 items-center gap-2 rounded-[0.75rem] bg-white px-4 text-sm font-black text-[#0B0B0F]"><FiSend /> Publicar</button>
+              </div>
+              {photoUrl && <p className="mt-2 text-xs font-semibold text-[#9BC27B]">Foto seleccionada</p>}
             </form>
 
             <div className="mt-5 space-y-4">

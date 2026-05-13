@@ -3,9 +3,10 @@ import { FiArrowLeft, FiBell, FiBookmark, FiMapPin, FiMessageCircle, FiUsers } f
 import { useNavigate } from 'react-router-dom';
 
 const notifications = [
-  { icon: FiBookmark, title: 'Lucía guardó tu plan', text: 'Fogata en la playa empezó a moverse.', time: 'Hace 4 min', color: '#FF74C8' },
-  { icon: FiUsers, title: '4 personas se sumaron', text: 'Tu plan de esta noche tiene nuevo grupo.', time: 'Hace 18 min', color: '#7DFF72' },
-  { icon: FiMessageCircle, title: 'Martina comentó', text: '“Me encanta, voy con una amiga.”', time: 'Hace 1 h', color: '#67C8FF' },
+  { icon: FiUsers, title: 'Juan empezó a seguirte', text: 'También guarda planes de música y rambla.', time: 'Hace 2 min', color: '#FF8A3D' },
+  { icon: FiBookmark, title: 'Martina guardó tu plan', text: 'Fogata en la playa empezó a moverse.', time: 'Hace 4 min', color: '#FF74C8' },
+  { icon: FiUsers, title: '5 personas se sumaron', text: 'Tu plan de esta noche tiene nuevo grupo.', time: 'Hace 18 min', color: '#85B96B' },
+  { icon: FiMessageCircle, title: 'Sofía comentó tu experiencia', text: '“Me encanta, voy con una amiga.”', time: 'Hace 1 h', color: '#67C8FF' },
   { icon: FiMapPin, title: 'Nuevo evento cerca tuyo', text: 'Hay música en vivo a menos de 2 km.', time: 'Hoy', color: '#FFD84D' },
 ];
 
@@ -25,7 +26,7 @@ export default function Notifications() {
             <p className="text-sm font-semibold uppercase tracking-[0.18em] text-white/42">MOVA</p>
             <h1 className="mt-2 text-3xl font-semibold tracking-[0.005em]">Notificaciones</h1>
           </div>
-          <div className="grid h-11 w-11 place-items-center rounded-[0.7rem] bg-[#FF74C8] text-[#0B0B0F]">
+          <div className="grid h-11 w-11 place-items-center rounded-[0.7rem] bg-[#FF8A3D] text-[#0B0B0F]">
             <FiBell />
           </div>
         </header>

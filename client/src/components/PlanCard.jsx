@@ -12,10 +12,10 @@ export default function PlanCard({ plan, compact = false }) {
 
   return (
     <motion.article whileTap={{ scale: 0.98 }}>
-      <Link to={`/plan/${plan.id}`} className={`photo-card group relative block overflow-hidden rounded-[1.35rem] border border-white/12 bg-white/[0.06] shadow-[0_10px_0_rgba(255,116,200,.12),0_18px_50px_rgba(0,0,0,0.34)] ${compact ? 'h-44' : 'h-60'}`}>
+      <Link to={`/plan/${plan.id}`} className={`photo-card group relative block overflow-hidden rounded-[1.35rem] border border-white/12 bg-white/[0.06] shadow-[0_10px_0_rgba(255,138,61,.10),0_18px_50px_rgba(0,0,0,0.34)] ${compact ? 'h-44' : 'h-60'}`}>
         <img src={image} alt={title} className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105" loading="lazy" />
         <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/24 to-black/88" />
-        <span className="mova-sticker absolute right-3 top-3 rounded-full bg-[#7DFF72] px-2.5 py-1 text-[10px] font-black">{category}</span>
+        <span className="mova-sticker absolute right-3 top-3 rounded-[0.55rem] bg-[#85B96B] px-2.5 py-1 text-[10px] font-black">{category}</span>
         <div className="absolute inset-x-0 bottom-0 p-4">
           <div className="mb-2 flex items-center gap-1.5 text-xs font-medium text-white/70">
             <FiMapPin />
@@ -24,7 +24,7 @@ export default function PlanCard({ plan, compact = false }) {
           <h3 className="text-lg font-bold leading-tight tracking-[-0.01em] text-white">{title}</h3>
           {!compact && <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-white/68">{plan.description || plan.descripcion}</p>}
           <div className="mt-3 flex items-center justify-between text-xs font-semibold text-white/76">
-            <span className="rounded-full bg-[#FF74C8] px-3 py-1 text-[#0B0B0F]">{category}</span>
+            <span className="rounded-[0.55rem] bg-[#FF8A3D] px-3 py-1 text-[#0B0B0F]">{category}</span>
             <span className="flex items-center gap-1"><FiHeart /> {likes}</span>
           </div>
         </div>
