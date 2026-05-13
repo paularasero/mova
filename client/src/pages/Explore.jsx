@@ -100,7 +100,7 @@ function SearchCard({ item, saved, joined, onSave, onJoin, tall = false }) {
           <span className="truncate">{categoryOf(item)}</span>
           <span className="inline-flex shrink-0 items-center gap-1 text-[var(--mova-accent)]"><FiUsers /> {interestedOf(item)}</span>
         </div>
-        <button onClick={() => onJoin(item.id)} className={`h-9 w-full rounded-full text-xs font-bold transition ${joined ? 'bg-[var(--mova-card)] text-[var(--mova-accent)] ring-1 ring-[var(--mova-accent)]' : 'bg-[var(--mova-accent)] text-white'}`}>{joined ? 'Te sumaste' : 'Me sumo'}</button>
+        <button onClick={() => onJoin(item.id)} className={`h-9 w-full rounded-[0.8rem] text-xs font-bold transition ${joined ? 'bg-[#F2EDEA] text-[#111215]' : 'bg-[#FD7407] text-[#111215] hover:bg-[#F9A809]'}`}>{joined ? 'Te sumaste' : 'Me sumo'}</button>
       </div>
     </motion.article>
   );
@@ -258,7 +258,7 @@ export default function Explore() {
           </div>
         )}
 
-        {status === 'error' && <p className="mt-6 text-sm text-[#ff8f8f]">No se pudieron cargar las experiencias.</p>}
+        {status === 'error' && <p className="mt-6 text-sm text-[#FB97B3]">No se pudieron cargar las experiencias.</p>}
         <section className="mt-4">
           <div className="grid grid-cols-2 gap-3">
             {results.map((item, index) => <SearchCard key={item.id} item={item} saved={savedIds.has(item.id)} joined={joinedIds.has(item.id) || userJoined(item, user?.id)} onSave={saveExperience} onJoin={joinExperience} tall={index % 4 === 1 || index % 4 === 2} />)}

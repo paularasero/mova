@@ -2,10 +2,10 @@ import { motion } from 'framer-motion';
 import { FiEdit3, FiSearch } from 'react-icons/fi';
 
 const conversations = [
-  { name: 'Martina', text: 'Te paso el sunset del sábado?', time: '2m', unread: 1, avatar: 'https://api.dicebear.com/9.x/bottts-neutral/svg?seed=MartinaMova&backgroundColor=ff74c8' },
-  { name: 'Amigos', text: 'Sofi: Buen plan, me copo', time: '10m', unread: 3, avatar: 'https://api.dicebear.com/9.x/bottts-neutral/svg?seed=AmigosMova&backgroundColor=7dff72' },
-  { name: 'Tomás', text: 'Dale perfecto!', time: '1h', unread: 0, avatar: 'https://api.dicebear.com/9.x/bottts-neutral/svg?seed=TomasMova&backgroundColor=67c8ff' },
-  { name: 'Juana', text: 'Jajaja buena data', time: '2h', unread: 0, avatar: 'https://api.dicebear.com/9.x/bottts-neutral/svg?seed=JuanaMova&backgroundColor=ffd84d' },
+  { name: 'Martina', text: 'Te paso el sunset del sábado?', time: '2m', unread: 1, avatar: 'https://api.dicebear.com/9.x/bottts-neutral/svg?seed=MartinaMova&backgroundColor=fd7407' },
+  { name: 'Amigos', text: 'Sofi: Buen plan, me copo', time: '10m', unread: 3, avatar: 'https://api.dicebear.com/9.x/bottts-neutral/svg?seed=AmigosMova&backgroundColor=04533e' },
+  { name: 'Tomás', text: 'Dale perfecto!', time: '1h', unread: 0, avatar: 'https://api.dicebear.com/9.x/bottts-neutral/svg?seed=TomasMova&backgroundColor=0869d0' },
+  { name: 'Juana', text: 'Jajaja buena data', time: '2h', unread: 0, avatar: 'https://api.dicebear.com/9.x/bottts-neutral/svg?seed=JuanaMova&backgroundColor=f9a809' },
 ];
 
 export default function Messages() {
@@ -17,7 +17,7 @@ export default function Messages() {
             <p className="text-sm text-white/48">MOVA social</p>
             <h1 className="text-2xl font-semibold tracking-[0.01em]">Mensajes</h1>
           </div>
-          <button className="grid h-11 w-11 place-items-center rounded-[0.75rem] bg-[var(--mova-accent)] text-[#0B0B0F]">
+          <button className="grid h-11 w-11 place-items-center rounded-[0.75rem] bg-[var(--mova-accent)] text-[#111215]">
             <FiEdit3 />
           </button>
         </header>

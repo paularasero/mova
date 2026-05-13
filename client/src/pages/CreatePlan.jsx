@@ -17,7 +17,7 @@ const fallback = 'https://images.unsplash.com/photo-1517457373958-b7bdd4587205?a
 const MONTEVIDEO = [-34.9011, -56.1645];
 const accentIcon = L.divIcon({
   className: '',
-  html: '<div style="width:32px;height:32px;border-radius:999px;background:var(--mova-accent);box-shadow:0 0 0 8px rgba(123,97,255,.16);border:2px solid rgba(255,255,255,.9)"></div>',
+  html: '<div style="width:32px;height:32px;border-radius:999px;background:var(--mova-accent);box-shadow:0 0 0 8px rgba(253, 116, 7,.16);border:2px solid rgba(255,255,255,.9)"></div>',
   iconSize: [32, 32],
   iconAnchor: [16, 16],
 });
@@ -64,7 +64,7 @@ function MapPicker({ open, onClose, onSelect }) {
               <FiMapPin className="text-[var(--mova-accent)]" />
               <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Buscar dirección" className="w-full bg-transparent outline-none placeholder:text-white/35" />
             </label>
-            <div className="relative mt-4 h-64 overflow-hidden rounded-[1rem] bg-[#111]">
+            <div className="relative mt-4 h-64 overflow-hidden rounded-[1rem] bg-[#111215]">
               <MapContainer center={MONTEVIDEO} zoom={13} className="h-full w-full">
                 <TileLayer attribution='&copy; OpenStreetMap' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                 <ClickToSelect onSelect={(coords) => setPicked((prev) => ({ ...prev, ...coords, location: 'Punto seleccionado en mapa' }))} />
@@ -74,12 +74,52 @@ function MapPicker({ open, onClose, onSelect }) {
             <div className="mt-4 space-y-2">
               {filtered.map((item) => <button key={item.location} onClick={() => choose(item)} className="w-full rounded-[0.8rem] bg-white/[0.06] px-4 py-3 text-left text-sm font-semibold">{item.location} · {item.barrio}</button>)}
             </div>
-            <button onClick={() => { onSelect(picked); onClose(); }} className="mt-4 h-12 w-full rounded-[0.9rem] bg-[var(--mova-accent)] text-sm font-bold text-[#0B0B0F]">Guardar ubicación</button>
+            <button onClick={() => { onSelect(picked); onClose(); }} className="mt-4 h-12 w-full rounded-[0.9rem] bg-[var(--mova-accent)] text-sm font-bold text-[#111215]">Guardar ubicación</button>
           </motion.div>
           </div>
         </>
       )}
     </AnimatePresence>
+  );
+}
+
+function StepGraphic({ step }) {
+  const base = 'pointer-events-none relative my-5 h-28 overflow-hidden opacity-78';
+  if (step === 1) {
+    return (
+      <motion.div aria-hidden className={base} animate={{ y: [0, -5, 0] }} transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}>
+        <div className="absolute -left-8 bottom-[-3.5rem] h-40 w-40 rounded-t-full bg-[#FD7407]" />
+        <div className="absolute left-20 bottom-[-3rem] h-36 w-36 rounded-t-full bg-[#FB97B3]" />
+        <div className="absolute right-0 bottom-[-2.5rem] h-32 w-32 rounded-t-full bg-[#0869D0]" />
+      </motion.div>
+    );
+  }
+  if (step === 2) {
+    return (
+      <motion.div aria-hidden className={base} animate={{ x: [0, 4, 0] }} transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut' }}>
+        <div className="absolute left-2 top-0 h-24 w-[36%] rounded-full bg-[linear-gradient(180deg,#FD7407,#FB97B3,#0869D0)]" />
+        <div className="absolute bottom-0 right-2 top-0 w-[48%] bg-[#04533E]">
+          <div className="absolute left-8 top-4 h-16 w-16 rounded-full bg-[#F9A809]" />
+          <div className="absolute bottom-0 left-5 right-5 top-16 flex justify-between">{Array.from({ length: 8 }, (_, i) => <span key={i} className="h-full w-[3px] bg-[#FD7407]" />)}</div>
+        </div>
+      </motion.div>
+    );
+  }
+  if (step === 3) {
+    return (
+      <motion.div aria-hidden className={base} animate={{ opacity: [0.68, 0.9, 0.68] }} transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}>
+        <div className="absolute inset-0 flex gap-2">
+          {['#FD7407', '#F9A809', '#FB97B3', '#0869D0', '#04533E'].map((color) => <span key={color} className="h-full flex-1" style={{ backgroundColor: color }} />)}
+        </div>
+      </motion.div>
+    );
+  }
+  return (
+    <motion.div aria-hidden className={base} animate={{ scale: [1, 1.02, 1] }} transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}>
+      <div className="absolute left-0 top-0 h-24 w-24 rounded-full bg-[#F9A809]" />
+      <div className="absolute left-20 top-3 h-24 w-24 rounded-full bg-[#FB97B3]" />
+      <div className="absolute right-4 top-2 h-24 w-24 rounded-full bg-[#0869D0]" />
+    </motion.div>
   );
 }
 
@@ -135,22 +175,23 @@ export default function CreatePlan() {
 
   return (
     <main className="mova-screen">
-      <section className="mova-mobile px-5 pb-28 pt-7">
-        <header className="flex items-center justify-between">
-          <button onClick={prev} className="grid h-11 w-11 place-items-center rounded-[0.75rem] bg-white/[0.07] text-xl"><IoArrowBack /></button>
+      <section className="mova-mobile relative overflow-hidden px-5 pb-28 pt-7">
+        <header className="relative z-10 flex items-center justify-between">
+          <button onClick={prev} className="grid h-11 w-11 place-items-center rounded-[0.16rem] bg-white/[0.07] text-xl"><IoArrowBack /></button>
           <div className="text-right">
             <p className="text-xs text-white/38">Paso {step} de 4</p>
             <div className="mt-2 h-1.5 w-28 overflow-hidden rounded-full bg-white/10"><motion.div animate={{ width: progress }} className="h-full rounded-full bg-[var(--mova-accent)]" /></div>
           </div>
         </header>
 
-        <motion.div key={step} initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} className="mt-8">
+        <motion.div key={step} initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} className="relative z-10 mt-8">
           {step === 1 && (
             <>
               <h1 className="text-[2rem] font-semibold leading-tight tracking-[0.005em]">¿Qué tipo de experiencia querés compartir?</h1>
-              <div className="mt-6 grid grid-cols-2 gap-3">
+              <StepGraphic step={step} />
+              <div className="mt-5 grid grid-cols-2 gap-3">
                 {categories.map((type) => (
-                  <motion.button whileTap={{ scale: 0.98 }} key={type} onClick={() => setForm((prev) => ({ ...prev, category: type, tags: Array.from(new Set([...prev.tags, type.toLowerCase()])) }))} className={`relative h-28 overflow-hidden rounded-[1rem] border p-4 text-left font-semibold ${form.category === type ? 'border-[var(--mova-accent)] bg-[var(--mova-accent-soft)] text-[var(--mova-accent)]' : 'border-[var(--mova-border)] bg-[var(--mova-card)] text-[var(--mova-text)]'}`}>
+                  <motion.button whileTap={{ scale: 0.98 }} key={type} onClick={() => setForm((prev) => ({ ...prev, category: type, tags: Array.from(new Set([...prev.tags, type.toLowerCase()])) }))} className={`relative h-28 overflow-hidden rounded-[0.35rem] border p-4 text-left font-semibold ${form.category === type ? 'border-[var(--mova-accent)] bg-[var(--mova-accent-soft)] text-[var(--mova-accent)]' : 'border-[var(--mova-border)] bg-[var(--mova-card)] text-[var(--mova-text)]'}`}>
                     <span className="absolute bottom-4 left-4">{type}</span>
                   </motion.button>
                 ))}
@@ -162,9 +203,10 @@ export default function CreatePlan() {
             <>
               <h1 className="text-[2rem] font-semibold">Agregá fotos</h1>
               <p className="mt-2 text-sm text-white/52">Sumá fotos del plan. La subida real queda lista para conectar a galería/cámara.</p>
+              <StepGraphic step={step} />
               <div className="mt-5 grid grid-cols-2 gap-3">
-                <button onClick={() => setImageUrl(fallback)} className="flex h-12 items-center justify-center gap-2 rounded-[0.85rem] bg-white/[0.07] text-sm font-semibold text-white/72"><FiCamera /> Subir foto</button>
-                <button onClick={() => setImageUrl(fallback)} className="flex h-12 items-center justify-center gap-2 rounded-[0.85rem] bg-[var(--mova-accent)] text-sm font-black text-[#0B0B0F]"><FiPlus /> Galería</button>
+                <button onClick={() => setImageUrl(fallback)} className="flex h-12 items-center justify-center gap-2 rounded-[0.16rem] bg-white/[0.07] text-sm font-semibold text-white/72"><FiCamera /> Subir foto</button>
+                <button onClick={() => setImageUrl(fallback)} className="flex h-12 items-center justify-center gap-2 rounded-[0.16rem] bg-[var(--mova-accent)] text-sm font-black text-[#111215]"><FiPlus /> Galería</button>
               </div>
               {imageUrl && <button onClick={addImage} className="mt-3 h-11 w-full rounded-[0.85rem] border border-white/10 bg-white/[0.06] text-sm font-semibold">Agregar foto seleccionada</button>}
               <div className="mt-5 grid grid-cols-2 gap-3">
@@ -182,6 +224,7 @@ export default function CreatePlan() {
           {step === 3 && (
             <>
               <h1 className="text-[2rem] font-semibold">Contanos más</h1>
+              <StepGraphic step={step} />
               <div className="mt-5 space-y-3">
                 <input value={form.title} onChange={update('title')} placeholder="Título" className="w-full rounded-[0.85rem] bg-white/[0.07] px-4 py-3.5 text-sm outline-none placeholder:text-white/35" />
                 <textarea value={form.description} onChange={update('description')} placeholder="Descripción editorial del plan" rows="4" className="w-full resize-none rounded-[0.85rem] bg-white/[0.07] px-4 py-3.5 text-sm outline-none placeholder:text-white/35" />
@@ -190,14 +233,14 @@ export default function CreatePlan() {
                   <input list="barrios" value={form.neighborhood} onChange={update('neighborhood')} placeholder="Barrio" className="rounded-[0.85rem] bg-white/[0.07] px-4 py-3.5 text-sm outline-none placeholder:text-white/35" />
                   <datalist id="barrios">{barrios.map((item) => <option key={item} value={item} />)}</datalist>
                 </div>
-                <button onClick={() => setMapOpen(true)} className="flex w-full items-center gap-3 rounded-[0.85rem] bg-white/[0.07] px-4 py-3.5 text-left text-sm text-white/74"><FiMapPin className="text-[var(--mova-accent)]" /> {form.location || 'Seleccionar ubicación en mapa'}</button>
+                <button onClick={() => setMapOpen(true)} className="flex w-full items-center gap-3 rounded-[0.16rem] bg-white/[0.07] px-4 py-3.5 text-left text-sm text-white/74"><FiMapPin className="text-[var(--mova-accent)]" /> {form.location || 'Seleccionar ubicación en mapa'}</button>
                 <div className="grid grid-cols-2 gap-3">
                   <input type="date" value={form.date} onChange={update('date')} className="rounded-[0.85rem] bg-white/[0.07] px-4 py-3.5 text-sm outline-none" />
                   <input type="time" value={form.time} onChange={update('time')} className="rounded-[0.85rem] bg-white/[0.07] px-4 py-3.5 text-sm outline-none" />
                 </div>
                 <div>
                   <p className="mb-2 text-sm font-semibold text-white/62">Compañía ideal</p>
-                  <div className="flex flex-wrap gap-2">{companies.map((item) => <button key={item} onClick={() => setForm((prev) => ({ ...prev, company: item }))} className={`rounded-[0.7rem] px-4 py-2 text-xs font-semibold ${form.company === item ? 'bg-[var(--mova-accent)] text-[#0B0B0F]' : 'bg-white/[0.07] text-white/68'}`}>{item}</button>)}</div>
+                  <div className="flex flex-wrap gap-2">{companies.map((item) => <button key={item} onClick={() => setForm((prev) => ({ ...prev, company: item }))} className={`rounded-[0.16rem] px-4 py-2 text-xs font-semibold ${form.company === item ? 'bg-[var(--mova-accent)] text-[#111215]' : 'bg-white/[0.07] text-white/68'}`}>{item}</button>)}</div>
                 </div>
                 <select value={form.price} onChange={update('price')} className="w-full rounded-[0.85rem] bg-white/[0.07] px-4 py-3.5 text-sm outline-none"><option>$</option><option>$$</option><option>$$$</option></select>
               </div>
@@ -207,7 +250,8 @@ export default function CreatePlan() {
           {step === 4 && (
             <>
               <h1 className="text-[2rem] font-semibold">Preview</h1>
-              <div className="mt-5 overflow-hidden rounded-[1.15rem] border border-white/10 bg-white/[0.06]">
+              <StepGraphic step={step} />
+              <div className="mt-5 overflow-hidden rounded-[0.45rem] border border-white/10 bg-white/[0.06]">
                 <img src={cover} alt="" className="h-64 w-full object-cover" />
                 <div className="p-4">
                   <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--mova-accent)]">{form.category}</p>
@@ -220,8 +264,8 @@ export default function CreatePlan() {
           )}
         </motion.div>
 
-        {message && <p className="mt-5 rounded-[0.85rem] bg-[var(--mova-accent-soft)] px-4 py-3 text-sm font-semibold text-[var(--mova-accent)]">{message}</p>}
-        <motion.button whileTap={{ scale: 0.985 }} onClick={step === 4 ? publish : next} className="mt-6 h-14 w-full rounded-[0.95rem] bg-[var(--mova-accent)] font-bold text-[#0B0B0F]">
+        {message && <p className="relative z-10 mt-5 rounded-[0.35rem] bg-[var(--mova-accent-soft)] px-4 py-3 text-sm font-semibold text-[var(--mova-accent)]">{message}</p>}
+        <motion.button whileTap={{ scale: 0.985 }} onClick={step === 4 ? publish : next} className="relative z-10 mt-6 h-14 w-full rounded-[0.16rem] bg-[var(--mova-accent)] font-bold text-[#111215]">
           {step === 4 ? 'Publicar experiencia' : 'Siguiente'}
         </motion.button>
       </section>

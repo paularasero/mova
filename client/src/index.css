@@ -8,44 +8,44 @@
   font-family: Inter, ui-sans-serif, system-ui, sans-serif;
   color: var(--mova-text);
   background-color: var(--mova-bg);
-  --mova-bg: #0b0b0f;
-  --mova-surface: #15151d;
+  --mova-bg: #111215;
+  --mova-surface: #111215;
   --mova-card: rgba(255, 255, 255, 0.075);
-  --mova-text: #f5f5f5;
-  --mova-muted: rgba(245, 245, 245, 0.58);
+  --mova-text: #F2EDEA;
+  --mova-muted: rgba(242, 237, 234, 0.58);
   --mova-border: rgba(255, 255, 255, 0.12);
   --mova-overlay: rgba(0, 0, 0, 0.78);
-  --mova-accent: #ff8a3d;
-  --mova-accent-soft: rgba(255, 138, 61, 0.16);
-  --mova-green: #85b96b;
-  --mova-orange: #ff7a2f;
-  --mova-blue: #67c8ff;
-  --mova-yellow: #ffd84d;
-  --mova-violet: #9d7bff;
+  --mova-accent: #FD7407;
+  --mova-accent-soft: rgba(253, 116, 7, 0.16);
+  --mova-green: #04533E;
+  --mova-orange: #FD7407;
+  --mova-blue: #0869D0;
+  --mova-yellow: #F9A809;
+  --mova-violet: #0869D0;
 }
 
 [data-theme='dark'] {
-  --mova-bg: #0b0b0f;
-  --mova-surface: #15151d;
+  --mova-bg: #111215;
+  --mova-surface: #111215;
   --mova-card: rgba(255, 255, 255, 0.075);
-  --mova-text: #f5f5f5;
-  --mova-muted: rgba(245, 245, 245, 0.58);
+  --mova-text: #F2EDEA;
+  --mova-muted: rgba(242, 237, 234, 0.58);
   --mova-border: rgba(255, 255, 255, 0.12);
   --mova-overlay: rgba(0, 0, 0, 0.78);
-  --mova-accent: #ff8a3d;
-  --mova-accent-soft: rgba(255, 138, 61, 0.16);
+  --mova-accent: #FD7407;
+  --mova-accent-soft: rgba(253, 116, 7, 0.16);
 }
 
 [data-theme='light'] {
-  --mova-bg: #fff7ef;
-  --mova-surface: #ffffff;
+  --mova-bg: #F2EDEA;
+  --mova-surface: #F2EDEA;
   --mova-card: rgba(255, 255, 255, 0.88);
-  --mova-text: #151015;
+  --mova-text: #111215;
   --mova-muted: rgba(21, 16, 21, 0.58);
   --mova-border: rgba(21, 16, 21, 0.1);
-  --mova-overlay: rgba(11, 11, 15, 0.54);
-  --mova-accent: #9d7bff;
-  --mova-accent-soft: rgba(157, 123, 255, 0.16);
+  --mova-overlay: rgba(17, 18, 21, 0.54);
+  --mova-accent: #0869D0;
+  --mova-accent-soft: rgba(8, 105, 208, 0.16);
 }
 
 * {
@@ -58,24 +58,54 @@
   display: none;
 }
 
+button {
+  border-radius: 0.16rem !important;
+}
+
 body {
   margin: 0;
   min-height: 100vh;
   background:
-    radial-gradient(circle at 12% 0%, rgba(255, 138, 61, 0.14), transparent 28rem),
-    radial-gradient(circle at 88% 8%, rgba(103, 200, 255, 0.1), transparent 24rem),
+    radial-gradient(circle at 12% 0%, rgba(253, 116, 7, 0.14), transparent 28rem),
+    radial-gradient(circle at 88% 8%, rgba(8, 105, 208, 0.1), transparent 24rem),
     var(--mova-bg);
   color: var(--mova-text);
 }
 
 .mova-screen {
+  position: relative;
   min-height: 100vh;
   background:
-    radial-gradient(circle at 18% -8%, rgba(255, 138, 61, 0.1), transparent 19rem),
-    radial-gradient(circle at 96% 16%, rgba(133, 185, 107, 0.07), transparent 16rem),
-    radial-gradient(circle at 0% 88%, rgba(157, 123, 255, 0.08), transparent 18rem),
+    radial-gradient(circle at 74% -10%, rgba(253, 116, 7, 0.16), transparent 12rem),
+    radial-gradient(circle at 110% 24%, rgba(4, 83, 62, 0.12), transparent 14rem),
+    linear-gradient(180deg, rgba(17, 18, 21, 0), rgba(17, 18, 21, 0.88)),
     var(--mova-bg);
   color: var(--mova-text);
+}
+
+.mova-screen::before {
+  pointer-events: none;
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  opacity: 0.32;
+  background:
+    radial-gradient(circle at 50% 8%, rgba(253, 116, 7, 0.18) 0 5.8rem, transparent 5.9rem),
+    radial-gradient(circle at 50% 38%, rgba(4, 83, 62, 0.14) 0 11rem, transparent 11.1rem),
+    radial-gradient(circle at 50% 58%, rgba(8, 105, 208, 0.14) 0 13rem, transparent 13.1rem);
+  filter: blur(14px);
+}
+
+.mova-screen > * {
+  position: relative;
+  z-index: 1;
+}
+
+.mova-screen button,
+.mova-screen a[aria-label],
+.mova-screen a[role='button'] {
+  border-radius: 0.16rem !important;
 }
 
 .mova-mobile {
@@ -153,7 +183,7 @@ body {
   max-width: 430px;
   max-height: 86vh;
   overflow: hidden;
-  border-radius: 22px 22px 0 0;
+  border-radius: 8px 8px 0 0;
   border: 1px solid var(--mova-border);
   background: var(--mova-surface);
   color: var(--mova-text);
@@ -165,17 +195,17 @@ body {
   max-width: 398px;
   max-height: 86vh;
   overflow-y: auto;
-  border-radius: 18px;
+  border-radius: 8px;
   border: 1px solid var(--mova-border);
   background: var(--mova-surface);
   color: var(--mova-text);
-  box-shadow: 0 28px 90px rgba(0, 0, 0, 0.5), 0 0 0 2px rgba(255, 216, 77, 0.04);
+  box-shadow: 0 28px 90px rgba(0, 0, 0, 0.5), 0 0 0 2px rgba(249, 168, 9, 0.04);
 }
 
-[data-theme='light'] [class*='bg-[#050505]'],
-[data-theme='light'] [class*='bg-[#090909]'],
-[data-theme='light'] [class*='bg-[#0b0b0b]'],
-[data-theme='light'] [class*='bg-[#111]'] {
+[data-theme='light'] [class*='bg-[#111215]'],
+[data-theme='light'] [class*='bg-[#111215]'],
+[data-theme='light'] [class*='bg-[#111215]'],
+[data-theme='light'] [class*='bg-[#111215]'] {
   background-color: var(--mova-bg) !important;
 }
 
@@ -195,7 +225,7 @@ body {
 [data-theme='light'] .photo-card,
 [data-theme='light'] .photo-card [class*='text-white'],
 [data-theme='light'] .photo-card [class*='text-white/'] {
-  color: #fff !important;
+  color: #F2EDEA !important;
 }
 
 .mova-accent {
@@ -208,18 +238,31 @@ body {
 
 .mova-playful-card {
   position: relative;
-  border-radius: 1.25rem;
+  border-radius: 0.45rem;
   border: 1px solid var(--mova-border);
   background:
-    radial-gradient(circle at 16% 0%, rgba(255, 138, 61, 0.08), transparent 8rem),
-    radial-gradient(circle at 100% 14%, rgba(103, 200, 255, 0.07), transparent 7rem),
+    radial-gradient(circle at 18% -14%, rgba(253, 116, 7, 0.14), transparent 7rem),
+    radial-gradient(circle at 92% 0%, rgba(251, 151, 179, 0.1), transparent 6rem),
+    linear-gradient(180deg, rgba(242, 237, 234, 0.04), rgba(242, 237, 234, 0)),
     var(--mova-card);
   box-shadow: 0 16px 44px rgba(0, 0, 0, 0.26);
 }
 
+.mova-playful-card::after {
+  pointer-events: none;
+  content: '';
+  position: absolute;
+  inset: auto -8% -18% -8%;
+  height: 46%;
+  background:
+    radial-gradient(circle at 50% 100%, rgba(8, 105, 208, 0.16) 0 48%, transparent 49%),
+    radial-gradient(circle at 48% 118%, rgba(4, 83, 62, 0.12) 0 62%, transparent 63%);
+  opacity: 0.72;
+}
+
 .mova-sticker {
   border: 1px solid rgba(255, 255, 255, 0.12);
-  color: #0b0b0f;
+  color: #111215;
   box-shadow: 0 10px 28px rgba(0, 0, 0, 0.18);
 }
 
@@ -231,6 +274,16 @@ body {
   border-radius: 999px;
   filter: blur(0.15px);
   transform-origin: center;
+}
+
+.mova-print-texture {
+  opacity: 0.22;
+  mix-blend-mode: multiply;
+  background-image:
+    radial-gradient(circle at 20% 20%, rgba(17, 18, 21, 0.18) 0 1px, transparent 1.4px),
+    radial-gradient(circle at 70% 60%, rgba(242, 237, 234, 0.18) 0 1px, transparent 1.5px),
+    linear-gradient(90deg, rgba(17, 18, 21, 0.08), rgba(242, 237, 234, 0.08));
+  background-size: 5px 5px, 7px 7px, 100% 100%;
 }
 
 .mova-scrollbar-none {

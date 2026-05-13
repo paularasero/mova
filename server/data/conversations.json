@@ -2,7 +2,7 @@
   {
     "id": "chat-rooftop",
     "name": "Martina",
-    "avatar": "https://api.dicebear.com/9.x/bottts-neutral/svg?seed=MartinaSocial&backgroundColor=ff74c8",
+    "avatar": "https://api.dicebear.com/9.x/bottts-neutral/svg?seed=MartinaSocial&backgroundColor=fd7407",
     "vibe": "rooftop",
     "preview": "¿Van hoy al rooftop?",
     "time": "2m",
@@ -16,7 +16,7 @@
   {
     "id": "chat-rambla",
     "name": "Juan",
-    "avatar": "https://api.dicebear.com/9.x/bottts-neutral/svg?seed=JuanSocial&backgroundColor=67c8ff",
+    "avatar": "https://api.dicebear.com/9.x/bottts-neutral/svg?seed=JuanSocial&backgroundColor=0869d0",
     "vibe": "rambla",
     "preview": "Nos vemos en la rambla",
     "time": "18m",
@@ -29,7 +29,7 @@
   {
     "id": "chat-cartas",
     "name": "Sofía",
-    "avatar": "https://api.dicebear.com/9.x/bottts-neutral/svg?seed=SofiaSocial&backgroundColor=ffd84d",
+    "avatar": "https://api.dicebear.com/9.x/bottts-neutral/svg?seed=SofiaSocial&backgroundColor=f9a809",
     "vibe": "cine",
     "preview": "Yo llevo cartas",
     "time": "1h",
@@ -42,7 +42,7 @@
   {
     "id": "chat-grupo",
     "name": "Grupo Fogata",
-    "avatar": "https://api.dicebear.com/9.x/bottts-neutral/svg?seed=LucasSocial&backgroundColor=9d7bff",
+    "avatar": "https://api.dicebear.com/9.x/bottts-neutral/svg?seed=LucasSocial&backgroundColor=04533e",
     "vibe": "outdoor",
     "preview": "¿Alguien lleva parlante?",
     "time": "3h",

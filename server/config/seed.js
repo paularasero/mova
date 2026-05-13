@@ -13,7 +13,7 @@ const demoComments = [
     text: 'Estuvo increíble el sunset. Fuimos 5 amigas y el ambiente fue re tranqui.',
     rating: 5,
     photos: ['https://images.unsplash.com/photo-1506869640319-fe1a24fd76dc?auto=format&fit=crop&w=500&q=80'],
-    avatar: 'https://api.dicebear.com/9.x/bottts-neutral/svg?seed=ReviewMartina&backgroundColor=ff74c8',
+    avatar: 'https://api.dicebear.com/9.x/bottts-neutral/svg?seed=ReviewMartina&backgroundColor=fd7407',
     createdAt: new Date('2026-05-01T21:00:00.000Z'),
   },
   {
@@ -23,7 +23,7 @@ const demoComments = [
     text: 'Muy buena música, gente abierta y fácil para caer sin conocer a nadie.',
     rating: 4,
     photos: ['https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=500&q=80'],
-    avatar: 'https://api.dicebear.com/9.x/bottts-neutral/svg?seed=ReviewJuan&backgroundColor=67c8ff',
+    avatar: 'https://api.dicebear.com/9.x/bottts-neutral/svg?seed=ReviewJuan&backgroundColor=0869d0',
     createdAt: new Date('2026-05-03T22:00:00.000Z'),
   },
   {
@@ -33,7 +33,7 @@ const demoComments = [
     text: 'Lleven abrigo y cámara con flash. El plan rinde mucho más de noche.',
     rating: 5,
     photos: ['https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?auto=format&fit=crop&w=500&q=80'],
-    avatar: 'https://api.dicebear.com/9.x/bottts-neutral/svg?seed=ReviewSofia&backgroundColor=ffd84d',
+    avatar: 'https://api.dicebear.com/9.x/bottts-neutral/svg?seed=ReviewSofia&backgroundColor=f9a809',
     createdAt: new Date('2026-05-05T19:30:00.000Z'),
   },
 ];

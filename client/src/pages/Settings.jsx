@@ -69,7 +69,7 @@ export default function Settings() {
               <FiChevronRight className="mova-muted" />
             </button>
           ))}
-          <button onClick={handleLogout} className="flex w-full items-center gap-3 rounded-2xl border border-red-400/10 bg-red-500/8 px-4 py-4 text-left text-[#ff7777]">
+          <button onClick={handleLogout} className="flex w-full items-center gap-3 rounded-2xl border border-red-400/10 bg-red-500/8 px-4 py-4 text-left text-[#FB97B3]">
             <FiLogOut />
             <span className="text-sm font-semibold">Cerrar sesión</span>
           </button>

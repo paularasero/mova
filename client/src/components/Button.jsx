@@ -4,7 +4,7 @@ export default function Button({ children, variant = 'primary', className = '', 
 
   const variants = {
     primary:
-      'bg-[var(--mova-accent)] text-white shadow-[0_10px_26px_rgba(123,97,255,0.22)] hover:brightness-[0.98]',
+      'bg-[var(--mova-accent)] text-[#111215] shadow-[0_10px_26px_rgba(253,116,7,0.18)] hover:bg-[#F9A809]',
     secondary: 'bg-white text-ink border border-black/10 hover:bg-black/[0.02]',
   };
 

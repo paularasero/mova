@@ -11,9 +11,9 @@ const fallbackImage = `data:image/svg+xml;utf8,${encodeURIComponent(`
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1200">
     <defs>
       <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0" stop-color="#7B61FF"/>
-        <stop offset=".48" stop-color="#202024"/>
-        <stop offset="1" stop-color="#FF9F5A"/>
+        <stop offset="0" stop-color="#0869D0"/>
+        <stop offset=".48" stop-color="#111215"/>
+        <stop offset="1" stop-color="#F9A809"/>
       </linearGradient>
     </defs>
     <rect width="900" height="1200" fill="url(#g)"/>
@@ -77,26 +77,26 @@ function matchesTab(item, tab, user) {
 
 function FeaturedCard({ item, saved, joined, onSave, onJoin }) {
   return (
-    <motion.article initial={{ opacity: 0, y: 24, filter: 'blur(8px)' }} animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }} whileTap={{ scale: 0.99 }} transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }} className="relative overflow-hidden rounded-[1.1rem] bg-[#111117] shadow-[0_24px_70px_rgba(0,0,0,.36)]">
-      <div className="pointer-events-none absolute -right-12 -top-10 z-10 h-36 w-36 rounded-[2rem] bg-[#FF74C8]/18 blur-xl" />
+    <motion.article initial={{ opacity: 0, y: 24, filter: 'blur(8px)' }} animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }} whileTap={{ scale: 0.99 }} transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }} className="relative overflow-hidden rounded-[0.45rem] bg-[#111215] shadow-[0_24px_70px_rgba(0,0,0,.36)]">
+      <div className="pointer-events-none absolute -right-12 -top-10 z-10 h-36 w-36 rounded-[0.45rem] bg-[#FB97B3]/18 blur-xl" />
       <div className="photo-card relative h-[20rem] overflow-hidden">
         <Link to={`/plan/${item.id}`} className="block h-full">
           <img src={imageOf(item)} onError={(event) => { event.currentTarget.src = fallbackImage; }} alt={titleOf(item)} className="h-full w-full object-cover transition duration-700 hover:scale-105" />
         </Link>
         <div className="absolute inset-0 bg-gradient-to-b from-black/12 via-transparent to-black/86" />
         <span className="absolute left-4 top-4 rounded-[0.35rem] border border-white/20 bg-black/38 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/82 backdrop-blur-md">Plan del día</span>
-        <span className="absolute right-16 top-4 rounded-[0.45rem] bg-white px-3 py-1.5 text-xs font-black text-[#0B0B0F]">★ {item.rating || 4.8}</span>
-        <button onClick={() => onSave(item.id)} className={`absolute right-4 top-4 grid h-10 w-10 place-items-center rounded-[0.65rem] backdrop-blur-xl ${saved ? 'bg-[#FF74C8] text-[#0B0B0F]' : 'bg-white/90 text-[#0B0B0F]'}`}>{saved ? <FiCheck /> : <FiBookmark />}</button>
+        <span className="absolute right-16 top-4 rounded-[0.45rem] bg-white px-3 py-1.5 text-xs font-black text-[#111215]">★ {item.rating || 4.8}</span>
+        <button onClick={() => onSave(item.id)} className={`absolute right-4 top-4 grid h-10 w-10 place-items-center rounded-[0.16rem] backdrop-blur-xl ${saved ? 'bg-[#FB97B3] text-[#111215]' : 'bg-white/90 text-[#111215]'}`}>{saved ? <FiCheck /> : <FiBookmark />}</button>
         <div className="absolute bottom-0 left-0 right-0 p-5">
           <Link to={`/plan/${item.id}`} className="block">
-            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.16em] text-[#9BC27B]">{neighborhoodOf(item)} · {categoryOf(item)}</p>
+            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.16em] text-[#F9A809]">{neighborhoodOf(item)} · {categoryOf(item)}</p>
             <h2 className="max-w-[17rem] text-[2rem] font-semibold leading-[1.02] tracking-[0.005em] text-white">{titleOf(item)}</h2>
           </Link>
         </div>
       </div>
       <div className="flex items-center justify-between gap-4 p-4">
         <span className="inline-flex items-center gap-1 text-sm font-semibold text-[var(--mova-muted)]"><FiUsers /> {interestedOf(item)} personas interesadas</span>
-        <button onClick={() => onJoin(item.id)} className={`h-10 shrink-0 rounded-[0.75rem] px-4 text-sm font-bold transition ${joined ? 'bg-white text-[#0B0B0F]' : 'bg-[#FF74C8] text-[#0B0B0F] shadow-[0_14px_32px_rgba(255,116,200,.22)]'}`}>{joined ? 'Te sumaste' : 'Me sumo'}</button>
+        <button onClick={() => onJoin(item.id)} className={`h-10 shrink-0 rounded-[0.16rem] px-4 text-sm font-bold transition ${joined ? 'bg-white text-[#111215]' : 'bg-[#FD7407] text-[#111215] shadow-[0_14px_32px_rgba(253,116,7,.22)] hover:bg-[#F9A809]'}`}>{joined ? 'Te sumaste' : 'Me sumo'}</button>
       </div>
     </motion.article>
   );
@@ -104,23 +104,23 @@ function FeaturedCard({ item, saved, joined, onSave, onJoin }) {
 
 function SmallCard({ item, saved, joined, onSave, onJoin }) {
   return (
-    <motion.article initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} whileTap={{ scale: 0.985 }} className="mova-playful-card h-[20rem] w-44 shrink-0 overflow-hidden rounded-[1.15rem]">
+    <motion.article initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} whileTap={{ scale: 0.985 }} className="mova-playful-card h-[20rem] w-44 shrink-0 overflow-hidden rounded-[0.45rem]">
       <div className="photo-card relative h-36 overflow-hidden">
         <Link to={`/plan/${item.id}`} className="block h-full">
           <img src={imageOf(item)} onError={(event) => { event.currentTarget.src = fallbackImage; }} alt={titleOf(item)} className="h-full w-full object-cover" loading="lazy" />
         </Link>
-        <button onClick={() => onSave(item.id)} className={`absolute right-2 top-2 grid h-8 w-8 place-items-center rounded-[0.7rem] backdrop-blur-xl ${saved ? 'bg-[#FF74C8] text-[#0B0B0F]' : 'bg-white/90 text-[#0B0B0F]'}`}>{saved ? <FiCheck /> : <FiBookmark />}</button>
+        <button onClick={() => onSave(item.id)} className={`absolute right-2 top-2 grid h-8 w-8 place-items-center rounded-[0.16rem] backdrop-blur-xl ${saved ? 'bg-[#FB97B3] text-[#111215]' : 'bg-white/90 text-[#111215]'}`}>{saved ? <FiCheck /> : <FiBookmark />}</button>
       </div>
       <div className="flex h-[11rem] flex-col justify-between p-3 text-left">
         <Link to={`/plan/${item.id}`} className="block">
           <h3 className="line-clamp-2 min-h-[2.5rem] text-left text-base font-semibold leading-tight">{titleOf(item)}</h3>
           <div className="mt-2 grid justify-items-start gap-1 text-left text-[11px] leading-snug text-[var(--mova-muted)]">
             <span className="truncate">{neighborhoodOf(item)}</span>
-            <span className="truncate text-[#9dddff]">{categoryOf(item)}</span>
+            <span className="truncate text-[#0869D0]">{categoryOf(item)}</span>
             <span className="inline-flex items-center gap-1 text-[var(--mova-accent)]"><FiUsers /> {interestedOf(item)} personas</span>
           </div>
         </Link>
-        <button onClick={() => onJoin(item.id)} className={`h-9 w-full rounded-[0.8rem] text-xs font-bold transition ${joined ? 'bg-white text-[#0B0B0F]' : 'bg-[#FF74C8] text-[#0B0B0F]'}`}>{joined ? 'Te sumaste' : 'Me sumo'}</button>
+        <button onClick={() => onJoin(item.id)} className={`h-9 w-full rounded-[0.16rem] text-xs font-bold transition ${joined ? 'bg-white text-[#111215]' : 'bg-[#FD7407] text-[#111215] hover:bg-[#F9A809]'}`}>{joined ? 'Te sumaste' : 'Me sumo'}</button>
         </div>
     </motion.article>
   );
@@ -128,16 +128,20 @@ function SmallCard({ item, saved, joined, onSave, onJoin }) {
 
 function EditorialBanner() {
   return (
-    <motion.section initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-80px' }} className="relative mt-9 overflow-hidden rounded-[1.05rem] border border-white/10 bg-[#111117] p-5 shadow-[0_18px_52px_rgba(0,0,0,.28)]">
-      <div className="pointer-events-none absolute -right-10 -top-10 h-36 w-36 rounded-full bg-[#FF8A3D]/28 blur-xl" />
-      <div className="pointer-events-none absolute right-6 top-8 h-24 w-24 rounded-full border border-[#67C8FF]/35" />
-      <div className="pointer-events-none absolute bottom-7 right-7 h-12 w-32 rotate-[-18deg] rounded-[0.7rem] bg-gradient-to-r from-[#FF8A3D] via-[#FF74C8] to-[#9D7BFF] opacity-90" />
-      <div className="pointer-events-none absolute -bottom-12 -left-8 h-36 w-36 rounded-[2rem] bg-[#85B96B]/18 blur-lg" />
-      <div className="pointer-events-none absolute bottom-14 right-24 h-16 w-16 rounded-full bg-[#FFD84D]/18" />
-      <span className="relative rounded-[0.35rem] border border-white/14 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-white/70">MOVA Studio</span>
+    <motion.section initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-80px' }} className="relative mt-9 overflow-hidden rounded-[0.45rem] border border-[#F2EDEA]/10 bg-[#111215] p-5 shadow-[0_18px_52px_rgba(0,0,0,.28)]">
+      <div className="pointer-events-none absolute bottom-0 right-0 top-0 w-[48%] bg-[#04533E]">
+        <div className="absolute left-5 right-5 top-6 aspect-square rounded-full bg-[linear-gradient(180deg,#FD7407,#F9A809)]" />
+        <div className="absolute bottom-0 left-3 right-3 top-28 flex justify-between overflow-hidden">
+          {Array.from({ length: 8 }, (_, index) => <span key={index} className="h-full w-[4px] bg-gradient-to-b from-[#FB97B3] via-[#FD7407] to-[#0869D0]" />)}
+        </div>
+      </div>
+      <div className="pointer-events-none absolute -left-16 bottom-[-7rem] h-72 w-72 rounded-t-full bg-[linear-gradient(180deg,#FD7407,#FB97B3_44%,#0869D0)] opacity-74" />
+      <div className="mova-print-texture pointer-events-none absolute inset-0" />
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,#111215_0%,rgba(17,18,21,.86)_58%,rgba(17,18,21,.28))]" />
+      <span className="relative rounded-[0.12rem] border border-white/14 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-white/70">MOVA Studio</span>
       <h2 className="relative mt-5 max-w-[14rem] text-[1.85rem] font-semibold leading-[1.03]">Creá tu propio plan</h2>
       <p className="relative mt-2 max-w-[15rem] text-sm leading-relaxed text-white/52">Armá una salida, invitá gente y mové tu ciudad desde una idea simple.</p>
-      <Link to="/create" className="relative mt-5 inline-flex rounded-[0.65rem] bg-white px-4 py-2 text-sm font-black text-[#0B0B0F]">Crear ahora</Link>
+      <Link to="/create" className="relative mt-5 inline-flex rounded-[0.16rem] bg-white px-4 py-2 text-sm font-black text-[#111215]">Crear ahora</Link>
     </motion.section>
   );
 }
@@ -184,7 +188,7 @@ function CitySheet({ open, onClose, currentUser, currentCity, onSave }) {
             <label className="mt-5 flex h-14 items-center gap-3 rounded-[0.9rem] bg-[var(--mova-card)] px-4"><FiSearch className="text-[var(--mova-muted)]" /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Buscar ciudad" className="w-full bg-transparent text-sm outline-none placeholder:text-[var(--mova-muted)]" /></label>
             <button onClick={() => selectCity(currentCity)} className="mt-4 flex w-full items-center gap-3 rounded-[0.85rem] bg-[var(--mova-accent-soft)] px-4 py-3 text-sm font-semibold text-[var(--mova-accent)]"><FiMapPin /> Usar ubicación actual</button>
             <div className="mt-4 max-h-[48vh] space-y-2 overflow-y-auto pb-3">
-              {filtered.map((city) => <button key={city} onClick={() => selectCity(city)} className={`w-full rounded-[0.8rem] px-4 py-3 text-left text-sm font-semibold ${city === currentCity ? 'bg-[var(--mova-accent)] text-[#0B0B0F]' : 'bg-[var(--mova-card)] text-[var(--mova-muted)]'}`}>{city}</button>)}
+              {filtered.map((city) => <button key={city} onClick={() => selectCity(city)} className={`w-full rounded-[0.8rem] px-4 py-3 text-left text-sm font-semibold ${city === currentCity ? 'bg-[var(--mova-accent)] text-[#111215]' : 'bg-[var(--mova-card)] text-[var(--mova-muted)]'}`}>{city}</button>)}
             </div>
           </motion.div>
           </div>
@@ -267,7 +271,7 @@ export default function Home() {
 
   return (
     <main className="mova-screen">
-      <section className="mova-mobile px-5 pb-28 pt-7">
+      <section className="mova-mobile relative px-5 pb-28 pt-7">
         <header className="flex items-center justify-between">
           <div>
             <p className="text-xl font-semibold">Hola, {user?.nombre?.split(' ')[0] || 'Paula'} 👋</p>
@@ -276,8 +280,8 @@ export default function Home() {
             </button>
           </div>
           <div className="flex gap-2">
-            <Link to="/notifications" aria-label="Notificaciones" className="grid h-11 w-11 place-items-center rounded-[0.7rem] border border-white/10 bg-white/[0.06] text-lg text-white/82"><FiBell /></Link>
-            <Link to="/saved" aria-label="Guardados" className="grid h-11 w-11 place-items-center rounded-[0.7rem] border border-white/10 bg-white/[0.06] text-lg text-white/82"><FiBookmark /></Link>
+            <Link to="/notifications" aria-label="Notificaciones" className="grid h-11 w-11 place-items-center rounded-[0.16rem] border border-white/10 bg-white/[0.06] text-lg text-white/82"><FiBell /></Link>
+            <Link to="/saved" aria-label="Guardados" className="grid h-11 w-11 place-items-center rounded-[0.16rem] border border-white/10 bg-white/[0.06] text-lg text-white/82"><FiBookmark /></Link>
           </div>
         </header>
 
@@ -286,17 +290,17 @@ export default function Home() {
         </div>
 
         <div className="mt-5">
-          <button onClick={() => navigate('/explore')} className="box-border flex h-14 w-full max-w-full items-center gap-3 rounded-full border border-[var(--mova-border)] bg-[var(--mova-surface)] px-4 text-left text-sm text-[var(--mova-muted)] shadow-[0_10px_30px_rgba(17,17,17,0.04)]"><FiSearch className="text-lg" /> Buscar experiencias</button>
+          <button onClick={() => navigate('/explore')} className="box-border flex h-14 w-full max-w-full items-center gap-3 rounded-[0.16rem] border border-[var(--mova-border)] bg-[var(--mova-surface)] px-4 text-left text-sm text-[var(--mova-muted)] shadow-[0_10px_30px_rgba(17,17,17,0.04)]"><FiSearch className="text-lg" /> Buscar experiencias</button>
         </div>
 
         <div className="mova-scrollbar-none mt-5 flex gap-2 overflow-x-auto pb-2">
           {tabs.map((tab) => (
-            <button key={tab} onClick={() => setActiveTab(tab)} className={`shrink-0 rounded-[0.55rem] border px-4 py-2 text-sm font-semibold capitalize transition ${activeTab === tab ? 'border-white bg-white text-[#0B0B0F]' : 'border-white/18 bg-transparent text-white/78'}`}>{tab}</button>
+            <button key={tab} onClick={() => setActiveTab(tab)} className={`shrink-0 rounded-[0.16rem] border px-4 py-2 text-sm font-semibold capitalize transition ${activeTab === tab ? 'border-white bg-white text-[#111215]' : 'border-white/18 bg-transparent text-white/78'}`}>{tab}</button>
           ))}
         </div>
 
-        {status === 'loading' && <div className="mt-8 h-[23rem] animate-pulse rounded-[2rem] bg-white/[0.06]" />}
-        {status === 'error' && <p className="mt-8 rounded-2xl bg-red-500/10 px-4 py-3 text-sm text-[#ff8f8f]">No se pudieron cargar las experiencias.</p>}
+        {status === 'loading' && <div className="mt-8 h-[23rem] animate-pulse rounded-[0.45rem] bg-white/[0.06]" />}
+        {status === 'error' && <p className="mt-8 rounded-[0.35rem] bg-red-500/10 px-4 py-3 text-sm text-[#FB97B3]">No se pudieron cargar las experiencias.</p>}
         {featured && <div className="mt-4"><FeaturedCard item={featured} saved={savedIds.has(featured.id)} joined={joinedIds.has(featured.id) || userJoined(featured, user?.id)} onSave={saveExperience} onJoin={joinExperience} /></div>}
         <Rail title="Populares cerca" items={popularNear} userId={user?.id} savedIds={savedIds} joinedIds={joinedIds} onSave={saveExperience} onJoin={joinExperience} />
         <EditorialBanner />

@@ -5,11 +5,11 @@ import { apiRequest } from '../lib/api';
 import { getCurrentUser, setCurrentUser } from '../lib/auth';
 
 const demoPeople = [
-  { id: 'demo-martina', name: 'Martina', username: 'martu', city: 'Montevideo', vibe: 'jazz', avatar: 'https://api.dicebear.com/9.x/bottts-neutral/svg?seed=MartinaSocial&backgroundColor=ff74c8' },
-  { id: 'demo-juan', name: 'Juan', username: 'juanplan', city: 'Montevideo', vibe: 'outdoor', avatar: 'https://api.dicebear.com/9.x/bottts-neutral/svg?seed=JuanSocial&backgroundColor=67c8ff' },
-  { id: 'demo-sofia', name: 'Sofía', username: 'sofiafilms', city: 'Montevideo', vibe: 'cine', avatar: 'https://api.dicebear.com/9.x/bottts-neutral/svg?seed=SofiaSocial&backgroundColor=ffd84d' },
-  { id: 'demo-lucas', name: 'Lucas', username: 'lucasnight', city: 'Montevideo', vibe: 'night', avatar: 'https://api.dicebear.com/9.x/bottts-neutral/svg?seed=LucasSocial&backgroundColor=9d7bff' },
-  { id: 'demo-ana', name: 'Ana', username: 'ana.cafe', city: 'Montevideo', vibe: 'cafés', avatar: 'https://api.dicebear.com/9.x/bottts-neutral/svg?seed=AnaSocial&backgroundColor=7dff72' },
+  { id: 'demo-martina', name: 'Martina', username: 'martu', city: 'Montevideo', vibe: 'jazz', avatar: 'https://api.dicebear.com/9.x/bottts-neutral/svg?seed=MartinaSocial&backgroundColor=fd7407' },
+  { id: 'demo-juan', name: 'Juan', username: 'juanplan', city: 'Montevideo', vibe: 'outdoor', avatar: 'https://api.dicebear.com/9.x/bottts-neutral/svg?seed=JuanSocial&backgroundColor=0869d0' },
+  { id: 'demo-sofia', name: 'Sofía', username: 'sofiafilms', city: 'Montevideo', vibe: 'cine', avatar: 'https://api.dicebear.com/9.x/bottts-neutral/svg?seed=SofiaSocial&backgroundColor=f9a809' },
+  { id: 'demo-lucas', name: 'Lucas', username: 'lucasnight', city: 'Montevideo', vibe: 'night', avatar: 'https://api.dicebear.com/9.x/bottts-neutral/svg?seed=LucasSocial&backgroundColor=04533e' },
+  { id: 'demo-ana', name: 'Ana', username: 'ana.cafe', city: 'Montevideo', vibe: 'cafés', avatar: 'https://api.dicebear.com/9.x/bottts-neutral/svg?seed=AnaSocial&backgroundColor=fb97b3' },
 ];
 
 const demoConversations = [
@@ -78,7 +78,7 @@ function normalizeUser(user) {
     username: user.username || name.toLowerCase().split(' ')[0],
     city: user.city || user.ciudad || 'Montevideo',
     vibe: user.preferences?.favoriteCategories?.[0] || 'planes',
-    avatar: `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${encodeURIComponent(seed)}&backgroundColor=ff74c8,67c8ff,ffd84d,9d7bff`,
+    avatar: `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${encodeURIComponent(seed)}&backgroundColor=fd7407,f9a809,fb97b3,0869d0,04533e`,
   };
 }
 
@@ -88,12 +88,12 @@ function Suggestion({ person, following, onFollow }) {
     <motion.article whileTap={{ scale: 0.98 }} className="w-24 shrink-0 text-center">
       <div className="relative mx-auto h-16 w-16 overflow-hidden rounded-[1rem] bg-white/[0.06] ring-1 ring-white/10">
         <img src={person.avatar} alt="" className="h-full w-full object-cover" />
-        <span className="absolute -bottom-1 -right-1 grid h-6 w-6 place-items-center rounded-[0.45rem] bg-white text-[10px] font-black text-[#0B0B0F]">+</span>
+        <span className="absolute -bottom-1 -right-1 grid h-6 w-6 place-items-center rounded-[0.45rem] bg-white text-[10px] font-black text-[#111215]">+</span>
       </div>
       <p className="mt-2 truncate text-sm font-semibold">{person.name}</p>
       <p className="truncate text-[11px] text-white/42">{person.vibe}</p>
       {!isDemo && (
-        <button onClick={() => onFollow(person.id)} className={`mt-2 rounded-[0.5rem] px-2 py-1 text-[10px] font-black ${following.includes(person.id) ? 'bg-white text-[#0B0B0F]' : 'bg-white/[0.08] text-white/60'}`}>
+        <button onClick={() => onFollow(person.id)} className={`mt-2 rounded-[0.16rem] px-2 py-1 text-[10px] font-black ${following.includes(person.id) ? 'bg-white text-[#111215]' : 'bg-white/[0.08] text-white/60'}`}>
           {following.includes(person.id) ? 'Siguiendo' : 'Seguir'}
         </button>
       )}
@@ -103,8 +103,8 @@ function Suggestion({ person, following, onFollow }) {
 
 function ChatRow({ chat, onOpen }) {
   return (
-    <motion.button initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} whileTap={{ scale: 0.99 }} onClick={() => onOpen(chat)} className="flex h-20 w-full items-center gap-3 overflow-hidden rounded-[1rem] bg-white/[0.045] p-3 text-left ring-1 ring-white/8">
-      <img src={chat.avatar} alt="" style={{ width: 52, height: 52 }} className="shrink-0 rounded-[0.9rem] object-cover" />
+    <motion.button initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} whileTap={{ scale: 0.99 }} onClick={() => onOpen(chat)} className="flex h-20 w-full items-center gap-3 overflow-hidden rounded-[0.35rem] bg-white/[0.045] p-3 text-left ring-1 ring-white/8">
+      <img src={chat.avatar} alt="" style={{ width: 52, height: 52 }} className="shrink-0 rounded-[0.25rem] object-cover" />
       <div className="min-w-0 flex-1">
         <div className="flex items-center justify-between gap-3">
           <p className="truncate font-semibold">{chat.name}</p>
@@ -112,7 +112,7 @@ function ChatRow({ chat, onOpen }) {
         </div>
         <p className="mt-1 truncate text-sm text-white/48">{chat.preview}</p>
       </div>
-      {chat.unread > 0 && <span className="grid h-6 min-w-6 place-items-center rounded-[0.45rem] bg-[#FF74C8] px-2 text-xs font-black text-[#0B0B0F]">{chat.unread}</span>}
+      {chat.unread > 0 && <span className="grid h-6 min-w-6 place-items-center rounded-[0.16rem] bg-[#FB97B3] px-2 text-xs font-black text-[#111215]">{chat.unread}</span>}
     </motion.button>
   );
 }
@@ -148,7 +148,7 @@ function ChatView({ chat, onBack }) {
           const mine = message.from === 'Yo';
           return (
             <motion.div key={`${message.text}-${index}`} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className={`flex ${mine ? 'justify-end' : 'justify-start'}`}>
-              <div className={`max-w-[78%] rounded-[1rem] px-4 py-3 ${mine ? 'bg-white text-[#0B0B0F]' : 'bg-white/[0.07] text-white'}`}>
+              <div className={`max-w-[78%] rounded-[1rem] px-4 py-3 ${mine ? 'bg-white text-[#111215]' : 'bg-white/[0.07] text-white'}`}>
                 {!mine && <p className="mb-1 text-[11px] font-semibold text-white/42">{message.from}</p>}
                 <p className="text-sm leading-relaxed">{message.text}</p>
                 <p className={`mt-1 text-[10px] ${mine ? 'text-black/42' : 'text-white/34'}`}>{message.time}</p>
@@ -158,9 +158,9 @@ function ChatView({ chat, onBack }) {
         })}
       </div>
 
-      <div className="fixed bottom-24 left-1/2 z-30 flex w-[92%] max-w-[398px] -translate-x-1/2 gap-2 rounded-[1rem] border border-white/10 bg-[#15151d]/94 p-2 backdrop-blur-xl">
+      <div className="fixed bottom-24 left-1/2 z-30 flex w-[92%] max-w-[398px] -translate-x-1/2 gap-2 rounded-[1rem] border border-white/10 bg-[#111215]/94 p-2 backdrop-blur-xl">
         <input value={draft} onChange={(event) => setDraft(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter') send(); }} placeholder="Escribir mensaje" className="h-11 flex-1 rounded-[0.75rem] bg-white/[0.06] px-4 text-sm outline-none placeholder:text-white/34" />
-        <button onClick={send} className="grid h-11 w-11 place-items-center rounded-[0.75rem] bg-[#FF74C8] text-[#0B0B0F]"><FiSend /></button>
+        <button onClick={send} className="grid h-11 w-11 place-items-center rounded-[0.75rem] bg-[#FB97B3] text-[#111215]"><FiSend /></button>
       </div>
     </motion.section>
   );
@@ -207,8 +207,8 @@ export default function Community() {
   return (
     <main className="mova-screen">
       <section className="mova-mobile relative overflow-hidden px-5 pb-32 pt-8">
-        <div className="pointer-events-none absolute -right-14 top-16 h-40 w-40 rounded-[2rem] bg-[#FF74C8]/12 blur-xl" />
-        <div className="pointer-events-none absolute -left-16 bottom-32 h-48 w-48 rounded-full bg-[#67C8FF]/8 blur-xl" />
+        <div className="pointer-events-none absolute -right-14 top-16 h-40 w-40 rounded-[2rem] bg-[#FB97B3]/12 blur-xl" />
+        <div className="pointer-events-none absolute -left-16 bottom-32 h-48 w-48 rounded-full bg-[#0869D0]/8 blur-xl" />
 
         <AnimatePresence mode="wait">
           {activeChat ? (

@@ -10,14 +10,14 @@ import { apiRequest } from '../lib/api';
 import { getCurrentUser } from '../lib/auth';
 
 const MONTEVIDEO = [-34.9011, -56.1645];
-const fallbackAvatar = 'https://api.dicebear.com/9.x/bottts-neutral/svg?seed=MOVAHost&backgroundColor=ff74c8,67c8ff,ffd84d';
+const fallbackAvatar = 'https://api.dicebear.com/9.x/bottts-neutral/svg?seed=MOVAHost&backgroundColor=fd7407,0869d0,f9a809';
 const fallbackReviewPhoto = 'https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?auto=format&fit=crop&w=600&q=80';
 
 const pinIcon = L.divIcon({
   className: '',
-  html: '<div style="width:28px;height:28px;border-radius:13px 13px 13px 5px;background:#ff74c8;transform:rotate(-10deg);display:grid;place-items:center;border:1.5px solid rgba(255,255,255,.86);box-shadow:0 0 0 8px rgba(255,116,200,.14),0 14px 30px rgba(0,0,0,.3)"><span style="width:11px;height:8px;border-radius:999px;background:#0b0b0f;display:block;transform:rotate(25deg)"></span></div>',
-  iconSize: [28, 28],
-  iconAnchor: [14, 14],
+  html: '<div style="width:18px;height:18px;border-radius:50%;background:#FD7407;border:2px solid #F2EDEA;box-shadow:0 0 0 6px rgba(253,116,7,.18),0 10px 24px rgba(17,18,21,.32)"></div>',
+  iconSize: [24, 24],
+  iconAnchor: [12, 12],
 });
 
 function coordsOf(experience) {
@@ -33,6 +33,36 @@ function imageOf(item) {
 function interestedOf(item) {
   return item?.interestedCount ?? item?.joinedUsers?.length ?? item?.saves ?? 0;
 }
+
+const demoComments = [
+  {
+    id: 'demo-review-1',
+    userName: 'Martina',
+    text: 'Fui el viernes pasado y estuvo increíble. Vale la pena llegar temprano porque se arma lindo grupo.',
+    rating: 5,
+    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 20).toISOString(),
+    avatar: 'https://api.dicebear.com/9.x/bottts-neutral/svg?seed=Martina&backgroundColor=fb97b3',
+    photos: ['https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?auto=format&fit=crop&w=500&q=80'],
+  },
+  {
+    id: 'demo-review-2',
+    userName: 'Juan',
+    text: '¿Hay lugar para sentarse o conviene llevar manta? La música estuvo MUY buena la otra vez.',
+    rating: 4,
+    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 42).toISOString(),
+    avatar: 'https://api.dicebear.com/9.x/bottts-neutral/svg?seed=Juan&backgroundColor=0869d0',
+    photos: [],
+  },
+  {
+    id: 'demo-review-3',
+    userName: 'Sofía',
+    text: 'Fuimos 5 amigas y terminamos conociendo gente nueva. Muy buen mood y cero presión.',
+    rating: 5,
+    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 68).toISOString(),
+    avatar: 'https://api.dicebear.com/9.x/bottts-neutral/svg?seed=Sofia&backgroundColor=f9a809',
+    photos: ['https://images.unsplash.com/photo-1528605248644-14dd04022da1?auto=format&fit=crop&w=500&q=80'],
+  },
+];
 
 function MiniMap({ experience }) {
   const center = coordsOf(experience);
@@ -51,7 +81,7 @@ function Stars({ value = 5, onChange }) {
     <div className="flex gap-1">
       {[1, 2, 3, 4, 5].map((star) => (
         <button key={star} type="button" onClick={() => onChange?.(star)} className={onChange ? 'text-lg' : 'pointer-events-none text-sm'}>
-          <FiStar fill={star <= value ? 'currentColor' : 'none'} className={star <= value ? 'text-[#D8C98F]' : 'text-white/24'} />
+          <FiStar fill={star <= value ? 'currentColor' : 'none'} className={star <= value ? 'text-[#F9A809]' : 'text-white/24'} />
         </button>
       ))}
     </div>
@@ -92,8 +122,9 @@ export default function PlanDetail() {
   const saved = experience.savedBy?.includes(user?.id);
   const joined = experience.joinedUsers?.includes(user?.id);
   const comments = experience.comments || [];
+  const socialComments = [...comments, ...demoComments].slice(0, Math.max(3, comments.length));
   const hostSeed = encodeURIComponent(experience.author || 'MOVA host');
-  const hostAvatar = `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${hostSeed}&backgroundColor=ff74c8,67c8ff,ffd84d`;
+  const hostAvatar = `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${hostSeed}&backgroundColor=fd7407,0869d0,f9a809`;
 
   const save = async () => {
     const data = await apiRequest(`/experiences/${id}/save`, {
@@ -160,20 +191,13 @@ export default function PlanDetail() {
             </div>
           </div>
           <div className="absolute bottom-5 left-5 right-5">
-            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.16em] text-[#9eb8a0]">{experience.neighborhood} · {experience.category}</p>
+            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.16em] text-white/86">{experience.neighborhood} · {experience.category}</p>
             <h1 className="max-w-[19rem] text-[2.35rem] font-semibold leading-[1.02] tracking-[0.005em] text-white">{experience.title}</h1>
             <div className="mt-4 flex items-center gap-2">
-              <span className="rounded-[0.55rem] bg-white px-3 py-1.5 text-xs font-black text-[#0B0B0F]">★ {experience.rating || 4.8}</span>
+              <span className="rounded-[0.55rem] bg-white px-3 py-1.5 text-xs font-black text-[#111215]">★ {experience.rating || 4.8}</span>
               <span className="rounded-[0.55rem] bg-black/42 px-3 py-1.5 text-xs font-semibold text-white/78 backdrop-blur-md">{interestedOf(experience)} personas</span>
             </div>
           </div>
-          {gallery.length > 1 && (
-            <div className="absolute bottom-5 right-5 flex gap-2">
-              {gallery.map((image, index) => (
-                <button key={image} onClick={() => setActiveImage(index)} className={`h-1.5 rounded-full transition-all ${activeImage === index ? 'w-8 bg-white' : 'w-4 bg-white/38'}`} aria-label={`Foto ${index + 1}`} />
-              ))}
-            </div>
-          )}
         </div>
 
         <div className="px-5 pt-6">
@@ -190,12 +214,12 @@ export default function PlanDetail() {
             </div>
           </section>
 
-          {message && <p className="mt-4 rounded-[0.85rem] bg-white/[0.06] px-4 py-3 text-sm font-semibold text-[#D8C98F]">{message}</p>}
+          {message && <p className="mt-4 rounded-[0.85rem] bg-white/[0.06] px-4 py-3 text-sm font-semibold text-[#F9A809]">{message}</p>}
 
           <motion.button
             whileTap={{ scale: 0.98 }}
             onClick={join}
-            style={{ backgroundColor: joined ? '#F5F5F5' : '#D97BAD', color: '#0B0B0F' }}
+            style={{ backgroundColor: joined ? '#F2EDEA' : '#FD7407', color: '#111215' }}
             className="mt-5 block h-14 w-full rounded-[0.95rem] text-base font-black shadow-[0_16px_38px_rgba(0,0,0,.22)] transition"
           >
             {joined ? 'Te sumaste' : 'Me sumo'}
@@ -236,7 +260,7 @@ export default function PlanDetail() {
             <div className="flex items-end justify-between">
               <div>
                 <h2 className="text-xl font-semibold">La gente comentó</h2>
-                <p className="mt-1 text-sm text-white/42">{comments.length || experience.commentCount || 0} experiencias compartidas</p>
+                <p className="mt-1 text-sm text-white/42">{socialComments.length || experience.commentCount || 0} experiencias compartidas</p>
               </div>
               <Stars value={Math.round(experience.rating || 5)} />
             </div>
@@ -250,16 +274,16 @@ export default function PlanDetail() {
               <div className="mt-3 flex gap-2">
                 <button type="button" onClick={() => setPhotoUrl(fallbackReviewPhoto)} className="h-11 rounded-[0.75rem] bg-white/[0.07] px-4 text-sm font-semibold text-white/68">Subir foto</button>
                 <button type="button" onClick={() => setPhotoUrl(fallbackReviewPhoto)} className="h-11 rounded-[0.75rem] bg-white/[0.07] px-4 text-sm font-semibold text-white/68">Galería</button>
-                <button className="ml-auto inline-flex h-11 items-center gap-2 rounded-[0.75rem] bg-white px-4 text-sm font-black text-[#0B0B0F]"><FiSend /> Publicar</button>
+                <button className="ml-auto inline-flex h-11 items-center gap-2 rounded-[0.75rem] bg-white px-4 text-sm font-black text-[#111215]"><FiSend /> Publicar</button>
               </div>
-              {photoUrl && <p className="mt-2 text-xs font-semibold text-[#9BC27B]">Foto seleccionada</p>}
+              {photoUrl && <p className="mt-2 text-xs font-semibold text-[#F9A809]">Foto seleccionada</p>}
             </form>
 
             <div className="mt-5 space-y-4">
-              {comments.map((item) => (
+              {socialComments.map((item) => (
                 <article key={item.id} className="rounded-[1rem] bg-white/[0.045] p-4 ring-1 ring-white/10">
                   <div className="flex items-start gap-3">
-                    <img src={item.avatar || `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${encodeURIComponent(item.userName)}&backgroundColor=ff74c8`} alt="" className="h-11 w-11 rounded-[0.75rem] object-cover" />
+                    <img src={item.avatar || `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${encodeURIComponent(item.userName)}&backgroundColor=fb97b3`} alt="" className="h-11 w-11 rounded-[0.75rem] object-cover" />
                     <div className="min-w-0 flex-1">
                       <div className="flex items-start justify-between gap-3">
                         <div>
@@ -269,13 +293,13 @@ export default function PlanDetail() {
                         <Stars value={Number(item.rating) || 5} />
                       </div>
                       <p className="mt-3 text-sm leading-relaxed text-white/62">{item.text}</p>
+                      {!!item.photos?.length && (
+                        <div className="mova-scrollbar-none mt-3 flex gap-2 overflow-x-auto pb-1">
+                          {item.photos.map((photo) => <img key={photo} src={photo} alt="" className="h-20 w-24 shrink-0 rounded-[0.35rem] object-cover" />)}
+                        </div>
+                      )}
                     </div>
                   </div>
-                  {!!item.photos?.length && (
-                    <div className="mt-3 flex gap-2 overflow-x-auto pb-1 mova-scrollbar-none">
-                      {item.photos.map((photo) => <img key={photo} src={photo} alt="" className="h-20 w-24 shrink-0 rounded-[0.75rem] object-cover" />)}
-                    </div>
-                  )}
                 </article>
               ))}
             </div>

@@ -23,7 +23,7 @@ const userSchema = new mongoose.Schema(
     },
     avatar: {
       type: String,
-      default: 'https://api.dicebear.com/9.x/bottts-neutral/svg?seed=MovaLime&backgroundColor=c8ff3d',
+      default: 'https://api.dicebear.com/9.x/bottts-neutral/svg?seed=MovaOrange&backgroundColor=fd7407,f9a809,fb97b3,0869d0,04533e',
     },
   },
   {
