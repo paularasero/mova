@@ -1,0 +1,56 @@
+[
+  {
+    "id": "chat-rooftop",
+    "name": "Martina",
+    "avatar": "https://api.dicebear.com/9.x/bottts-neutral/svg?seed=MartinaSocial&backgroundColor=ff74c8",
+    "vibe": "rooftop",
+    "preview": "¿Van hoy al rooftop?",
+    "time": "2m",
+    "unread": 2,
+    "messages": [
+      { "from": "Martina", "text": "¿Van hoy al rooftop?", "time": "20:14" },
+      { "from": "Yo", "text": "Estoy viendo si llego después de cenar", "time": "20:16" },
+      { "from": "Martina", "text": "Hay lugar todavía?", "time": "20:18" }
+    ]
+  },
+  {
+    "id": "chat-rambla",
+    "name": "Juan",
+    "avatar": "https://api.dicebear.com/9.x/bottts-neutral/svg?seed=JuanSocial&backgroundColor=67c8ff",
+    "vibe": "rambla",
+    "preview": "Nos vemos en la rambla",
+    "time": "18m",
+    "unread": 0,
+    "messages": [
+      { "from": "Juan", "text": "Nos vemos en la rambla", "time": "19:42" },
+      { "from": "Yo", "text": "Dale, llevo mate", "time": "19:44" }
+    ]
+  },
+  {
+    "id": "chat-cartas",
+    "name": "Sofía",
+    "avatar": "https://api.dicebear.com/9.x/bottts-neutral/svg?seed=SofiaSocial&backgroundColor=ffd84d",
+    "vibe": "cine",
+    "preview": "Yo llevo cartas",
+    "time": "1h",
+    "unread": 1,
+    "messages": [
+      { "from": "Sofía", "text": "Yo llevo cartas", "time": "18:05" },
+      { "from": "Sofía", "text": "Y después podemos caer al cine al aire libre", "time": "18:06" }
+    ]
+  },
+  {
+    "id": "chat-grupo",
+    "name": "Grupo Fogata",
+    "avatar": "https://api.dicebear.com/9.x/bottts-neutral/svg?seed=LucasSocial&backgroundColor=9d7bff",
+    "vibe": "outdoor",
+    "preview": "¿Alguien lleva parlante?",
+    "time": "3h",
+    "unread": 0,
+    "messages": [
+      { "from": "Lucas", "text": "¿Alguien lleva parlante?", "time": "16:31" },
+      { "from": "Yo", "text": "Yo puedo llevar uno chico", "time": "16:35" },
+      { "from": "Ana", "text": "Perfecto, yo llevo algo para picar", "time": "16:38" }
+    ]
+  }
+]

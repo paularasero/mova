@@ -220,24 +220,32 @@ router.delete('/:id', async (req, res) => {
 
 router.post('/:id/comment', async (req, res) => {
   try {
-    const { userId, userName, text } = req.body;
+    const { userId, userName, text, rating, photos, avatar } = req.body;
     if (!String(text || '').trim()) return res.status(400).json({ error: 'Escribí un comentario.' });
 
+    const parsedRating = Math.max(1, Math.min(5, Number(rating) || 5));
     const comment = {
       id: `c_${Date.now()}`,
       userId,
       userName: userName || 'Usuario MOVA',
       text: text.trim(),
+      rating: parsedRating,
+      photos: Array.isArray(photos) ? photos.filter(Boolean).slice(0, 3) : [],
+      avatar,
       createdAt: new Date(),
     };
 
+    const current = await Plan.findById(req.params.id);
+    if (!current) return res.status(404).json({ error: 'Experiencia no encontrada.' });
+    const existingRatings = (current.comments || []).map((item) => Number(item.rating)).filter(Boolean);
+    const nextRating = [...existingRatings, parsedRating].reduce((sum, value) => sum + value, 0) / (existingRatings.length + 1);
+
     const experience = await Plan.findByIdAndUpdate(
       req.params.id,
-      { $push: { comments: comment }, $inc: { comentarios: 1 } },
+      { $push: { comments: comment }, $inc: { comentarios: 1 }, $set: { rating: Number(nextRating.toFixed(1)) } },
       { returnDocument: 'after' }
     );
 
-    if (!experience) return res.status(404).json({ error: 'Experiencia no encontrada.' });
     if (userId) await User.findByIdAndUpdate(userId, { $inc: { puntos: 10 } });
 
     return res.json(experience);

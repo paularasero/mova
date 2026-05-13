@@ -5,9 +5,6 @@ import { FaApple, FaGoogle, FaInstagram } from 'react-icons/fa';
 import { IoArrowBack } from 'react-icons/io5';
 import { loginUser } from '../lib/auth';
 
-const loginImage =
-  'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1600&q=85';
-
 function isValidEmail(value) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 }
@@ -25,10 +22,24 @@ function SocialButton({ label, icon: Icon }) {
     <button
       type="button"
       aria-label={label}
-      className="grid h-12 w-12 place-items-center rounded-full border border-white/10 bg-white/[0.075] text-xl text-white/88 shadow-[0_12px_34px_rgba(0,0,0,0.24)] backdrop-blur-xl transition hover:bg-white/[0.13]"
+      className="grid h-12 w-12 place-items-center rounded-[0.75rem] border border-white/10 bg-white/[0.075] text-xl text-white/88 shadow-[0_12px_34px_rgba(0,0,0,0.24)] backdrop-blur-xl transition hover:bg-white/[0.13]"
     >
       <Icon />
     </button>
+  );
+}
+
+function AbstractAuthBackground() {
+  return (
+    <div className="absolute inset-0 overflow-hidden bg-[#0B0B0F]">
+      <motion.div className="absolute -left-20 top-24 h-72 w-72 rounded-full bg-[#FF74C8]/55" animate={{ x: [0, 18, 0], y: [0, -12, 0] }} transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }} />
+      <motion.div className="absolute right-[-4rem] top-12 h-80 w-28 rounded-full bg-[#67C8FF]/70" animate={{ rotate: [32, 46, 32], y: [0, 18, 0] }} transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }} />
+      <motion.div className="mova-ribbon absolute left-12 top-[17rem] h-11 w-80 bg-[linear-gradient(90deg,#FFD84D,rgba(255,255,255,.2))]" animate={{ rotate: [-18, -13, -18], x: [0, 10, 0] }} transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }} />
+      <motion.div className="mova-ribbon absolute -left-8 top-[23rem] h-10 w-72 bg-[linear-gradient(90deg,#0A7D44,rgba(103,200,255,.38))]" animate={{ rotate: [16, 10, 16], x: [0, -12, 0] }} transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }} />
+      <div className="absolute left-7 top-28 h-[28rem] w-px bg-white/10" />
+      <div className="absolute right-9 top-40 h-[24rem] w-px bg-white/10" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_35%,transparent,rgba(11,11,15,.18)_44%,#0B0B0F_82%)]" />
+    </div>
   );
 }
 
@@ -84,17 +95,15 @@ export default function Login() {
   };
 
   return (
-    <main className="min-h-screen bg-[#050505] text-white">
-      <section className="relative mx-auto flex min-h-screen w-full max-w-[430px] flex-col overflow-hidden bg-[#050505] px-5 pb-6 pt-7">
-        <img src={loginImage} alt="" className="absolute inset-0 h-full w-full scale-110 object-cover blur-[2px]" />
-        <div className="absolute inset-0 bg-black/68" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/88 via-black/48 to-black/96" />
+    <main className="min-h-screen bg-[#0B0B0F] text-white">
+      <section className="relative mx-auto flex min-h-screen w-full max-w-[430px] flex-col overflow-hidden bg-[#0B0B0F] px-5 pb-6 pt-7">
+        <AbstractAuthBackground />
 
         <header className="relative z-10 flex items-center justify-between">
           <Link
             to="/"
             aria-label="Volver"
-            className="grid h-11 w-11 place-items-center rounded-full bg-black/24 text-2xl text-white/86 backdrop-blur-xl transition hover:bg-white/10"
+            className="grid h-11 w-11 place-items-center rounded-[0.75rem] bg-white/[0.08] text-2xl text-white/86 backdrop-blur-xl transition hover:bg-white/10"
           >
             <IoArrowBack />
           </Link>
@@ -107,7 +116,7 @@ export default function Login() {
             initial={{ opacity: 0, y: 28, filter: 'blur(10px)' }}
             animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
             transition={{ duration: 0.58, ease: [0.16, 1, 0.3, 1] }}
-            className="rounded-[1.75rem] bg-black/30 p-4 shadow-[0_28px_90px_rgba(0,0,0,0.55)] backdrop-blur-xl"
+            className="rounded-[1.2rem] border border-white/10 bg-[#111117]/82 p-4 shadow-[0_24px_70px_rgba(0,0,0,0.48)] backdrop-blur-md"
           >
             <div className="mb-5">
               <p className="mb-2 text-xs font-semibold uppercase tracking-[0.24em] text-[var(--mova-accent)]">Acceso MOVA</p>
@@ -128,7 +137,7 @@ export default function Login() {
                     onBlur={() => setTouched((prev) => ({ ...prev, email: true }))}
                     placeholder="vos@email.com"
                     style={{ backgroundColor: 'rgba(13, 13, 13, 0.88)' }}
-                    className="w-full rounded-[1.2rem] border border-white/10 bg-[#0d0d0d]/86 px-4 py-3.5 text-base text-white outline-none transition placeholder:text-white/38 focus:border-[var(--mova-accent)] focus:bg-[#161616] focus:shadow-[0_0_0_4px_rgba(123,97,255,0.08)]"
+                    className="w-full rounded-[0.85rem] border border-white/10 bg-[#0d0d0d]/86 px-4 py-3.5 text-base text-white outline-none transition placeholder:text-white/38 focus:border-[var(--mova-accent)] focus:bg-[#161616] focus:shadow-[0_0_0_4px_rgba(255,116,200,0.08)]"
                   />
                   {touched.email && errors.email && <p className="mt-2 text-xs font-semibold text-[#ff7474]">{errors.email}</p>}
                 </label>
@@ -142,7 +151,7 @@ export default function Login() {
                     onBlur={() => setTouched((prev) => ({ ...prev, password: true }))}
                     placeholder="Mínimo 6 caracteres"
                     style={{ backgroundColor: 'rgba(13, 13, 13, 0.88)' }}
-                    className="w-full rounded-[1.2rem] border border-white/10 bg-[#0d0d0d]/86 px-4 py-3.5 text-base text-white outline-none transition placeholder:text-white/38 focus:border-[var(--mova-accent)] focus:bg-[#161616] focus:shadow-[0_0_0_4px_rgba(123,97,255,0.08)]"
+                    className="w-full rounded-[0.85rem] border border-white/10 bg-[#0d0d0d]/86 px-4 py-3.5 text-base text-white outline-none transition placeholder:text-white/38 focus:border-[var(--mova-accent)] focus:bg-[#161616] focus:shadow-[0_0_0_4px_rgba(255,116,200,0.08)]"
                   />
                   {touched.password && errors.password && (
                     <p className="mt-2 text-xs font-semibold text-[#ff7474]">{errors.password}</p>
@@ -160,12 +169,12 @@ export default function Login() {
               </div>
 
               {submitError && (
-                <p className="mt-4 rounded-2xl border border-red-400/15 bg-red-500/10 px-4 py-3 text-sm font-semibold text-[#ff8585]">
+                <p className="mt-4 rounded-[0.85rem] border border-red-400/15 bg-red-500/10 px-4 py-3 text-sm font-semibold text-[#ff8585]">
                   {submitError}
                 </p>
               )}
               {submitSuccess && (
-                <p className="mt-4 rounded-2xl border border-[var(--mova-accent)] bg-[var(--mova-accent-soft)] px-4 py-3 text-sm font-semibold text-[var(--mova-accent)]">
+                <p className="mt-4 rounded-[0.85rem] border border-[var(--mova-accent)] bg-[var(--mova-accent-soft)] px-4 py-3 text-sm font-semibold text-[var(--mova-accent)]">
                   {submitSuccess}
                 </p>
               )}
@@ -174,7 +183,7 @@ export default function Login() {
                 type="submit"
                 whileTap={{ scale: 0.98 }}
                 disabled={isSubmitting}
-                className={`mt-6 h-14 w-full rounded-full bg-[var(--mova-accent)] text-base font-bold text-white shadow-[0_18px_44px_rgba(123,97,255,0.28)] transition hover:brightness-105 disabled:cursor-wait ${
+                className={`mt-6 h-14 w-full rounded-[0.95rem] bg-[var(--mova-accent)] text-base font-bold text-[#0B0B0F] shadow-[0_18px_44px_rgba(255,116,200,0.22)] transition hover:brightness-105 disabled:cursor-wait ${
                   !isValid || isSubmitting ? 'opacity-70' : ''
                 }`}
               >

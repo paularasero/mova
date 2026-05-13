@@ -58,13 +58,13 @@ function MapPicker({ open, onClose, onSelect }) {
             <div className="mx-auto mb-5 h-1 w-10 rounded-full bg-white/18" />
             <div className="flex items-center justify-between">
               <h2 className="text-2xl font-semibold">Elegí ubicación</h2>
-              <button onClick={onClose} className="grid h-10 w-10 place-items-center rounded-full bg-white/[0.08]"><FiX /></button>
+              <button onClick={onClose} className="grid h-10 w-10 place-items-center rounded-[0.7rem] bg-white/[0.08]"><FiX /></button>
             </div>
-            <label className="mt-5 flex h-12 items-center gap-3 rounded-2xl bg-white/[0.07] px-4 text-sm">
+            <label className="mt-5 flex h-12 items-center gap-3 rounded-[0.85rem] bg-white/[0.07] px-4 text-sm">
               <FiMapPin className="text-[var(--mova-accent)]" />
               <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Buscar dirección" className="w-full bg-transparent outline-none placeholder:text-white/35" />
             </label>
-            <div className="relative mt-4 h-64 overflow-hidden rounded-[1.6rem] bg-[#111]">
+            <div className="relative mt-4 h-64 overflow-hidden rounded-[1rem] bg-[#111]">
               <MapContainer center={MONTEVIDEO} zoom={13} className="h-full w-full">
                 <TileLayer attribution='&copy; OpenStreetMap' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                 <ClickToSelect onSelect={(coords) => setPicked((prev) => ({ ...prev, ...coords, location: 'Punto seleccionado en mapa' }))} />
@@ -72,9 +72,9 @@ function MapPicker({ open, onClose, onSelect }) {
               </MapContainer>
             </div>
             <div className="mt-4 space-y-2">
-              {filtered.map((item) => <button key={item.location} onClick={() => choose(item)} className="w-full rounded-2xl bg-white/[0.06] px-4 py-3 text-left text-sm font-semibold">{item.location} · {item.barrio}</button>)}
+              {filtered.map((item) => <button key={item.location} onClick={() => choose(item)} className="w-full rounded-[0.8rem] bg-white/[0.06] px-4 py-3 text-left text-sm font-semibold">{item.location} · {item.barrio}</button>)}
             </div>
-            <button onClick={() => { onSelect(picked); onClose(); }} className="mt-4 h-12 w-full rounded-full bg-[var(--mova-accent)] text-sm font-bold text-white">Guardar ubicación</button>
+            <button onClick={() => { onSelect(picked); onClose(); }} className="mt-4 h-12 w-full rounded-[0.9rem] bg-[var(--mova-accent)] text-sm font-bold text-[#0B0B0F]">Guardar ubicación</button>
           </motion.div>
           </div>
         </>
@@ -137,7 +137,7 @@ export default function CreatePlan() {
     <main className="mova-screen">
       <section className="mova-mobile px-5 pb-28 pt-7">
         <header className="flex items-center justify-between">
-          <button onClick={prev} className="grid h-11 w-11 place-items-center rounded-full bg-white/[0.07] text-xl"><IoArrowBack /></button>
+          <button onClick={prev} className="grid h-11 w-11 place-items-center rounded-[0.75rem] bg-white/[0.07] text-xl"><IoArrowBack /></button>
           <div className="text-right">
             <p className="text-xs text-white/38">Paso {step} de 4</p>
             <div className="mt-2 h-1.5 w-28 overflow-hidden rounded-full bg-white/10"><motion.div animate={{ width: progress }} className="h-full rounded-full bg-[var(--mova-accent)]" /></div>
@@ -150,7 +150,7 @@ export default function CreatePlan() {
               <h1 className="text-[2rem] font-semibold leading-tight tracking-[0.005em]">¿Qué tipo de experiencia querés compartir?</h1>
               <div className="mt-6 grid grid-cols-2 gap-3">
                 {categories.map((type) => (
-                  <motion.button whileTap={{ scale: 0.96 }} key={type} onClick={() => setForm((prev) => ({ ...prev, category: type, tags: Array.from(new Set([...prev.tags, type.toLowerCase()])) }))} className={`relative h-28 overflow-hidden rounded-[1.4rem] border p-4 text-left font-semibold ${form.category === type ? 'border-[var(--mova-accent)] bg-[var(--mova-accent-soft)] text-[var(--mova-accent)]' : 'border-[var(--mova-border)] bg-[var(--mova-card)] text-[var(--mova-text)]'}`}>
+                  <motion.button whileTap={{ scale: 0.98 }} key={type} onClick={() => setForm((prev) => ({ ...prev, category: type, tags: Array.from(new Set([...prev.tags, type.toLowerCase()])) }))} className={`relative h-28 overflow-hidden rounded-[1rem] border p-4 text-left font-semibold ${form.category === type ? 'border-[var(--mova-accent)] bg-[var(--mova-accent-soft)] text-[var(--mova-accent)]' : 'border-[var(--mova-border)] bg-[var(--mova-card)] text-[var(--mova-text)]'}`}>
                     <span className="absolute bottom-4 left-4">{type}</span>
                   </motion.button>
                 ))}
@@ -163,17 +163,17 @@ export default function CreatePlan() {
               <h1 className="text-[2rem] font-semibold">Agregá fotos</h1>
               <p className="mt-2 text-sm text-white/52">Pegá varias URLs. Queda listo para reemplazar por Cloudinary más adelante.</p>
               <div className="mt-5 flex gap-2">
-                <input value={imageUrl} onChange={(event) => setImageUrl(event.target.value)} placeholder="URL de imagen" className="h-12 flex-1 rounded-2xl bg-white/[0.07] px-4 text-sm outline-none placeholder:text-white/35" />
-                <button onClick={addImage} className="grid h-12 w-12 place-items-center rounded-2xl bg-[var(--mova-accent)] text-white"><FiPlus /></button>
+                <input value={imageUrl} onChange={(event) => setImageUrl(event.target.value)} placeholder="URL de imagen" className="h-12 flex-1 rounded-[0.85rem] bg-white/[0.07] px-4 text-sm outline-none placeholder:text-white/35" />
+                <button onClick={addImage} className="grid h-12 w-12 place-items-center rounded-[0.85rem] bg-[var(--mova-accent)] text-[#0B0B0F]"><FiPlus /></button>
               </div>
               <div className="mt-5 grid grid-cols-2 gap-3">
                 {form.images.map((image) => (
-                  <div key={image} className="relative h-36 overflow-hidden rounded-2xl">
+                  <div key={image} className="relative h-36 overflow-hidden rounded-[0.95rem]">
                     <img src={image} alt="" className="h-full w-full object-cover" />
-                    <button onClick={() => removeImage(image)} className="absolute right-2 top-2 grid h-8 w-8 place-items-center rounded-full bg-black/55"><FiX /></button>
+                    <button onClick={() => removeImage(image)} className="absolute right-2 top-2 grid h-8 w-8 place-items-center rounded-[0.65rem] bg-black/55"><FiX /></button>
                   </div>
                 ))}
-                <button onClick={() => setImageUrl(fallback)} className="grid h-36 place-items-center rounded-2xl border border-dashed border-white/18 bg-white/[0.045] text-white/45"><FiCamera /></button>
+                <button onClick={() => setImageUrl(fallback)} className="grid h-36 place-items-center rounded-[0.95rem] border border-dashed border-white/18 bg-white/[0.045] text-white/45"><FiCamera /></button>
               </div>
             </>
           )}
@@ -182,23 +182,23 @@ export default function CreatePlan() {
             <>
               <h1 className="text-[2rem] font-semibold">Contanos más</h1>
               <div className="mt-5 space-y-3">
-                <input value={form.title} onChange={update('title')} placeholder="Título" className="w-full rounded-2xl bg-white/[0.07] px-4 py-3.5 text-sm outline-none placeholder:text-white/35" />
-                <textarea value={form.description} onChange={update('description')} placeholder="Descripción editorial del plan" rows="4" className="w-full resize-none rounded-2xl bg-white/[0.07] px-4 py-3.5 text-sm outline-none placeholder:text-white/35" />
+                <input value={form.title} onChange={update('title')} placeholder="Título" className="w-full rounded-[0.85rem] bg-white/[0.07] px-4 py-3.5 text-sm outline-none placeholder:text-white/35" />
+                <textarea value={form.description} onChange={update('description')} placeholder="Descripción editorial del plan" rows="4" className="w-full resize-none rounded-[0.85rem] bg-white/[0.07] px-4 py-3.5 text-sm outline-none placeholder:text-white/35" />
                 <div className="grid grid-cols-2 gap-3">
-                  <select value={form.city} onChange={update('city')} className="rounded-2xl bg-white/[0.07] px-4 py-3.5 text-sm outline-none">{cities.map((city) => <option key={city}>{city}</option>)}</select>
-                  <input list="barrios" value={form.neighborhood} onChange={update('neighborhood')} placeholder="Barrio" className="rounded-2xl bg-white/[0.07] px-4 py-3.5 text-sm outline-none placeholder:text-white/35" />
+                  <select value={form.city} onChange={update('city')} className="rounded-[0.85rem] bg-white/[0.07] px-4 py-3.5 text-sm outline-none">{cities.map((city) => <option key={city}>{city}</option>)}</select>
+                  <input list="barrios" value={form.neighborhood} onChange={update('neighborhood')} placeholder="Barrio" className="rounded-[0.85rem] bg-white/[0.07] px-4 py-3.5 text-sm outline-none placeholder:text-white/35" />
                   <datalist id="barrios">{barrios.map((item) => <option key={item} value={item} />)}</datalist>
                 </div>
-                <button onClick={() => setMapOpen(true)} className="flex w-full items-center gap-3 rounded-2xl bg-white/[0.07] px-4 py-3.5 text-left text-sm text-white/74"><FiMapPin className="text-[var(--mova-accent)]" /> {form.location || 'Seleccionar ubicación en mapa'}</button>
+                <button onClick={() => setMapOpen(true)} className="flex w-full items-center gap-3 rounded-[0.85rem] bg-white/[0.07] px-4 py-3.5 text-left text-sm text-white/74"><FiMapPin className="text-[var(--mova-accent)]" /> {form.location || 'Seleccionar ubicación en mapa'}</button>
                 <div className="grid grid-cols-2 gap-3">
-                  <input type="date" value={form.date} onChange={update('date')} className="rounded-2xl bg-white/[0.07] px-4 py-3.5 text-sm outline-none" />
-                  <input type="time" value={form.time} onChange={update('time')} className="rounded-2xl bg-white/[0.07] px-4 py-3.5 text-sm outline-none" />
+                  <input type="date" value={form.date} onChange={update('date')} className="rounded-[0.85rem] bg-white/[0.07] px-4 py-3.5 text-sm outline-none" />
+                  <input type="time" value={form.time} onChange={update('time')} className="rounded-[0.85rem] bg-white/[0.07] px-4 py-3.5 text-sm outline-none" />
                 </div>
                 <div>
                   <p className="mb-2 text-sm font-semibold text-white/62">Compañía ideal</p>
-                  <div className="flex flex-wrap gap-2">{companies.map((item) => <button key={item} onClick={() => setForm((prev) => ({ ...prev, company: item }))} className={`rounded-full px-4 py-2 text-xs font-semibold ${form.company === item ? 'bg-[var(--mova-accent)] text-white' : 'bg-white/[0.07] text-white/68'}`}>{item}</button>)}</div>
+                  <div className="flex flex-wrap gap-2">{companies.map((item) => <button key={item} onClick={() => setForm((prev) => ({ ...prev, company: item }))} className={`rounded-[0.7rem] px-4 py-2 text-xs font-semibold ${form.company === item ? 'bg-[var(--mova-accent)] text-[#0B0B0F]' : 'bg-white/[0.07] text-white/68'}`}>{item}</button>)}</div>
                 </div>
-                <select value={form.price} onChange={update('price')} className="w-full rounded-2xl bg-white/[0.07] px-4 py-3.5 text-sm outline-none"><option>$</option><option>$$</option><option>$$$</option></select>
+                <select value={form.price} onChange={update('price')} className="w-full rounded-[0.85rem] bg-white/[0.07] px-4 py-3.5 text-sm outline-none"><option>$</option><option>$$</option><option>$$$</option></select>
               </div>
             </>
           )}
@@ -206,7 +206,7 @@ export default function CreatePlan() {
           {step === 4 && (
             <>
               <h1 className="text-[2rem] font-semibold">Preview</h1>
-              <div className="mt-5 overflow-hidden rounded-[1.8rem] border border-white/10 bg-white/[0.06]">
+              <div className="mt-5 overflow-hidden rounded-[1.15rem] border border-white/10 bg-white/[0.06]">
                 <img src={cover} alt="" className="h-64 w-full object-cover" />
                 <div className="p-4">
                   <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--mova-accent)]">{form.category}</p>
@@ -219,8 +219,8 @@ export default function CreatePlan() {
           )}
         </motion.div>
 
-        {message && <p className="mt-5 rounded-2xl bg-[var(--mova-accent-soft)] px-4 py-3 text-sm font-semibold text-[var(--mova-accent)]">{message}</p>}
-        <motion.button whileTap={{ scale: 0.98 }} onClick={step === 4 ? publish : next} className="mt-6 h-14 w-full rounded-full bg-[var(--mova-accent)] font-bold text-white">
+        {message && <p className="mt-5 rounded-[0.85rem] bg-[var(--mova-accent-soft)] px-4 py-3 text-sm font-semibold text-[var(--mova-accent)]">{message}</p>}
+        <motion.button whileTap={{ scale: 0.985 }} onClick={step === 4 ? publish : next} className="mt-6 h-14 w-full rounded-[0.95rem] bg-[var(--mova-accent)] font-bold text-[#0B0B0F]">
           {step === 4 ? 'Publicar experiencia' : 'Siguiente'}
         </motion.button>
       </section>

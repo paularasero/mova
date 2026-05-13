@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useMemo, useState } from 'react';
-import { FiCamera, FiCheck, FiMapPin, FiSearch, FiUpload, FiUser, FiX } from 'react-icons/fi';
+import { FiCheck, FiMapPin, FiSearch, FiUpload, FiUser, FiX } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import { apiRequest } from '../lib/api';
 import { getCurrentUser, setCurrentUser } from '../lib/auth';
@@ -20,26 +20,23 @@ const avatars = [
 ];
 
 function AvatarPicker({ open, onClose, value, onSelect }) {
-  const [custom, setCustom] = useState('');
   return (
     <AnimatePresence>
       {open && (
         <>
           <motion.button initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} className="mova-overlay" aria-label="Cerrar avatares" />
-          <div className="mova-sheet-wrap">
-          <motion.div initial={{ y: 420 }} animate={{ y: 0 }} exit={{ y: 420 }} className="mova-sheet p-5 pb-8">
-            <div className="mx-auto mb-5 h-1 w-10 rounded-full bg-white/18" />
-            <div className="flex items-center justify-between"><h2 className="text-2xl font-semibold">Tu avatar</h2><button onClick={onClose} className="grid h-10 w-10 place-items-center rounded-full bg-white/[0.08]"><FiX /></button></div>
-            <div className="mt-5 grid grid-cols-4 gap-3">
-              {avatars.map((avatar) => <button key={avatar} onClick={() => onSelect(avatar)} className={`grid h-16 place-items-center overflow-hidden rounded-2xl border ${value === avatar ? 'border-[var(--mova-accent)]' : 'border-white/10'} bg-white/[0.06]`}><img src={avatar} alt="" className="h-full w-full object-cover" /></button>)}
+          <div className="mova-modal-wrap">
+          <motion.div initial={{ opacity: 0, scale: 0.96, y: 18 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.96, y: 18 }} className="mova-modal relative z-10 overflow-hidden p-5">
+            <div className="pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-[2rem] bg-[#FF74C8]/20 blur-xl" />
+            <div className="pointer-events-none absolute -bottom-8 left-8 h-24 w-32 rotate-[-14deg] rounded-[1rem] bg-[#7DFF72]/16 blur-lg" />
+            <div className="relative flex items-center justify-between"><h2 className="text-2xl font-semibold">Tu avatar</h2><button onClick={onClose} className="grid h-9 w-9 place-items-center rounded-[0.55rem] bg-white/[0.08]"><FiX /></button></div>
+            <p className="relative mt-2 text-sm text-white/52">Elegí un avatar gráfico o subí una imagen desde tu galería.</p>
+            <div className="relative mt-5 grid grid-cols-4 gap-3">
+              {avatars.map((avatar) => <button key={avatar} onClick={() => onSelect(avatar)} className={`grid h-16 place-items-center overflow-hidden rounded-[0.9rem] border ${value === avatar ? 'border-[#7DFF72]' : 'border-white/10'} bg-white/[0.06]`}><img src={avatar} alt="" className="h-full w-full object-cover" /></button>)}
             </div>
-            <div className="mt-5 grid grid-cols-2 gap-3">
-              <button className="flex items-center justify-center gap-2 rounded-2xl bg-white/[0.07] px-3 py-4 text-sm font-semibold text-white/70"><FiCamera /> Tomar foto</button>
-              <button className="flex items-center justify-center gap-2 rounded-2xl bg-white/[0.07] px-3 py-4 text-sm font-semibold text-white/70"><FiUpload /> Galería</button>
-            </div>
-            <div className="mt-4 flex gap-2">
-              <input value={custom} onChange={(event) => setCustom(event.target.value)} placeholder="O pegá URL de foto" className="h-12 flex-1 rounded-2xl bg-white/[0.07] px-4 text-sm outline-none placeholder:text-white/35" />
-              <button onClick={() => custom && onSelect(custom)} className="rounded-2xl bg-[var(--mova-accent)] px-4 text-sm font-bold text-white">Usar</button>
+            <div className="relative mt-5 grid grid-cols-2 gap-3">
+              <button className="flex items-center justify-center gap-2 rounded-[0.85rem] bg-white/[0.07] px-3 py-4 text-sm font-semibold text-white/70"><FiUpload /> Galería</button>
+              <button onClick={() => onSelect(avatars[0])} className="flex items-center justify-center gap-2 rounded-[0.85rem] bg-[#7DFF72] px-3 py-4 text-sm font-black text-[#0B0B0F]"><FiUser /> Elegir avatar</button>
             </div>
           </motion.div>
           </div>
@@ -90,56 +87,59 @@ export default function SetupOnboarding() {
 
   return (
     <main className="mova-screen">
-      <section className="mova-mobile flex flex-col px-5 pb-8 pt-8">
-        <header>
+      <section className="mova-mobile relative flex flex-col overflow-hidden px-5 pb-8 pt-8">
+        <div className="pointer-events-none absolute -right-16 top-24 h-48 w-48 rounded-[3rem] bg-[#9D7BFF]/12 blur-2xl" />
+        <div className="pointer-events-none absolute -left-14 bottom-28 h-40 w-56 rotate-[-18deg] rounded-[1.5rem] bg-[#FF7A2F]/10 blur-xl" />
+        <motion.div aria-hidden initial={false} animate={{ y: [0, -8, 0], rotate: [0, 2, 0] }} transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }} className="pointer-events-none absolute right-7 top-40 h-12 w-28 rounded-[0.75rem] bg-gradient-to-r from-[#67C8FF]/24 to-[#FF74C8]/24" />
+        <header className="relative z-10">
           <p className="text-2xl font-bold">MOVA<span className="text-[var(--mova-accent)]">.</span></p>
           <div className="mt-6 h-1.5 overflow-hidden rounded-full bg-white/10"><motion.div animate={{ width: `${step * 20}%` }} className="h-full rounded-full bg-[var(--mova-accent)]" /></div>
         </header>
 
-        <motion.div key={step} initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} className="mt-10 flex-1">
+        <motion.div key={step} initial={{ opacity: 0, x: 24, filter: 'blur(8px)' }} animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }} className="relative z-10 mt-10 flex-1">
           {step === 1 && (
             <>
               <h1 className="text-[2.15rem] font-semibold leading-tight">Elegí tu ciudad base.</h1>
               <p className="mt-3 text-sm text-white/52">Podés buscar cualquier ciudad. La usamos para recomendar planes cerca.</p>
-              <label className="mt-6 flex h-14 items-center gap-3 rounded-full bg-white/[0.07] px-4"><FiSearch className="text-white/45" /><input value={cityQuery} onChange={(event) => setCityQuery(event.target.value)} placeholder="Buscar ciudad" className="w-full bg-transparent text-sm outline-none placeholder:text-white/35" /></label>
-              <button onClick={() => setForm((prev) => ({ ...prev, city: 'Montevideo' }))} className="mt-4 flex w-full items-center gap-3 rounded-2xl bg-[var(--mova-accent-soft)] px-4 py-3 text-sm font-semibold text-[var(--mova-accent)]"><FiMapPin /> Usar ubicación actual</button>
-              <div className="mt-4 max-h-[44vh] space-y-2 overflow-y-auto pb-2">{filteredCities.map((city) => <button key={city} onClick={() => setForm((prev) => ({ ...prev, city }))} className={`flex w-full items-center justify-between rounded-2xl px-4 py-3 text-left font-semibold ${form.city === city ? 'bg-[var(--mova-accent)] text-white' : 'bg-white/[0.07] text-white'}`}>{city}{form.city === city && <FiCheck />}</button>)}</div>
+              <label className="mt-6 flex h-14 items-center gap-3 rounded-[0.9rem] bg-white/[0.07] px-4"><FiSearch className="text-white/45" /><input value={cityQuery} onChange={(event) => setCityQuery(event.target.value)} placeholder="Buscar ciudad" className="w-full bg-transparent text-sm outline-none placeholder:text-white/35" /></label>
+              <button onClick={() => setForm((prev) => ({ ...prev, city: 'Montevideo' }))} className="mt-4 flex w-full items-center gap-3 rounded-[0.85rem] bg-[var(--mova-accent-soft)] px-4 py-3 text-sm font-semibold text-[var(--mova-accent)]"><FiMapPin /> Usar ubicación actual</button>
+              <div className="mt-4 max-h-[44vh] space-y-2 overflow-y-auto pb-2">{filteredCities.map((city) => <button key={city} onClick={() => setForm((prev) => ({ ...prev, city }))} className={`flex w-full items-center justify-between rounded-[0.85rem] px-4 py-3 text-left font-semibold ${form.city === city ? 'bg-[var(--mova-accent)] text-[#0B0B0F]' : 'bg-white/[0.07] text-white'}`}>{city}{form.city === city && <FiCheck />}</button>)}</div>
             </>
           )}
           {step === 2 && (
             <>
               <h1 className="text-[2.15rem] font-semibold leading-tight">¿Qué planes te gustan?</h1>
-              <div className="mt-8 grid grid-cols-2 gap-3">{categories.map((item) => <button key={item} onClick={() => toggle('favoriteCategories', item)} className={`h-24 rounded-3xl border text-sm font-semibold ${form.favoriteCategories.includes(item) ? 'border-[var(--mova-accent)] bg-[var(--mova-accent-soft)] text-[var(--mova-accent)]' : 'border-white/10 bg-white/[0.07] text-white/70'}`}>{item}</button>)}</div>
+              <div className="mt-8 grid grid-cols-2 gap-3">{categories.map((item, index) => <button key={item} onClick={() => toggle('favoriteCategories', item)} className={`relative h-24 overflow-hidden rounded-[1rem] border text-sm font-semibold ${form.favoriteCategories.includes(item) ? 'border-[#7DFF72] bg-[var(--mova-accent-soft)] text-[#7DFF72]' : 'border-white/10 bg-white/[0.07] text-white/70'}`}><span className={`absolute -right-3 -top-3 h-12 w-12 rounded-[0.75rem] ${index % 3 === 0 ? 'bg-[#FF74C8]/20' : index % 3 === 1 ? 'bg-[#67C8FF]/18' : 'bg-[#FFD84D]/18'}`} />{item}</button>)}</div>
             </>
           )}
           {step === 3 && (
             <>
               <h1 className="text-[2.15rem] font-semibold leading-tight">¿Con quién solés salir?</h1>
-              <div className="mt-8 space-y-3">{companies.map((item) => <button key={item} onClick={() => toggle('company', item)} className={`flex w-full items-center justify-between rounded-3xl px-5 py-5 text-left font-semibold ${form.company.includes(item) ? 'bg-[var(--mova-accent)] text-white' : 'bg-white/[0.07] text-white'}`}>{item}{form.company.includes(item) && <FiCheck />}</button>)}</div>
+              <div className="mt-8 space-y-3">{companies.map((item) => <button key={item} onClick={() => toggle('company', item)} className={`flex w-full items-center justify-between rounded-[1rem] px-5 py-5 text-left font-semibold ${form.company.includes(item) ? 'bg-[var(--mova-accent)] text-[#0B0B0F]' : 'bg-white/[0.07] text-white'}`}>{item}{form.company.includes(item) && <FiCheck />}</button>)}</div>
             </>
           )}
           {step === 4 && (
             <>
               <h1 className="text-[2.15rem] font-semibold leading-tight">Tu cumpleaños.</h1>
               <p className="mt-3 text-sm text-white/52">Lo usamos para recomendaciones y momentos especiales.</p>
-              <input type="date" value={form.birthday} onChange={(event) => setForm((prev) => ({ ...prev, birthday: event.target.value }))} className="mt-8 h-14 w-full rounded-2xl bg-white/[0.07] px-4 text-sm outline-none" />
+              <input type="date" value={form.birthday} onChange={(event) => setForm((prev) => ({ ...prev, birthday: event.target.value }))} className="mt-8 h-14 w-full rounded-[0.9rem] bg-white/[0.07] px-4 text-sm outline-none" />
             </>
           )}
           {step === 5 && (
             <>
               <h1 className="text-[2.15rem] font-semibold leading-tight">Elegí tu foto.</h1>
-              <p className="mt-3 text-sm text-white/52">Podés elegir un avatar, pegar una URL o dejar uno por defecto.</p>
-              <button onClick={() => setAvatarOpen(true)} className="mt-8 flex w-full items-center gap-4 rounded-[1.6rem] bg-white/[0.07] p-4 text-left">
+              <p className="mt-3 text-sm text-white/52">Podés elegir un avatar gráfico o subir una imagen desde galería.</p>
+              <button onClick={() => setAvatarOpen(true)} className="mt-8 flex w-full items-center gap-4 rounded-[1rem] bg-white/[0.07] p-4 text-left">
                 <div className="grid h-24 w-24 place-items-center overflow-hidden rounded-full bg-white/[0.07] text-2xl text-white/42">{form.avatar ? <img src={form.avatar} alt="" className="h-full w-full object-cover" /> : <FiUser />}</div>
-                <div><p className="font-semibold">Cambiar avatar</p><p className="mt-1 text-sm text-white/45">Tomar foto, galería o avatar MOVA</p></div>
+                <div><p className="font-semibold">Cambiar avatar</p><p className="mt-1 text-sm text-white/45">Galería o avatar MOVA</p></div>
               </button>
             </>
           )}
         </motion.div>
 
-        <div className="mt-8 flex gap-3">
-          {step > 1 && <button onClick={() => setStep((value) => value - 1)} className="h-14 w-24 rounded-full bg-white/[0.08] font-semibold text-white/72">Atrás</button>}
-          <motion.button whileTap={{ scale: 0.98 }} onClick={step === 5 ? finish : () => setStep((value) => value + 1)} disabled={saving} className="h-14 flex-1 rounded-full bg-[var(--mova-accent)] font-bold text-white">
+        <div className="relative z-10 mt-8 flex gap-3">
+          {step > 1 && <button onClick={() => setStep((value) => value - 1)} className="h-14 w-24 rounded-[0.85rem] bg-white/[0.08] font-semibold text-white/72">Atrás</button>}
+          <motion.button whileTap={{ scale: 0.98 }} onClick={step === 5 ? finish : () => setStep((value) => value + 1)} disabled={saving} className="h-14 flex-1 rounded-[0.95rem] bg-[var(--mova-accent)] font-bold text-[#0B0B0F]">
             {step === 5 ? (saving ? 'Guardando...' : 'Entrar a MOVA') : 'Continuar'}
           </motion.button>
         </div>

@@ -8,29 +8,44 @@
   font-family: Inter, ui-sans-serif, system-ui, sans-serif;
   color: var(--mova-text);
   background-color: var(--mova-bg);
-  --mova-bg: #f8f8f6;
-  --mova-surface: #ffffff;
-  --mova-card: rgba(255, 255, 255, 0.92);
-  --mova-text: #111111;
-  --mova-muted: #6e6e73;
-  --mova-border: #e7e7e7;
-  --mova-overlay: rgba(4, 4, 4, 0.54);
-  --mova-accent: #7b61ff;
-  --mova-accent-soft: rgba(123, 97, 255, 0.14);
-  --mova-green: #6bcb77;
-  --mova-orange: #ff9f5a;
+  --mova-bg: #0b0b0f;
+  --mova-surface: #15151d;
+  --mova-card: rgba(255, 255, 255, 0.075);
+  --mova-text: #f5f5f5;
+  --mova-muted: rgba(245, 245, 245, 0.58);
+  --mova-border: rgba(255, 255, 255, 0.12);
+  --mova-overlay: rgba(0, 0, 0, 0.78);
+  --mova-accent: #ff74c8;
+  --mova-accent-soft: rgba(255, 116, 200, 0.17);
+  --mova-green: #7dff72;
+  --mova-orange: #ff7a2f;
+  --mova-blue: #67c8ff;
+  --mova-yellow: #ffd84d;
+  --mova-violet: #9d7bff;
 }
 
 [data-theme='dark'] {
-  --mova-bg: #0f0f10;
-  --mova-surface: #17181a;
-  --mova-card: rgba(255, 255, 255, 0.07);
+  --mova-bg: #0b0b0f;
+  --mova-surface: #15151d;
+  --mova-card: rgba(255, 255, 255, 0.075);
   --mova-text: #f5f5f5;
-  --mova-muted: #9b9b9b;
-  --mova-border: #2a2a2d;
-  --mova-overlay: rgba(0, 0, 0, 0.72);
-  --mova-accent: #8b7cff;
-  --mova-accent-soft: rgba(139, 124, 255, 0.16);
+  --mova-muted: rgba(245, 245, 245, 0.58);
+  --mova-border: rgba(255, 255, 255, 0.12);
+  --mova-overlay: rgba(0, 0, 0, 0.78);
+  --mova-accent: #ff74c8;
+  --mova-accent-soft: rgba(255, 116, 200, 0.17);
+}
+
+[data-theme='light'] {
+  --mova-bg: #fff7ef;
+  --mova-surface: #ffffff;
+  --mova-card: rgba(255, 255, 255, 0.88);
+  --mova-text: #151015;
+  --mova-muted: rgba(21, 16, 21, 0.58);
+  --mova-border: rgba(21, 16, 21, 0.1);
+  --mova-overlay: rgba(11, 11, 15, 0.54);
+  --mova-accent: #9d7bff;
+  --mova-accent-soft: rgba(157, 123, 255, 0.16);
 }
 
 * {
@@ -40,13 +55,20 @@
 body {
   margin: 0;
   min-height: 100vh;
-  background: var(--mova-bg);
+  background:
+    radial-gradient(circle at 12% 0%, rgba(255, 116, 200, 0.12), transparent 28rem),
+    radial-gradient(circle at 88% 8%, rgba(103, 200, 255, 0.1), transparent 24rem),
+    var(--mova-bg);
   color: var(--mova-text);
 }
 
 .mova-screen {
   min-height: 100vh;
-  background: var(--mova-bg);
+  background:
+    radial-gradient(circle at 18% -8%, rgba(255, 116, 200, 0.09), transparent 19rem),
+    radial-gradient(circle at 96% 16%, rgba(125, 255, 114, 0.07), transparent 16rem),
+    radial-gradient(circle at 0% 88%, rgba(157, 123, 255, 0.08), transparent 18rem),
+    var(--mova-bg);
   color: var(--mova-text);
 }
 
@@ -62,7 +84,7 @@ body {
   border: 1px solid var(--mova-border);
   background: var(--mova-card);
   color: var(--mova-text);
-  box-shadow: 0 12px 34px rgba(17, 17, 17, 0.04);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.24);
 }
 
 .mova-muted {
@@ -79,12 +101,12 @@ body {
   position: fixed;
   inset: 0;
   z-index: 900;
-  pointer-events: none;
+  pointer-events: auto;
   display: flex;
   align-items: center;
   justify-content: center;
   background: var(--mova-overlay);
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(6px);
 }
 
 .mova-sheet-wrap {
@@ -108,17 +130,28 @@ body {
   pointer-events: auto;
 }
 
+.mova-modal-wrap > .mova-overlay,
+.mova-sheet-wrap > .mova-overlay {
+  z-index: 0;
+}
+
+.mova-modal-wrap > .mova-modal,
+.mova-sheet-wrap > .mova-sheet {
+  position: relative;
+  z-index: 1;
+}
+
 .mova-sheet {
   pointer-events: auto;
   width: 100%;
   max-width: 430px;
   max-height: 86vh;
   overflow: hidden;
-  border-radius: 28px 28px 0 0;
+  border-radius: 22px 22px 0 0;
   border: 1px solid var(--mova-border);
   background: var(--mova-surface);
   color: var(--mova-text);
-  box-shadow: 0 -28px 80px rgba(0, 0, 0, 0.24);
+  box-shadow: 0 -28px 80px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 .mova-modal {
@@ -126,11 +159,11 @@ body {
   max-width: 398px;
   max-height: 86vh;
   overflow-y: auto;
-  border-radius: 28px;
+  border-radius: 18px;
   border: 1px solid var(--mova-border);
   background: var(--mova-surface);
   color: var(--mova-text);
-  box-shadow: 0 28px 90px rgba(0, 0, 0, 0.28);
+  box-shadow: 0 28px 90px rgba(0, 0, 0, 0.5), 0 0 0 2px rgba(255, 216, 77, 0.04);
 }
 
 [data-theme='light'] [class*='bg-[#050505]'],
@@ -167,6 +200,33 @@ body {
   background: var(--mova-accent);
 }
 
+.mova-playful-card {
+  position: relative;
+  border-radius: 1.25rem;
+  border: 1px solid var(--mova-border);
+  background:
+    radial-gradient(circle at 16% 0%, rgba(255, 116, 200, 0.08), transparent 8rem),
+    radial-gradient(circle at 100% 14%, rgba(103, 200, 255, 0.07), transparent 7rem),
+    var(--mova-card);
+  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.26);
+}
+
+.mova-sticker {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #0b0b0f;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.18);
+}
+
+.mova-organic {
+  border-radius: 34% 66% 54% 46% / 44% 36% 64% 56%;
+}
+
+.mova-ribbon {
+  border-radius: 999px;
+  filter: blur(0.15px);
+  transform-origin: center;
+}
+
 .mova-scrollbar-none {
   scrollbar-width: none;
 }
@@ -182,10 +242,10 @@ body {
 
 .mova-leaflet-popup .leaflet-popup-content-wrapper {
   overflow: hidden;
-  border-radius: 18px;
+  border-radius: 14px;
   background: transparent;
   padding: 0;
-  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.28);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.3);
 }
 
 .mova-leaflet-popup .leaflet-popup-content {
@@ -194,6 +254,16 @@ body {
 
 .mova-leaflet-popup .leaflet-popup-tip {
   background: var(--mova-surface);
+}
+
+button,
+a,
+input,
+select,
+textarea {
+  transition-property: color, background-color, border-color, opacity, transform, box-shadow, filter;
+  transition-duration: 180ms;
+  transition-timing-function: ease;
 }
 
 @keyframes fadeIn {

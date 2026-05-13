@@ -5,9 +5,6 @@ import { FaApple, FaGoogle, FaInstagram } from 'react-icons/fa';
 import { IoArrowBack } from 'react-icons/io5';
 import { registerUser } from '../lib/auth';
 
-const registerImage =
-  'https://images.unsplash.com/photo-1506869640319-fe1a24fd76dc?auto=format&fit=crop&w=1600&q=85';
-
 function isValidEmail(value) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 }
@@ -25,10 +22,23 @@ function SocialButton({ label, icon: Icon }) {
     <button
       type="button"
       aria-label={label}
-      className="grid h-12 w-12 place-items-center rounded-full border border-white/10 bg-white/[0.075] text-xl text-white/88 shadow-[0_12px_34px_rgba(0,0,0,0.24)] backdrop-blur-xl transition hover:bg-white/[0.13]"
+      className="grid h-12 w-12 place-items-center rounded-[0.75rem] border border-white/10 bg-white/[0.075] text-xl text-white/88 shadow-[0_12px_34px_rgba(0,0,0,0.24)] backdrop-blur-xl transition hover:bg-white/[0.13]"
     >
       <Icon />
     </button>
+  );
+}
+
+function AbstractAuthBackground() {
+  return (
+    <div className="absolute inset-0 overflow-hidden bg-[#0B0B0F]">
+      <motion.div className="absolute left-[-5rem] top-16 h-80 w-44 rounded-[3rem] bg-[#0A7D44]/80" animate={{ rotate: [-12, -4, -12], y: [0, 10, 0] }} transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }} />
+      <motion.div className="absolute right-[-3rem] top-28 h-56 w-56 rounded-full bg-[#FF74C8]/58" animate={{ x: [0, -14, 0], scale: [1, 1.04, 1] }} transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }} />
+      <motion.div className="mova-ribbon absolute left-0 top-[18rem] h-12 w-96 bg-[linear-gradient(90deg,#67C8FF,rgba(255,255,255,.18))]" animate={{ rotate: [18, 12, 18], x: [0, -12, 0] }} transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }} />
+      <motion.div className="mova-ribbon absolute left-24 top-[24rem] h-10 w-72 bg-[linear-gradient(90deg,#FFD84D,rgba(255,116,200,.42))]" animate={{ rotate: [-20, -14, -20], x: [0, 14, 0] }} transition={{ duration: 7.5, repeat: Infinity, ease: 'easeInOut' }} />
+      <div className="absolute left-8 top-32 h-[26rem] w-[22rem] rounded-[2rem] border border-white/10" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_52%_36%,transparent,rgba(11,11,15,.2)_46%,#0B0B0F_84%)]" />
+    </div>
   );
 }
 
@@ -108,17 +118,15 @@ export default function Register() {
   };
 
   return (
-    <main className="min-h-screen bg-[#050505] text-white">
-      <section className="relative mx-auto flex min-h-screen w-full max-w-[430px] flex-col overflow-hidden bg-[#050505] px-5 pb-5 pt-7">
-        <img src={registerImage} alt="" className="absolute inset-0 h-full w-full scale-110 object-cover blur-[2px]" />
-        <div className="absolute inset-0 bg-black/70" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/88 via-black/50 to-black/96" />
+    <main className="min-h-screen bg-[#0B0B0F] text-white">
+      <section className="relative mx-auto flex min-h-screen w-full max-w-[430px] flex-col overflow-hidden bg-[#0B0B0F] px-5 pb-5 pt-7">
+        <AbstractAuthBackground />
 
         <header className="relative z-10 flex items-center justify-between">
           <Link
             to="/"
             aria-label="Volver"
-            className="grid h-11 w-11 place-items-center rounded-full bg-black/24 text-2xl text-white/86 backdrop-blur-xl transition hover:bg-white/10"
+            className="grid h-11 w-11 place-items-center rounded-[0.75rem] bg-white/[0.08] text-2xl text-white/86 backdrop-blur-xl transition hover:bg-white/10"
           >
             <IoArrowBack />
           </Link>
@@ -131,7 +139,7 @@ export default function Register() {
             initial={{ opacity: 0, y: 28, filter: 'blur(10px)' }}
             animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
             transition={{ duration: 0.58, ease: [0.16, 1, 0.3, 1] }}
-            className="rounded-[1.75rem] bg-black/32 p-4 shadow-[0_28px_90px_rgba(0,0,0,0.55)] backdrop-blur-xl"
+            className="rounded-[1.2rem] border border-white/10 bg-[#111117]/84 p-4 shadow-[0_24px_70px_rgba(0,0,0,0.48)] backdrop-blur-md"
           >
             <div className="mb-4">
               <p className="mb-2 text-xs font-semibold uppercase tracking-[0.24em] text-[var(--mova-accent)]">Nueva cuenta</p>
@@ -152,7 +160,7 @@ export default function Register() {
                     onBlur={() => setTouched((prev) => ({ ...prev, name: true }))}
                     placeholder="Tu nombre"
                     style={{ backgroundColor: 'rgba(13, 13, 13, 0.88)' }}
-                    className="w-full rounded-[1.18rem] border border-white/10 bg-[#0d0d0d]/86 px-4 py-3.5 text-base text-white outline-none transition placeholder:text-white/38 focus:border-[var(--mova-accent)] focus:bg-[#161616] focus:shadow-[0_0_0_4px_rgba(123,97,255,0.08)]"
+                    className="w-full rounded-[0.85rem] border border-white/10 bg-[#0d0d0d]/86 px-4 py-3.5 text-base text-white outline-none transition placeholder:text-white/38 focus:border-[var(--mova-accent)] focus:bg-[#161616] focus:shadow-[0_0_0_4px_rgba(255,116,200,0.08)]"
                   />
                   {touched.name && errors.name && <p className="mt-2 text-xs font-semibold text-[#ff7474]">{errors.name}</p>}
                 </label>
@@ -166,7 +174,7 @@ export default function Register() {
                     onBlur={() => setTouched((prev) => ({ ...prev, email: true }))}
                     placeholder="vos@email.com"
                     style={{ backgroundColor: 'rgba(13, 13, 13, 0.88)' }}
-                    className="w-full rounded-[1.18rem] border border-white/10 bg-[#0d0d0d]/86 px-4 py-3.5 text-base text-white outline-none transition placeholder:text-white/38 focus:border-[var(--mova-accent)] focus:bg-[#161616] focus:shadow-[0_0_0_4px_rgba(123,97,255,0.08)]"
+                    className="w-full rounded-[0.85rem] border border-white/10 bg-[#0d0d0d]/86 px-4 py-3.5 text-base text-white outline-none transition placeholder:text-white/38 focus:border-[var(--mova-accent)] focus:bg-[#161616] focus:shadow-[0_0_0_4px_rgba(255,116,200,0.08)]"
                   />
                   {touched.email && errors.email && <p className="mt-2 text-xs font-semibold text-[#ff7474]">{errors.email}</p>}
                 </label>
@@ -180,7 +188,7 @@ export default function Register() {
                     onBlur={() => setTouched((prev) => ({ ...prev, password: true }))}
                     placeholder="Mínimo 6 caracteres"
                     style={{ backgroundColor: 'rgba(13, 13, 13, 0.88)' }}
-                    className="w-full rounded-[1.18rem] border border-white/10 bg-[#0d0d0d]/86 px-4 py-3.5 text-base text-white outline-none transition placeholder:text-white/38 focus:border-[var(--mova-accent)] focus:bg-[#161616] focus:shadow-[0_0_0_4px_rgba(123,97,255,0.08)]"
+                    className="w-full rounded-[0.85rem] border border-white/10 bg-[#0d0d0d]/86 px-4 py-3.5 text-base text-white outline-none transition placeholder:text-white/38 focus:border-[var(--mova-accent)] focus:bg-[#161616] focus:shadow-[0_0_0_4px_rgba(255,116,200,0.08)]"
                   />
                   {touched.password && errors.password && (
                     <p className="mt-2 text-xs font-semibold text-[#ff7474]">{errors.password}</p>
@@ -196,7 +204,7 @@ export default function Register() {
                     onBlur={() => setTouched((prev) => ({ ...prev, confirmPassword: true }))}
                     placeholder="Repetí tu contraseña"
                     style={{ backgroundColor: 'rgba(13, 13, 13, 0.88)' }}
-                    className="w-full rounded-[1.18rem] border border-white/10 bg-[#0d0d0d]/86 px-4 py-3.5 text-base text-white outline-none transition placeholder:text-white/38 focus:border-[var(--mova-accent)] focus:bg-[#161616] focus:shadow-[0_0_0_4px_rgba(123,97,255,0.08)]"
+                    className="w-full rounded-[0.85rem] border border-white/10 bg-[#0d0d0d]/86 px-4 py-3.5 text-base text-white outline-none transition placeholder:text-white/38 focus:border-[var(--mova-accent)] focus:bg-[#161616] focus:shadow-[0_0_0_4px_rgba(255,116,200,0.08)]"
                   />
                   {touched.confirmPassword && errors.confirmPassword && (
                     <p className="mt-2 text-xs font-semibold text-[#ff7474]">{errors.confirmPassword}</p>
@@ -205,12 +213,12 @@ export default function Register() {
               </div>
 
               {submitError && (
-                <p className="mt-4 rounded-2xl border border-red-400/15 bg-red-500/10 px-4 py-3 text-sm font-semibold text-[#ff8585]">
+                <p className="mt-4 rounded-[0.85rem] border border-red-400/15 bg-red-500/10 px-4 py-3 text-sm font-semibold text-[#ff8585]">
                   {submitError}
                 </p>
               )}
               {submitSuccess && (
-                <p className="mt-4 rounded-2xl border border-[var(--mova-accent)] bg-[var(--mova-accent-soft)] px-4 py-3 text-sm font-semibold text-[var(--mova-accent)]">
+                <p className="mt-4 rounded-[0.85rem] border border-[var(--mova-accent)] bg-[var(--mova-accent-soft)] px-4 py-3 text-sm font-semibold text-[var(--mova-accent)]">
                   {submitSuccess}
                 </p>
               )}
@@ -219,7 +227,7 @@ export default function Register() {
                 type="submit"
                 whileTap={{ scale: 0.98 }}
                 disabled={isSubmitting}
-                className={`mt-6 h-14 w-full rounded-full bg-[var(--mova-accent)] text-base font-bold text-white shadow-[0_18px_44px_rgba(123,97,255,0.28)] transition hover:brightness-105 disabled:cursor-wait ${
+                className={`mt-6 h-14 w-full rounded-[0.95rem] bg-[var(--mova-accent)] text-base font-bold text-[#0B0B0F] shadow-[0_18px_44px_rgba(255,116,200,0.22)] transition hover:brightness-105 disabled:cursor-wait ${
                   !isValid || isSubmitting ? 'opacity-70' : ''
                 }`}
               >

@@ -8,6 +8,7 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import Map from './pages/Map';
 import Messages from './pages/Messages';
+import Notifications from './pages/Notifications';
 import Onboarding from './pages/Onboarding';
 import PlanDetail from './pages/PlanDetail';
 import Profile from './pages/Profile';
@@ -48,6 +49,7 @@ export default function App() {
         <Route path="/rewards" element={<PrivateRoute><Rewards /></PrivateRoute>} />
         <Route path="/activity" element={<PrivateRoute><Activity /></PrivateRoute>} />
         <Route path="/messages" element={<PrivateRoute><Messages /></PrivateRoute>} />
+        <Route path="/notifications" element={<PrivateRoute><Notifications /></PrivateRoute>} />
         <Route path="/settings" element={<PrivateRoute><Settings /></PrivateRoute>} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
