@@ -20,7 +20,7 @@ function neighborhoodOf(item) {
 }
 
 function interestedOf(item) {
-  return item?.interestedCount ?? item?.joinedUsers?.length ?? item?.saves ?? 0;
+  return item?.interestedCount ?? item?.joinedUsers?.length ?? 0;
 }
 
 function SavedItem({ item, stateLabel }) {
@@ -39,7 +39,7 @@ function SavedItem({ item, stateLabel }) {
           <div className="mt-2 grid gap-1 text-[11px] text-white/52">
             <span className="inline-flex items-center gap-1"><FiMapPin /> {neighborhoodOf(item)}</span>
             <span className="inline-flex items-center gap-1"><FiCalendar /> {item.date || item.fecha || 'Próximamente'} · {item.time || item.horario || 'A confirmar'}</span>
-            <span className="inline-flex items-center gap-1 text-[#FB97B3]"><FiUsers /> {interestedOf(item)} personas</span>
+            <span className="inline-flex items-center gap-1 text-[#F9A809]"><FiUsers /> {interestedOf(item)} personas</span>
           </div>
         </div>
       </Link>

@@ -19,6 +19,7 @@ const planSchema = new mongoose.Schema(
     rating: { type: Number, default: 0 },
     likes: { type: Number, default: 0 },
     guardados: { type: Number, default: 0 },
+    interesados: { type: Number, default: 0 },
     usuario: { type: String, required: true, trim: true },
     authorId: { type: String },
     puntosGenera: { type: Number, default: 20 },
@@ -62,7 +63,7 @@ const planSchema = new mongoose.Schema(
         ret.author = ret.usuario;
         ret.saves = ret.guardados;
         ret.joinedUsers = ret.joinedUsers || [];
-        ret.interestedCount = (ret.guardados || 0) + ret.joinedUsers.length;
+        ret.interestedCount = (ret.interesados || 0) + ret.joinedUsers.length;
         ret.commentCount = ret.comentarios;
         delete ret._id;
       },

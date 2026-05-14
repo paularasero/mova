@@ -16,7 +16,12 @@
       "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1400&q=85",
       "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1400&q=85"
     ],
-    "tags": ["playa", "fogata", "sunset", "amigos"],
+    "tags": [
+      "playa",
+      "fogata",
+      "sunset",
+      "amigos"
+    ],
     "location": "Rambla de Malvín",
     "lat": -34.8938,
     "lng": -56.1077,
@@ -25,7 +30,8 @@
     "guardados": 174,
     "usuario": "Juana Paz",
     "puntosGenera": 20,
-    "comentarios": 37
+    "comentarios": 37,
+    "interesados": 174
   },
   {
     "id": "p2",
@@ -44,7 +50,12 @@
       "https://images.unsplash.com/photo-1505236858219-8359eb29e329?auto=format&fit=crop&w=1400&q=85",
       "https://images.unsplash.com/photo-1527529482837-4698179dc6ce?auto=format&fit=crop&w=1400&q=85"
     ],
-    "tags": ["bar", "noche", "música", "amigos"],
+    "tags": [
+      "bar",
+      "noche",
+      "música",
+      "amigos"
+    ],
     "location": "Bar Rodó",
     "lat": -34.9046,
     "lng": -56.1779,
@@ -53,7 +64,8 @@
     "guardados": 118,
     "usuario": "Sofi Rivas",
     "puntosGenera": 20,
-    "comentarios": 22
+    "comentarios": 22,
+    "interesados": 118
   },
   {
     "id": "p3",
@@ -72,7 +84,12 @@
       "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=1400&q=85",
       "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=1400&q=85"
     ],
-    "tags": ["cena", "cartas", "food", "chill"],
+    "tags": [
+      "cena",
+      "cartas",
+      "food",
+      "chill"
+    ],
     "location": "Mesa compartida Palermo",
     "lat": -34.9116,
     "lng": -56.1834,
@@ -81,7 +98,8 @@
     "guardados": 91,
     "usuario": "Mateo Luna",
     "puntosGenera": 20,
-    "comentarios": 16
+    "comentarios": 16,
+    "interesados": 91
   },
   {
     "id": "p4",
@@ -100,7 +118,12 @@
       "https://images.unsplash.com/photo-1472396961693-142e6e269027?auto=format&fit=crop&w=1400&q=85",
       "https://images.unsplash.com/photo-1506869640319-fe1a24fd76dc?auto=format&fit=crop&w=1400&q=85"
     ],
-    "tags": ["playa", "volley", "sunset", "gratis"],
+    "tags": [
+      "playa",
+      "volley",
+      "sunset",
+      "gratis"
+    ],
     "location": "Playa Pocitos",
     "lat": -34.9112,
     "lng": -56.1456,
@@ -109,7 +132,8 @@
     "guardados": 149,
     "usuario": "Martina Cruz",
     "puntosGenera": 20,
-    "comentarios": 28
+    "comentarios": 28,
+    "interesados": 149
   },
   {
     "id": "p5",
@@ -127,7 +151,12 @@
       "https://images.unsplash.com/photo-1506869640319-fe1a24fd76dc?auto=format&fit=crop&w=1400&q=85",
       "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=1400&q=85"
     ],
-    "tags": ["picnic", "chill", "pareja", "aire libre"],
+    "tags": [
+      "picnic",
+      "chill",
+      "pareja",
+      "aire libre"
+    ],
     "location": "Lago del Parque Rodó",
     "lat": -34.9129,
     "lng": -56.1649,
@@ -136,7 +165,8 @@
     "guardados": 137,
     "usuario": "Lola Vera",
     "puntosGenera": 20,
-    "comentarios": 24
+    "comentarios": 24,
+    "interesados": 137
   },
   {
     "id": "p6",
@@ -154,7 +184,12 @@
       "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=1400&q=85",
       "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1400&q=85"
     ],
-    "tags": ["jazz", "rooftop", "música", "noche"],
+    "tags": [
+      "jazz",
+      "rooftop",
+      "música",
+      "noche"
+    ],
     "location": "Azotea Zabala",
     "lat": -34.9065,
     "lng": -56.2049,
@@ -163,7 +198,8 @@
     "guardados": 96,
     "usuario": "Sofi Rivas",
     "puntosGenera": 20,
-    "comentarios": 18
+    "comentarios": 18,
+    "interesados": 96
   },
   {
     "id": "p7",
@@ -181,7 +217,12 @@
       "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1400&q=85",
       "https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&fit=crop&w=1400&q=85"
     ],
-    "tags": ["café", "arte", "vinilos", "solo"],
+    "tags": [
+      "café",
+      "arte",
+      "vinilos",
+      "solo"
+    ],
     "location": "Galería del Centro",
     "lat": -34.9053,
     "lng": -56.1919,
@@ -190,7 +231,8 @@
     "guardados": 74,
     "usuario": "Tomás Rey",
     "puntosGenera": 20,
-    "comentarios": 12
+    "comentarios": 12,
+    "interesados": 74
   },
   {
     "id": "p8",
@@ -208,7 +250,12 @@
       "https://images.unsplash.com/photo-1505236858219-8359eb29e329?auto=format&fit=crop&w=1400&q=85",
       "https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?auto=format&fit=crop&w=1400&q=85"
     ],
-    "tags": ["flash", "night", "amigos", "bar"],
+    "tags": [
+      "flash",
+      "night",
+      "amigos",
+      "bar"
+    ],
     "location": "Pocitos Soho",
     "lat": -34.9088,
     "lng": -56.1512,
@@ -217,6 +264,205 @@
     "guardados": 121,
     "usuario": "Paula R.",
     "puntosGenera": 20,
-    "comentarios": 19
+    "comentarios": 19,
+    "interesados": 121
+  },
+  {
+    "id": "p9",
+    "titulo": "Rooftop en Palermo",
+    "descripcion": "Un after chico con vista abierta, música suave y gente que cae después del trabajo para arrancar la noche sin apuro.",
+    "ciudad": "Buenos Aires",
+    "barrio": "Palermo",
+    "categoria": "Night",
+    "compania": "Amigos",
+    "fecha": "2026-05-15",
+    "horario": "20:30",
+    "precio": "$$",
+    "imagen": "https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=1400&q=85",
+    "images": [
+      "https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=1400&q=85",
+      "https://images.unsplash.com/photo-1470337458703-46ad1756a187?auto=format&fit=crop&w=1400&q=85"
+    ],
+    "tags": [
+      "rooftop",
+      "bar",
+      "noche",
+      "amigos"
+    ],
+    "location": "Palermo Soho",
+    "lat": -34.5889,
+    "lng": -58.4306,
+    "rating": 4.8,
+    "likes": 188,
+    "guardados": 92,
+    "usuario": "Mora Klein",
+    "puntosGenera": 20,
+    "comentarios": 18,
+    "interesados": 92
+  },
+  {
+    "id": "p10",
+    "titulo": "Café de dibujo en Malasaña",
+    "descripcion": "Mesas largas, café bueno y una consigna simple para dibujar con gente nueva sin presión.",
+    "ciudad": "Madrid",
+    "barrio": "Malasaña",
+    "categoria": "Art",
+    "compania": "Solo",
+    "fecha": "2026-05-16",
+    "horario": "17:00",
+    "precio": "$",
+    "imagen": "https://images.unsplash.com/photo-1511920170033-f8396924c348?auto=format&fit=crop&w=1400&q=85",
+    "images": [
+      "https://images.unsplash.com/photo-1511920170033-f8396924c348?auto=format&fit=crop&w=1400&q=85",
+      "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1400&q=85"
+    ],
+    "tags": [
+      "café",
+      "arte",
+      "dibujo",
+      "solo"
+    ],
+    "location": "Calle del Pez",
+    "lat": 40.426,
+    "lng": -3.704,
+    "rating": 4.7,
+    "likes": 156,
+    "guardados": 81,
+    "usuario": "Inés Vidal",
+    "puntosGenera": 20,
+    "comentarios": 14,
+    "interesados": 81
+  },
+  {
+    "id": "p11",
+    "titulo": "Picnic sunset en Barceloneta",
+    "descripcion": "Manta, fruta, cartas y música baja para ver caer el sol cerca del mar con un grupo tranqui.",
+    "ciudad": "Barcelona",
+    "barrio": "Barceloneta",
+    "categoria": "Outdoor",
+    "compania": "Amigos",
+    "fecha": "2026-05-17",
+    "horario": "19:00",
+    "precio": "$",
+    "imagen": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1400&q=85",
+    "images": [
+      "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1400&q=85",
+      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1400&q=85"
+    ],
+    "tags": [
+      "picnic",
+      "sunset",
+      "playa",
+      "amigos"
+    ],
+    "location": "Platja de la Barceloneta",
+    "lat": 41.3784,
+    "lng": 2.1926,
+    "rating": 4.9,
+    "likes": 241,
+    "guardados": 137,
+    "usuario": "Nora Puig",
+    "puntosGenera": 20,
+    "comentarios": 22,
+    "interesados": 137
+  },
+  {
+    "id": "p12",
+    "titulo": "Jazz en Vila Madalena",
+    "descripcion": "Jam íntima en una terraza, luces cálidas y mesas compartidas para quedarse charlando después del último tema.",
+    "ciudad": "São Paulo",
+    "barrio": "Vila Madalena",
+    "categoria": "Música",
+    "compania": "Amigos",
+    "fecha": "2026-05-18",
+    "horario": "21:00",
+    "precio": "$$",
+    "imagen": "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?auto=format&fit=crop&w=1400&q=85",
+    "images": [
+      "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?auto=format&fit=crop&w=1400&q=85",
+      "https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&fit=crop&w=1400&q=85"
+    ],
+    "tags": [
+      "jazz",
+      "música",
+      "terraza",
+      "noche"
+    ],
+    "location": "Rua Aspicuelta",
+    "lat": -23.5574,
+    "lng": -46.6892,
+    "rating": 4.8,
+    "likes": 213,
+    "guardados": 109,
+    "usuario": "Lia Ramos",
+    "puntosGenera": 20,
+    "comentarios": 19,
+    "interesados": 109
+  },
+  {
+    "id": "p13",
+    "titulo": "Cine al aire libre en Lastarria",
+    "descripcion": "Película de culto, mantas en el pasto y plan perfecto para ir con alguien o conocer gente antes de la función.",
+    "ciudad": "Santiago",
+    "barrio": "Lastarria",
+    "categoria": "Chill",
+    "compania": "Pareja",
+    "fecha": "2026-05-19",
+    "horario": "20:00",
+    "precio": "$",
+    "imagen": "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=1400&q=85",
+    "images": [
+      "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=1400&q=85",
+      "https://images.unsplash.com/photo-1524985069026-dd778a71c7b4?auto=format&fit=crop&w=1400&q=85"
+    ],
+    "tags": [
+      "cine",
+      "aire libre",
+      "chill",
+      "pareja"
+    ],
+    "location": "Barrio Lastarria",
+    "lat": -33.4372,
+    "lng": -70.64,
+    "rating": 4.6,
+    "likes": 127,
+    "guardados": 73,
+    "usuario": "Antonia Rojas",
+    "puntosGenera": 20,
+    "comentarios": 11,
+    "interesados": 73
+  },
+  {
+    "id": "p14",
+    "titulo": "Mate y sunset en Playa Brava",
+    "descripcion": "Plan simple de tarde: mate, reposeras, fotos analógicas y gente que quiere cerrar el día mirando el agua.",
+    "ciudad": "Punta del Este",
+    "barrio": "Playa Brava",
+    "categoria": "Outdoor",
+    "compania": "Amigos",
+    "fecha": "2026-05-20",
+    "horario": "18:30",
+    "precio": "$",
+    "imagen": "https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=1400&q=85",
+    "images": [
+      "https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=1400&q=85",
+      "https://images.unsplash.com/photo-1493558103817-58b2924bce98?auto=format&fit=crop&w=1400&q=85"
+    ],
+    "tags": [
+      "playa",
+      "sunset",
+      "mate",
+      "amigos"
+    ],
+    "location": "Parada 3, Playa Brava",
+    "lat": -34.9465,
+    "lng": -54.9236,
+    "rating": 4.9,
+    "likes": 172,
+    "guardados": 96,
+    "usuario": "Clara Mar",
+    "puntosGenera": 20,
+    "comentarios": 15,
+    "interesados": 96
   }
 ]

@@ -3,6 +3,7 @@ import { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaApple, FaGoogle, FaInstagram } from 'react-icons/fa';
 import { IoArrowBack } from 'react-icons/io5';
+import { FiEye, FiEyeOff } from 'react-icons/fi';
 import { registerUser } from '../lib/auth';
 
 function isValidEmail(value) {
@@ -14,12 +15,13 @@ const passwordRules = [
   { label: 'una mayúscula', test: (value) => /[A-ZÁÉÍÓÚÑ]/.test(value) },
   { label: 'una minúscula', test: (value) => /[a-záéíóúñ]/.test(value) },
   { label: 'un número', test: (value) => /\d/.test(value) },
-  { label: 'un símbolo, por ejemplo . ! @ #', test: (value) => /[^A-Za-zÁÉÍÓÚÑáéíóúñ0-9]/.test(value) },
 ];
 
 function validatePassword(value) {
-  const missingRule = passwordRules.find((rule) => !rule.test(value));
-  return missingRule ? `La contraseña debe incluir ${missingRule.label}.` : '';
+  const missing = passwordRules.filter((rule) => !rule.test(value)).map((rule) => rule.label);
+  if (!missing.length) return '';
+  const formatted = missing.length === 1 ? missing[0] : `${missing.slice(0, -1).join(', ')} y ${missing.at(-1)}`;
+  return `La contraseña debe tener ${formatted}.`;
 }
 
 function Logo() {
@@ -84,9 +86,12 @@ export default function Register() {
     password: false,
     confirmPassword: false,
   });
+  const [serverErrors, setServerErrors] = useState({});
   const [submitError, setSubmitError] = useState('');
   const [submitSuccess, setSubmitSuccess] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const errors = useMemo(
     () => ({
@@ -105,9 +110,19 @@ export default function Register() {
   );
 
   const isValid = !errors.name && !errors.email && !errors.password && !errors.confirmPassword;
+  const fieldError = (field) => (touched[field] ? errors[field] || serverErrors[field] || '' : '');
+  const inputClass = (field, extra = '') => {
+    const hasError = fieldError(field);
+    return `w-full border bg-[#111215]/86 px-4 py-3.5 text-base text-[#F2EDEA] outline-none transition placeholder:text-[#F2EDEA]/38 focus:bg-[#111215] ${extra} ${
+      hasError
+        ? 'border-[#FB97B3] focus:border-[#FB97B3] focus:shadow-[0_0_0_4px_rgba(251,151,179,0.14)]'
+        : 'border-[#F2EDEA]/10 focus:border-[var(--mova-accent)] focus:shadow-[0_0_0_4px_rgba(253,116,7,0.10)]'
+    }`;
+  };
 
   const handleChange = (field) => (event) => {
     setForm((prev) => ({ ...prev, [field]: event.target.value }));
+    setServerErrors((prev) => ({ ...prev, [field]: '' }));
     setSubmitError('');
     setSubmitSuccess('');
   };
@@ -120,9 +135,9 @@ export default function Register() {
       password: true,
       confirmPassword: true,
     });
+    setServerErrors({});
 
     if (!isValid) {
-      setSubmitError('Completá todos los campos correctamente.');
       return;
     }
 
@@ -136,7 +151,11 @@ export default function Register() {
     setIsSubmitting(false);
 
     if (!result.ok) {
-      setSubmitError(result.error || 'No pudimos crear tu cuenta. Intentá nuevamente.');
+      const message = result.error || 'No pudimos crear tu cuenta. Intentá nuevamente.';
+      if (/email|registrado/i.test(message)) setServerErrors({ email: message });
+      else if (/contraseña/i.test(message)) setServerErrors({ password: message });
+      else if (/nombre/i.test(message)) setServerErrors({ name: message });
+      else setSubmitError(message);
       return;
     }
 
@@ -185,11 +204,11 @@ export default function Register() {
                     value={form.name}
                     onChange={handleChange('name')}
                     onBlur={() => setTouched((prev) => ({ ...prev, name: true }))}
-                    placeholder="Tu nombre"
+                    placeholder="Paula Rasero"
                     style={{ backgroundColor: 'rgba(13, 13, 13, 0.88)' }}
-                    className="w-full border border-[#F2EDEA]/10 bg-[#111215]/86 px-4 py-3.5 text-base text-[#F2EDEA] outline-none transition placeholder:text-[#F2EDEA]/38 focus:border-[var(--mova-accent)] focus:bg-[#111215] focus:shadow-[0_0_0_4px_rgba(253,116,7,0.10)]"
+                    className={inputClass('name')}
                   />
-                  {touched.name && errors.name && <p className="mt-2 text-xs font-semibold text-[#FB97B3]">{errors.name}</p>}
+                  {fieldError('name') && <p className="mt-2 text-xs font-semibold text-[#FB97B3]">{fieldError('name')}</p>}
                 </label>
 
                 <label className="block">
@@ -199,26 +218,36 @@ export default function Register() {
                     value={form.email}
                     onChange={handleChange('email')}
                     onBlur={() => setTouched((prev) => ({ ...prev, email: true }))}
-                    placeholder="vos@email.com"
+                    placeholder="paula@email.com"
                     style={{ backgroundColor: 'rgba(13, 13, 13, 0.88)' }}
-                    className="w-full border border-[#F2EDEA]/10 bg-[#111215]/86 px-4 py-3.5 text-base text-[#F2EDEA] outline-none transition placeholder:text-[#F2EDEA]/38 focus:border-[var(--mova-accent)] focus:bg-[#111215] focus:shadow-[0_0_0_4px_rgba(253,116,7,0.10)]"
+                    className={inputClass('email')}
                   />
-                  {touched.email && errors.email && <p className="mt-2 text-xs font-semibold text-[#FB97B3]">{errors.email}</p>}
+                  {fieldError('email') && <p className="mt-2 text-xs font-semibold text-[#FB97B3]">{fieldError('email')}</p>}
                 </label>
 
                 <label className="block">
                   <span className="mb-2 block text-sm font-medium text-[#F2EDEA]/74">Contraseña</span>
-                  <input
-                    type="password"
-                    value={form.password}
-                    onChange={handleChange('password')}
-                    onBlur={() => setTouched((prev) => ({ ...prev, password: true }))}
-                    placeholder="Ej: Mova.2026"
-                    style={{ backgroundColor: 'rgba(13, 13, 13, 0.88)' }}
-                    className="w-full border border-[#F2EDEA]/10 bg-[#111215]/86 px-4 py-3.5 text-base text-[#F2EDEA] outline-none transition placeholder:text-[#F2EDEA]/38 focus:border-[var(--mova-accent)] focus:bg-[#111215] focus:shadow-[0_0_0_4px_rgba(253,116,7,0.10)]"
-                  />
-                  {touched.password && errors.password && (
-                    <p className="mt-2 text-xs font-semibold text-[#FB97B3]">{errors.password}</p>
+                  <div className="relative">
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      value={form.password}
+                      onChange={handleChange('password')}
+                      onBlur={() => setTouched((prev) => ({ ...prev, password: true }))}
+                      placeholder="Ej: Mova2026"
+                      style={{ backgroundColor: 'rgba(13, 13, 13, 0.88)' }}
+                      className={inputClass('password', 'pr-12')}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((prev) => !prev)}
+                      aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                      className="absolute right-3 top-1/2 grid h-8 w-8 -translate-y-1/2 place-items-center text-lg text-[#F2EDEA]/58 transition hover:text-[#F2EDEA]"
+                    >
+                      {showPassword ? <FiEyeOff /> : <FiEye />}
+                    </button>
+                  </div>
+                  {fieldError('password') && (
+                    <p className="mt-2 text-xs font-semibold text-[#FB97B3]">{fieldError('password')}</p>
                   )}
                   <div className="mt-3 grid grid-cols-1 gap-1.5">
                     {passwordRules.map((rule) => {
@@ -234,23 +263,33 @@ export default function Register() {
 
                 <label className="block">
                   <span className="mb-2 block text-sm font-medium text-[#F2EDEA]/74">Confirmar contraseña</span>
-                  <input
-                    type="password"
-                    value={form.confirmPassword}
-                    onChange={handleChange('confirmPassword')}
-                    onBlur={() => setTouched((prev) => ({ ...prev, confirmPassword: true }))}
-                    placeholder="Repetí tu contraseña"
-                    style={{ backgroundColor: 'rgba(13, 13, 13, 0.88)' }}
-                    className="w-full border border-[#F2EDEA]/10 bg-[#111215]/86 px-4 py-3.5 text-base text-[#F2EDEA] outline-none transition placeholder:text-[#F2EDEA]/38 focus:border-[var(--mova-accent)] focus:bg-[#111215] focus:shadow-[0_0_0_4px_rgba(253,116,7,0.10)]"
-                  />
-                  {touched.confirmPassword && errors.confirmPassword && (
-                    <p className="mt-2 text-xs font-semibold text-[#FB97B3]">{errors.confirmPassword}</p>
+                  <div className="relative">
+                    <input
+                      type={showConfirmPassword ? 'text' : 'password'}
+                      value={form.confirmPassword}
+                      onChange={handleChange('confirmPassword')}
+                      onBlur={() => setTouched((prev) => ({ ...prev, confirmPassword: true }))}
+                      placeholder="Repetí tu contraseña"
+                      style={{ backgroundColor: 'rgba(13, 13, 13, 0.88)' }}
+                      className={inputClass('confirmPassword', 'pr-12')}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword((prev) => !prev)}
+                      aria-label={showConfirmPassword ? 'Ocultar confirmación' : 'Mostrar confirmación'}
+                      className="absolute right-3 top-1/2 grid h-8 w-8 -translate-y-1/2 place-items-center text-lg text-[#F2EDEA]/58 transition hover:text-[#F2EDEA]"
+                    >
+                      {showConfirmPassword ? <FiEyeOff /> : <FiEye />}
+                    </button>
+                  </div>
+                  {fieldError('confirmPassword') && (
+                    <p className="mt-2 text-xs font-semibold text-[#FB97B3]">{fieldError('confirmPassword')}</p>
                   )}
                 </label>
               </div>
 
               {submitError && (
-                <p className="mt-4 rounded-[0.85rem] border border-red-400/15 bg-red-500/10 px-4 py-3 text-sm font-semibold text-[#FB97B3]">
+                <p className="mt-4 rounded-[0.45rem] border border-[#FB97B3]/18 bg-[#FB97B3]/10 px-4 py-3 text-sm font-semibold text-[#FB97B3]">
                   {submitError}
                 </p>
               )}

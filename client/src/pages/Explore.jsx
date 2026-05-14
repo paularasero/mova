@@ -61,7 +61,7 @@ function dateOf(item) {
 }
 
 function interestedOf(item) {
-  return item?.interestedCount ?? item?.joinedUsers?.length ?? item?.saves ?? item?.guardados ?? 0;
+  return item?.interestedCount ?? item?.joinedUsers?.length ?? 0;
 }
 
 function userJoined(item, userId) {
@@ -83,7 +83,7 @@ function distanceKm(item, city) {
 
 function SearchCard({ item, saved, joined, onSave, onJoin, tall = false }) {
   return (
-    <motion.article initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} whileTap={{ scale: 0.98 }} className={`overflow-hidden rounded-[1.55rem] border border-[var(--mova-border)] bg-[var(--mova-surface)] shadow-[0_12px_30px_rgba(17,17,17,0.05)] ${tall ? 'row-span-2' : ''}`}>
+    <motion.article initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} whileTap={{ scale: 0.98 }} className={`overflow-hidden rounded-[0.45rem] border border-[var(--mova-border)] bg-[var(--mova-surface)] shadow-[0_12px_30px_rgba(17,17,17,0.05)] ${tall ? 'row-span-2' : ''}`}>
       <div className={`photo-card relative overflow-hidden ${tall ? 'aspect-[0.78]' : 'aspect-[1.02]'}`}>
         <Link to={`/plan/${item.id}`} className="block h-full">
           <img src={item.image} alt="" className="h-full w-full object-cover" />
@@ -93,14 +93,14 @@ function SearchCard({ item, saved, joined, onSave, onJoin, tall = false }) {
             <p className="mt-1 line-clamp-1 text-xs text-white/72">{neighborhoodOf(item)}</p>
           </div>
         </Link>
-        <button onClick={() => onSave(item.id)} className={`absolute right-2 top-2 grid h-8 w-8 place-items-center rounded-full backdrop-blur-xl ${saved ? 'bg-[var(--mova-accent)] text-white' : 'bg-white/90 text-[var(--mova-accent)]'}`}>{saved ? <FiCheck /> : <FiBookmark />}</button>
+        <button onClick={() => onSave(item.id)} className={`absolute right-2 top-2 grid h-8 w-8 place-items-center rounded-[0.16rem] backdrop-blur-xl ${saved ? 'bg-[#F2EDEA] text-[#111215]' : 'bg-[#F2EDEA]/90 text-[#111215]'}`}>{saved ? <FiCheck /> : <FiBookmark />}</button>
       </div>
       <div className="space-y-3 p-3">
         <div className="flex items-center justify-between gap-2 text-[11px] text-[var(--mova-muted)]">
           <span className="truncate">{categoryOf(item)}</span>
-          <span className="inline-flex shrink-0 items-center gap-1 text-[var(--mova-accent)]"><FiUsers /> {interestedOf(item)}</span>
+          <span className="inline-flex shrink-0 items-center gap-1 text-[#F9A809]"><FiUsers /> {interestedOf(item)}</span>
         </div>
-        <button onClick={() => onJoin(item.id)} className={`h-9 w-full rounded-[0.8rem] text-xs font-bold transition ${joined ? 'bg-[#F2EDEA] text-[#111215]' : 'bg-[#FD7407] text-[#111215] hover:bg-[#F9A809]'}`}>{joined ? 'Te sumaste' : 'Me sumo'}</button>
+        <button onClick={() => onJoin(item.id)} className={`h-9 w-full rounded-[0.16rem] text-xs font-bold transition ${joined ? 'bg-[#F2EDEA] text-[#111215]' : 'bg-[#FD7407] text-[#111215] hover:bg-[#F9A809]'}`}>{joined ? 'Te sumaste' : 'Me sumo'}</button>
       </div>
     </motion.article>
   );
@@ -177,7 +177,7 @@ export default function Explore() {
     const text = `${titleOf(item)} ${descriptionOf(item)} ${neighborhoodOf(item)} ${cityOf(item)} ${categoryOf(item)} ${companyOf(item)} ${(item.tags || []).join(' ')}`.toLowerCase();
     const itemDistance = distanceKm(item, filters.city);
     return (!query || text.includes(query.toLowerCase()))
-      && (!filters.city || cityOf(item) === filters.city)
+      && (!filters.city || cityOf(item).toLowerCase() === filters.city.toLowerCase())
       && (!filters.category || String(categoryOf(item)).toLowerCase().includes(filters.category.toLowerCase()))
       && (!filters.company || companyOf(item) === filters.company)
       && (!filters.budget || priceOf(item) === filters.budget)
@@ -185,6 +185,10 @@ export default function Explore() {
       && (!filters.time || timeOf(item) === filters.time)
       && (!filters.distance || itemDistance <= Number(filters.distance));
   }), [experiences, query, filters]);
+  const hasPlansInCity = useMemo(
+    () => experiences.some((item) => !filters.city || cityOf(item).toLowerCase() === filters.city.toLowerCase()),
+    [experiences, filters.city]
+  );
 
   const activeFilters = useMemo(() => {
     const labels = [];
@@ -264,7 +268,17 @@ export default function Explore() {
             {results.map((item, index) => <SearchCard key={item.id} item={item} saved={savedIds.has(item.id)} joined={joinedIds.has(item.id) || userJoined(item, user?.id)} onSave={saveExperience} onJoin={joinExperience} tall={index % 4 === 1 || index % 4 === 2} />)}
           </div>
         </section>
-        {status === 'ready' && results.length === 0 && <p className="mt-8 text-sm text-[var(--mova-muted)]">No encontramos planes con esos filtros</p>}
+        {status === 'ready' && results.length === 0 && (
+          <div className="mt-8 overflow-hidden rounded-[0.45rem] border border-[var(--mova-border)] bg-[var(--mova-surface)] p-5">
+            <h2 className="text-xl font-semibold">
+              {hasPlansInCity ? 'No encontramos planes con esos filtros' : 'Todavía no hay planes en esta ciudad'}
+            </h2>
+            <p className="mt-2 text-sm leading-relaxed text-[var(--mova-muted)]">
+              {hasPlansInCity ? 'Probá ajustar la búsqueda o restablecer los filtros.' : 'Sé la primera persona en crear uno.'}
+            </p>
+            {!hasPlansInCity && <Link to="/create" className="mt-5 inline-flex rounded-[0.16rem] bg-[#FD7407] px-4 py-2.5 text-sm font-black text-[#111215] hover:bg-[#F9A809]">Crear plan</Link>}
+          </div>
+        )}
       </section>
       <FilterModal open={filtersOpen} onClose={() => setFiltersOpen(false)} filters={filters} setFilters={setFilters} onClear={clearFilters} />
     </main>

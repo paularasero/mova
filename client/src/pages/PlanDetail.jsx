@@ -31,7 +31,7 @@ function imageOf(item) {
 }
 
 function interestedOf(item) {
-  return item?.interestedCount ?? item?.joinedUsers?.length ?? item?.saves ?? 0;
+  return item?.interestedCount ?? item?.joinedUsers?.length ?? 0;
 }
 
 const demoComments = [
@@ -104,11 +104,11 @@ export default function PlanDetail() {
       .then((data) => {
         setExperience(data);
         setActiveImage(0);
-        return apiRequest('/experiences');
+        return apiRequest(`/experiences?city=${encodeURIComponent(data.city || data.ciudad || user?.city || user?.ciudad || 'Montevideo')}`);
       })
       .then((items) => setSimilar(items.filter((item) => item.id !== id).slice(0, 4)))
       .catch(() => setMessage('No se pudo cargar la experiencia.'));
-  }, [id]);
+  }, [id, user?.city, user?.ciudad]);
 
   const gallery = useMemo(() => {
     if (!experience) return [];
@@ -191,7 +191,7 @@ export default function PlanDetail() {
             </div>
           </div>
           <div className="absolute bottom-5 left-5 right-5">
-            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.16em] text-white/86">{experience.neighborhood} · {experience.category}</p>
+            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.16em] text-[#F2EDEA]">{experience.neighborhood} · {experience.category}</p>
             <h1 className="max-w-[19rem] text-[2.35rem] font-semibold leading-[1.02] tracking-[0.005em] text-white">{experience.title}</h1>
             <div className="mt-4 flex items-center gap-2">
               <span className="rounded-[0.55rem] bg-white px-3 py-1.5 text-xs font-black text-[#111215]">★ {experience.rating || 4.8}</span>
@@ -312,12 +312,17 @@ export default function PlanDetail() {
             </div>
             <div className="mova-scrollbar-none flex gap-3 overflow-x-auto pb-2">
               {similar.map((item) => (
-                <Link key={item.id} to={`/plan/${item.id}`} className="relative h-40 w-44 shrink-0 overflow-hidden rounded-[1rem]">
+                <Link key={item.id} to={`/plan/${item.id}`} className="relative h-40 w-44 shrink-0 overflow-hidden rounded-[0.45rem]">
                   <img src={imageOf(item)} alt="" className="h-full w-full object-cover" />
                   <div className="absolute inset-0 bg-gradient-to-b from-black/10 to-black/78" />
                   <p className="absolute bottom-3 left-3 right-3 text-sm font-semibold leading-tight">{item.title}</p>
                 </Link>
               ))}
+              {similar.length === 0 && (
+                <div className="w-full rounded-[0.45rem] border border-white/10 bg-white/[0.045] p-4 text-sm text-white/58">
+                  No hay planes similares en esta ciudad todavía
+                </div>
+              )}
             </div>
           </section>
         </div>

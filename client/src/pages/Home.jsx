@@ -56,7 +56,7 @@ function savesOf(item) {
 }
 
 function interestedOf(item) {
-  return item?.interestedCount ?? item?.joinedUsers?.length ?? savesOf(item);
+  return item?.interestedCount ?? item?.joinedUsers?.length ?? 0;
 }
 
 function userJoined(item, userId) {
@@ -89,7 +89,7 @@ function FeaturedCard({ item, saved, joined, onSave, onJoin }) {
         <button onClick={() => onSave(item.id)} className={`absolute right-4 top-4 grid h-10 w-10 place-items-center rounded-[0.16rem] backdrop-blur-xl ${saved ? 'bg-[#FB97B3] text-[#111215]' : 'bg-white/90 text-[#111215]'}`}>{saved ? <FiCheck /> : <FiBookmark />}</button>
         <div className="absolute bottom-0 left-0 right-0 p-5">
           <Link to={`/plan/${item.id}`} className="block">
-            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.16em] text-[#F9A809]">{neighborhoodOf(item)} · {categoryOf(item)}</p>
+            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.16em] text-[#F2EDEA]">{neighborhoodOf(item)} · {categoryOf(item)}</p>
             <h2 className="max-w-[17rem] text-[2rem] font-semibold leading-[1.02] tracking-[0.005em] text-white">{titleOf(item)}</h2>
           </Link>
         </div>
@@ -116,8 +116,8 @@ function SmallCard({ item, saved, joined, onSave, onJoin }) {
           <h3 className="line-clamp-2 min-h-[2.5rem] text-left text-base font-semibold leading-tight">{titleOf(item)}</h3>
           <div className="mt-2 grid justify-items-start gap-1 text-left text-[11px] leading-snug text-[var(--mova-muted)]">
             <span className="truncate">{neighborhoodOf(item)}</span>
-            <span className="truncate text-[#0869D0]">{categoryOf(item)}</span>
-            <span className="inline-flex items-center gap-1 text-[var(--mova-accent)]"><FiUsers /> {interestedOf(item)} personas</span>
+            <span className="truncate text-[#FD7407]">{categoryOf(item)}</span>
+            <span className="inline-flex items-center gap-1 text-[#F9A809]"><FiUsers /> {interestedOf(item)} personas</span>
           </div>
         </Link>
         <button onClick={() => onJoin(item.id)} className={`h-9 w-full rounded-[0.16rem] text-xs font-bold transition ${joined ? 'bg-white text-[#111215]' : 'bg-[#FD7407] text-[#111215] hover:bg-[#F9A809]'}`}>{joined ? 'Te sumaste' : 'Me sumo'}</button>
@@ -211,7 +211,8 @@ export default function Home() {
   const [joinedIds, setJoinedIds] = useState(new Set());
 
   useEffect(() => {
-    apiRequest('/experiences').then((data) => {
+    setStatus('loading');
+    apiRequest(`/experiences?city=${encodeURIComponent(filters.city || '')}`).then((data) => {
       setExperiences(data);
       setJoinedIds(new Set(data.filter((item) => userJoined(item, user?.id)).map((item) => item.id)));
       const candidates = [...data]
@@ -220,19 +221,18 @@ export default function Home() {
       setHeroId(candidates[Math.floor(Math.random() * Math.max(candidates.length, 1))]?.id || data[0]?.id || null);
       setStatus('ready');
     }).catch(() => setStatus('error'));
-  }, [user?.id]);
+  }, [user?.id, filters.city]);
 
-  const cityMatches = experiences.filter((item) => !filters.city || cityOf(item) === filters.city);
-  const cityExperiences = cityMatches.length ? cityMatches : experiences;
+  const cityExperiences = experiences.filter((item) => !filters.city || cityOf(item) === filters.city);
   const filteredByTab = useMemo(() => cityExperiences.filter((item) => matchesTab(item, activeTab, user)
     && (!filters.category || String(categoryOf(item)).toLowerCase().includes(filters.category.toLowerCase()))
     && (!filters.company || companyOf(item) === filters.company)
     && (!filters.budget || priceOf(item) === filters.budget)
     && (!filters.date || item.date === filters.date || item.fecha === filters.date)), [cityExperiences, activeTab, filters, user]);
-  const filtered = filteredByTab.length ? filteredByTab : cityExperiences;
-  const featured = filtered.find((item) => item.id === heroId) || filtered[0] || experiences[0];
-  const withoutFeatured = cityExperiences.filter((item) => item.id !== featured?.id);
-  const fillRail = (items) => (items.length ? items : withoutFeatured).slice(0, 8);
+  const filtered = filteredByTab.length || !cityExperiences.length ? filteredByTab : cityExperiences;
+  const featured = filtered.find((item) => item.id === heroId) || filtered[0] || null;
+  const withoutFeatured = filtered.filter((item) => item.id !== featured?.id);
+  const fillRail = (items) => items.slice(0, 8);
   const popularNear = fillRail([...withoutFeatured].sort((a, b) => ((interestedOf(b) || 0) + (b.likes || 0)) - ((interestedOf(a) || 0) + (a.likes || 0))));
   const today = fillRail(withoutFeatured);
   const friends = fillRail(withoutFeatured.filter((item) => String(companyOf(item)).toLowerCase().includes('amigos')));
@@ -300,7 +300,20 @@ export default function Home() {
         </div>
 
         {status === 'loading' && <div className="mt-8 h-[23rem] animate-pulse rounded-[0.45rem] bg-white/[0.06]" />}
-        {status === 'error' && <p className="mt-8 rounded-[0.35rem] bg-red-500/10 px-4 py-3 text-sm text-[#FB97B3]">No se pudieron cargar las experiencias.</p>}
+        {status === 'error' && <p className="mt-8 rounded-[0.35rem] border border-[#FB97B3]/18 bg-[#FB97B3]/10 px-4 py-3 text-sm text-[#FB97B3]">No se pudieron cargar las experiencias.</p>}
+        {status === 'ready' && cityExperiences.length === 0 && (
+          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="mt-8 overflow-hidden rounded-[0.45rem] border border-white/10 bg-white/[0.045] p-5">
+            <div className="relative mb-5 h-32 overflow-hidden rounded-[0.35rem] bg-[#111215]">
+              <div className="absolute -left-12 top-8 h-44 w-44 rounded-full bg-[#FD7407]/70 blur-sm" />
+              <div className="absolute bottom-[-5rem] right-[-2rem] h-44 w-44 rounded-full bg-[#0869D0]/72 blur-sm" />
+              <div className="absolute left-16 top-2 h-28 w-28 rounded-full bg-[#FB97B3]/58 blur-sm" />
+              <div className="mova-print-texture absolute inset-0" />
+            </div>
+            <h2 className="text-2xl font-semibold leading-tight">Todavía no hay planes en esta ciudad</h2>
+            <p className="mt-2 text-sm leading-relaxed text-[var(--mova-muted)]">Sé la primera persona en crear uno para {filters.city}.</p>
+            <Link to="/create" className="mt-5 inline-flex rounded-[0.16rem] bg-[#FD7407] px-4 py-2.5 text-sm font-black text-[#111215] hover:bg-[#F9A809]">Crear plan</Link>
+          </motion.div>
+        )}
         {featured && <div className="mt-4"><FeaturedCard item={featured} saved={savedIds.has(featured.id)} joined={joinedIds.has(featured.id) || userJoined(featured, user?.id)} onSave={saveExperience} onJoin={joinExperience} /></div>}
         <Rail title="Populares cerca" items={popularNear} userId={user?.id} savedIds={savedIds} joinedIds={joinedIds} onSave={saveExperience} onJoin={joinExperience} />
         <EditorialBanner />

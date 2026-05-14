@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { FiBookmark, FiCheck, FiChevronDown, FiClock, FiMapPin, FiNavigation, FiSliders, FiX } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 import { apiRequest } from '../lib/api';
-import { getCurrentUser } from '../lib/auth';
+import { getCurrentUser, setCurrentUser } from '../lib/auth';
 
 const MONTEVIDEO = [-34.9011, -56.1645];
 const cities = ['Montevideo', 'Buenos Aires', 'Madrid', 'Barcelona', 'París', 'Londres', 'Nueva York', 'São Paulo', 'Santiago', 'Punta del Este', 'Colonia', 'Roma', 'Berlín', 'Lisboa', 'Tokio'];
@@ -71,6 +71,13 @@ function cityCenter(city = '') {
   if (normalized.includes('montevideo')) return MONTEVIDEO;
   if (normalized.includes('punta')) return [-34.936, -54.936];
   if (normalized.includes('buenos')) return [-34.6037, -58.3816];
+  if (normalized.includes('madrid')) return [40.4168, -3.7038];
+  if (normalized.includes('barcelona')) return [41.3874, 2.1686];
+  if (normalized.includes('são paulo') || normalized.includes('sao paulo')) return [-23.5558, -46.6396];
+  if (normalized.includes('santiago')) return [-33.4489, -70.6693];
+  if (normalized.includes('parís') || normalized.includes('paris')) return [48.8566, 2.3522];
+  if (normalized.includes('londres')) return [51.5072, -0.1276];
+  if (normalized.includes('nueva york')) return [40.7128, -74.006];
   return MONTEVIDEO;
 }
 
@@ -133,7 +140,7 @@ export default function Map() {
   const [joinedIds, setJoinedIds] = useState(() => new Set());
   const [message, setMessage] = useState('');
   const fallbackCenter = cityCenter(city);
-  const center = userLocation || fallbackCenter;
+  const center = fallbackCenter;
 
   const requestLocation = () => {
     if (!navigator.geolocation) return;
@@ -186,6 +193,22 @@ export default function Map() {
     });
   };
 
+  const selectCity = async (nextCity) => {
+    setCity(nextCity);
+    setCityOpen(false);
+    setSelected(null);
+    if (!user?.id) return;
+    try {
+      const updated = await apiRequest('/users/me', {
+        method: 'PUT',
+        body: JSON.stringify({ userId: user.id, city: nextCity, preferences: user.preferences }),
+      });
+      setCurrentUser(updated);
+    } catch {
+      setMessage('La ciudad cambió en este mapa, pero no pudimos guardarla en tu perfil.');
+    }
+  };
+
   return (
     <main className="mova-screen">
       <section className="relative mova-mobile h-screen overflow-hidden pb-24">
@@ -229,6 +252,13 @@ export default function Map() {
             <h3 className="text-sm font-semibold text-white drop-shadow">Cerca tuyo</h3>
             <span className="rounded-[0.45rem] bg-[#F9A809] px-2 py-1 text-[10px] font-black text-[#111215]">{filtered.length} planes</span>
           </div>
+          {filtered.length === 0 && (
+            <div className="rounded-[0.45rem] border border-white/10 bg-[#111215]/88 p-4 text-white shadow-[0_18px_42px_rgba(0,0,0,.26)] backdrop-blur-md">
+              <h2 className="text-base font-semibold">No hay planes cerca todavía</h2>
+              <p className="mt-1 text-xs leading-relaxed text-white/58">Sé la primera persona en crear un plan en {city}.</p>
+              <Link to="/create" className="mt-3 inline-flex rounded-[0.16rem] bg-[#FD7407] px-3 py-2 text-xs font-black text-[#111215] hover:bg-[#F9A809]">Crear plan</Link>
+            </div>
+          )}
           <div className="mova-scrollbar-none flex gap-3 overflow-x-auto pb-1">
             {filtered.slice(0, 6).map((item) => (
               <button key={item.id} onClick={() => setSelected(item)} className={`photo-card relative h-24 w-40 shrink-0 overflow-hidden rounded-[0.45rem] border text-left ${selected?.id === item.id ? 'border-[#04533E]' : 'border-white/10'}`}>
@@ -259,7 +289,7 @@ export default function Map() {
             </motion.div>
           </div>
         )}
-        <CityPicker open={cityOpen} value={city} onClose={() => setCityOpen(false)} onSelect={(nextCity) => { setCity(nextCity); setCityOpen(false); setSelected(null); }} />
+        <CityPicker open={cityOpen} value={city} onClose={() => setCityOpen(false)} onSelect={selectCity} />
       </section>
     </main>
   );

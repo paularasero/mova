@@ -15,12 +15,19 @@ function createUsername(name) {
   );
 }
 
+function isValidEmail(email = '') {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function sendValidationError(res, status, message) {
+  return res.status(status).json({ message, error: message });
+}
+
 function validatePassword(password = '') {
   if (password.length < 8) return 'La contraseña debe tener al menos 8 caracteres.';
   if (!/[A-ZÁÉÍÓÚÑ]/.test(password)) return 'La contraseña debe incluir una mayúscula.';
   if (!/[a-záéíóúñ]/.test(password)) return 'La contraseña debe incluir una minúscula.';
   if (!/\d/.test(password)) return 'La contraseña debe incluir un número.';
-  if (!/[^A-Za-zÁÉÍÓÚÑáéíóúñ0-9]/.test(password)) return 'La contraseña debe incluir un símbolo, por ejemplo . ! @ #.';
   return '';
 }
 
@@ -171,13 +178,14 @@ router.post('/register', async (req, res) => {
     const { name, nombre, email, city, ciudad, password } = req.body;
     const normalizedEmail = String(email || '').trim().toLowerCase();
 
-    if (!name && !nombre) return res.status(400).json({ error: 'Ingresá tu nombre.' });
-    if (!normalizedEmail) return res.status(400).json({ error: 'Ingresá tu email.' });
+    if (!name && !nombre) return sendValidationError(res, 400, 'Ingresá tu nombre.');
+    if (!normalizedEmail) return sendValidationError(res, 400, 'Ingresá tu email.');
+    if (!isValidEmail(normalizedEmail)) return sendValidationError(res, 400, 'Ingresá un email válido.');
     const passwordError = validatePassword(password);
-    if (passwordError) return res.status(400).json({ error: passwordError });
+    if (passwordError) return sendValidationError(res, 400, passwordError);
 
     const exists = await User.findOne({ email: normalizedEmail });
-    if (exists) return res.status(409).json({ error: 'Ya existe una cuenta con ese email.' });
+    if (exists) return sendValidationError(res, 409, 'El email ya está registrado.');
 
     const displayName = String(name || nombre).trim();
     const user = await User.create({

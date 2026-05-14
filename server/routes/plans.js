@@ -5,12 +5,15 @@ const router = Router();
 
 router.get('/', async (req, res) => {
   try {
-    const { ciudad, categoria, compania } = req.query;
+    const { ciudad, city, categoria, category, compania, company } = req.query;
     const query = {};
+    const selectedCity = ciudad || city;
+    const selectedCategory = categoria || category;
+    const selectedCompany = compania || company;
 
-    if (ciudad) query.ciudad = new RegExp(`^${String(ciudad)}$`, 'i');
-    if (categoria) query.categoria = new RegExp(`^${String(categoria)}$`, 'i');
-    if (compania) query.compania = new RegExp(`^${String(compania)}$`, 'i');
+    if (selectedCity) query.ciudad = new RegExp(`^${String(selectedCity)}$`, 'i');
+    if (selectedCategory) query.categoria = new RegExp(`^${String(selectedCategory)}$`, 'i');
+    if (selectedCompany) query.compania = new RegExp(`^${String(selectedCompany)}$`, 'i');
 
     const plans = await Plan.find(query).sort({ fecha: 1, horario: 1 });
     res.json(plans);
