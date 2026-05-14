@@ -1,0 +1,17 @@
+{
+  "name": "MOVA",
+  "short_name": "MOVA",
+  "description": "MOVA, red social de planes urbanos.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#111215",
+  "theme_color": "#111215",
+  "icons": [
+    {
+      "src": "/mova-favicon.png",
+      "sizes": "822x776",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
