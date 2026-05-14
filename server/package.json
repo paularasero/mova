@@ -7,7 +7,7 @@
     "node": "22.x"
   },
   "scripts": {
-    "build": "echo \"No build needed\"",
+    "build": "node scripts/build-vercel.js",
     "dev": "node index.js",
     "start": "node index.js"
   },
