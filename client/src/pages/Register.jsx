@@ -9,6 +9,19 @@ function isValidEmail(value) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 }
 
+const passwordRules = [
+  { label: '8 caracteres como mínimo', test: (value) => value.length >= 8 },
+  { label: 'una mayúscula', test: (value) => /[A-ZÁÉÍÓÚÑ]/.test(value) },
+  { label: 'una minúscula', test: (value) => /[a-záéíóúñ]/.test(value) },
+  { label: 'un número', test: (value) => /\d/.test(value) },
+  { label: 'un símbolo, por ejemplo . ! @ #', test: (value) => /[^A-Za-zÁÉÍÓÚÑáéíóúñ0-9]/.test(value) },
+];
+
+function validatePassword(value) {
+  const missingRule = passwordRules.find((rule) => !rule.test(value));
+  return missingRule ? `La contraseña debe incluir ${missingRule.label}.` : '';
+}
+
 function Logo() {
   return (
     <p className="text-[1.75rem] font-bold tracking-[-0.01em] text-[#F2EDEA]">
@@ -80,7 +93,7 @@ export default function Register() {
       name: !form.name.trim() ? 'Contanos cómo te llamás.' : '',
       email: !form.email ? 'Ingresá tu email.' : !isValidEmail(form.email) ? 'Usá un email válido.' : '',
       password:
-        !form.password ? 'Creá una contraseña.' : form.password.length < 6 ? 'Debe tener al menos 6 caracteres.' : '',
+        !form.password ? 'Creá una contraseña.' : validatePassword(form.password),
       confirmPassword:
         !form.confirmPassword
           ? 'Repetí la contraseña.'
@@ -200,13 +213,23 @@ export default function Register() {
                     value={form.password}
                     onChange={handleChange('password')}
                     onBlur={() => setTouched((prev) => ({ ...prev, password: true }))}
-                    placeholder="Mínimo 6 caracteres"
+                    placeholder="Ej: Mova.2026"
                     style={{ backgroundColor: 'rgba(13, 13, 13, 0.88)' }}
                     className="w-full border border-[#F2EDEA]/10 bg-[#111215]/86 px-4 py-3.5 text-base text-[#F2EDEA] outline-none transition placeholder:text-[#F2EDEA]/38 focus:border-[var(--mova-accent)] focus:bg-[#111215] focus:shadow-[0_0_0_4px_rgba(253,116,7,0.10)]"
                   />
                   {touched.password && errors.password && (
                     <p className="mt-2 text-xs font-semibold text-[#FB97B3]">{errors.password}</p>
                   )}
+                  <div className="mt-3 grid grid-cols-1 gap-1.5">
+                    {passwordRules.map((rule) => {
+                      const passed = rule.test(form.password);
+                      return (
+                        <span key={rule.label} className={`text-xs font-semibold ${passed ? 'text-[#F9A809]' : 'text-[#F2EDEA]/42'}`}>
+                          {passed ? '✓' : '·'} {rule.label}
+                        </span>
+                      );
+                    })}
+                  </div>
                 </label>
 
                 <label className="block">

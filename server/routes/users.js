@@ -15,6 +15,15 @@ function createUsername(name) {
   );
 }
 
+function validatePassword(password = '') {
+  if (password.length < 8) return 'La contraseña debe tener al menos 8 caracteres.';
+  if (!/[A-ZÁÉÍÓÚÑ]/.test(password)) return 'La contraseña debe incluir una mayúscula.';
+  if (!/[a-záéíóúñ]/.test(password)) return 'La contraseña debe incluir una minúscula.';
+  if (!/\d/.test(password)) return 'La contraseña debe incluir un número.';
+  if (!/[^A-Za-zÁÉÍÓÚÑáéíóúñ0-9]/.test(password)) return 'La contraseña debe incluir un símbolo, por ejemplo . ! @ #.';
+  return '';
+}
+
 router.get('/', async (_req, res) => {
   try {
     const users = await User.find().sort({ puntos: -1, nombre: 1 });
@@ -164,7 +173,8 @@ router.post('/register', async (req, res) => {
 
     if (!name && !nombre) return res.status(400).json({ error: 'Ingresá tu nombre.' });
     if (!normalizedEmail) return res.status(400).json({ error: 'Ingresá tu email.' });
-    if (!password || password.length < 6) return res.status(400).json({ error: 'La contraseña debe tener al menos 6 caracteres.' });
+    const passwordError = validatePassword(password);
+    if (passwordError) return res.status(400).json({ error: passwordError });
 
     const exists = await User.findOne({ email: normalizedEmail });
     if (exists) return res.status(409).json({ error: 'Ya existe una cuenta con ese email.' });
