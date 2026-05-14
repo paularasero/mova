@@ -7,11 +7,13 @@ export async function connectDB() {
       return;
     }
 
-    if (!process.env.MONGODB_URI) {
-      throw new Error('Falta definir MONGODB_URI en .env');
+    const mongoUri = process.env.MONGODB_URI || process.env.MONGO_URI;
+
+    if (!mongoUri) {
+      throw new Error('Falta definir MONGODB_URI o MONGO_URI en .env');
     }
 
-    await mongoose.connect(process.env.MONGODB_URI);
+    await mongoose.connect(mongoUri);
     console.log('MongoDB conectado');
     await seedDatabase();
   } catch (error) {

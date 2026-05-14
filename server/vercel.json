@@ -1,6 +1,11 @@
 {
+  "version": 2,
   "buildCommand": "npm run build",
-  "outputDirectory": ".",
+  "functions": {
+    "api/index.js": {
+      "includeFiles": "{routes,models,config,data}/**"
+    }
+  },
   "rewrites": [
     {
       "source": "/(.*)",

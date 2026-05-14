@@ -12,8 +12,37 @@ const app = express();
 const PORT = process.env.PORT || 4000;
 let dbReadyPromise;
 
-app.use(cors());
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : '',
+  'http://localhost:5173',
+  'http://localhost:5174',
+  'http://localhost:3000',
+].filter(Boolean);
+
+app.use(cors({
+  origin(origin, callback) {
+    if (!origin) {
+      callback(null, true);
+      return;
+    }
+
+    let hostname = '';
+    try {
+      hostname = new URL(origin).hostname;
+    } catch {
+      hostname = '';
+    }
+
+    const isAllowed = allowedOrigins.includes(origin) || /\.vercel\.app$/.test(hostname);
+    callback(isAllowed ? null : new Error('Origen no permitido por CORS.'), isAllowed);
+  },
+}));
 app.use(express.json());
+
+app.get('/api/health', (_req, res) => {
+  res.json({ ok: true });
+});
 
 app.use(async (_req, _res, next) => {
   try {
@@ -23,10 +52,6 @@ app.use(async (_req, _res, next) => {
   } catch (error) {
     next(error);
   }
-});
-
-app.get('/api/health', (_req, res) => {
-  res.json({ ok: true, app: 'MOVA API' });
 });
 
 app.use('/api/plans', plansRouter);
