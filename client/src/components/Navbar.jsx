@@ -13,7 +13,7 @@ const links = [
 
 export default function Navbar() {
   return (
-    <nav className="fixed bottom-4 left-1/2 z-40 w-[90%] max-w-[382px] -translate-x-1/2 rounded-[1rem] border border-[#F2EDEA]/10 bg-[#111215]/94 px-3 py-3 shadow-[0_18px_44px_rgba(0,0,0,0.34)] backdrop-blur-2xl">
+    <nav className="mova-navbar fixed bottom-4 left-1/2 z-40 w-[90%] max-w-[382px] -translate-x-1/2 rounded-[1rem] border border-[#F2EDEA]/10 bg-[#111215]/94 px-3 py-3 shadow-[0_18px_44px_rgba(0,0,0,0.34)] backdrop-blur-2xl">
       <ul className="flex h-14 items-center justify-between gap-1">
         {links.map((link) => (
           <li key={link.to} className="min-w-0">

@@ -13,7 +13,8 @@ const officialAvatar = (seed = 'MOVA') => `https://api.dicebear.com/9.x/bottts-n
 
 function GraphicAvatar({ user }) {
   const name = user?.nombre || user?.name || 'Paula';
-  const customPhoto = user?.avatar && !String(user.avatar).includes('dicebear.com');
+  const avatar = user?.avatar || officialAvatar(name);
+  const customPhoto = avatar && !String(avatar).includes('dicebear.com');
 
   return (
     <div className="relative mx-auto h-32 w-32 overflow-hidden rounded-[0.35rem] border border-[#F2EDEA]/14 bg-[#111215] shadow-[0_18px_52px_rgba(0,0,0,.34)]">
@@ -22,9 +23,9 @@ function GraphicAvatar({ user }) {
       <div className="absolute -bottom-10 -right-8 h-32 w-32 rounded-t-full bg-[#0869D0]/34" />
       <div className="mova-print-texture absolute inset-0 opacity-36" />
       {customPhoto ? (
-        <img src={user.avatar} alt="" className="absolute inset-0 h-full w-full object-cover opacity-90 mix-blend-luminosity" />
+        <img src={avatar} alt="" className="absolute inset-0 h-full w-full object-cover opacity-90 mix-blend-luminosity" />
       ) : (
-        <img src={officialAvatar(name)} alt="" className="absolute bottom-1 left-1/2 h-28 w-28 -translate-x-1/2 object-contain" />
+        <img src={avatar} alt="" className="absolute bottom-1 left-1/2 h-28 w-28 -translate-x-1/2 object-contain" />
       )}
     </div>
   );
@@ -135,6 +136,11 @@ export default function Profile() {
     setDraftAvatar(user?.avatar || officialAvatar(name));
   }, [name, user?.avatar]);
 
+  useEffect(() => {
+    document.body.classList.toggle('mova-profile-editing', editing);
+    return () => document.body.classList.remove('mova-profile-editing');
+  }, [editing]);
+
   const handleFile = (event) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -144,22 +150,40 @@ export default function Profile() {
     event.target.value = '';
   };
 
+  const closeEditor = () => {
+    setDraftName(name);
+    setDraftAvatar(user?.avatar || officialAvatar(name));
+    setEditing(false);
+  };
+
   const saveProfile = async () => {
     if (!currentUserId) return;
+    const nextName = draftName.trim() || name;
+    const nextAvatar = draftAvatar || user?.avatar || officialAvatar(nextName);
+    const optimisticUser = {
+      ...user,
+      id: currentUserId,
+      nombre: nextName,
+      name: nextName,
+      avatar: nextAvatar,
+    };
+
+    setCurrentUser({ ...getCurrentUser(), ...optimisticUser });
+    setProfile((prev) => prev ? { ...prev, user: { ...prev.user, ...optimisticUser } } : { user: optimisticUser, created: [], saved: [], stats: {} });
+    setEditing(false);
     setSaving(true);
     try {
       const updated = await apiRequest('/users/me', {
         method: 'PUT',
         body: JSON.stringify({
           userId: currentUserId,
-          name: draftName.trim() || name,
-          avatar: draftAvatar || user?.avatar,
+          name: nextName,
+          avatar: nextAvatar,
           preferences: user?.preferences,
         }),
       });
       setCurrentUser(updated);
       setProfile((prev) => prev ? { ...prev, user: { ...prev.user, ...updated } } : { user: updated, created: [], saved: [], stats: {} });
-      setEditing(false);
     } finally {
       setSaving(false);
     }
@@ -260,7 +284,7 @@ export default function Profile() {
         <AnimatePresence>
           <EditProfileModal
             open={editing}
-            onClose={() => setEditing(false)}
+            onClose={closeEditor}
             value={{ name: draftName, avatar: draftAvatar }}
             onChangeName={setDraftName}
             onOpenGallery={() => document.getElementById('profile-gallery-upload')?.click()}

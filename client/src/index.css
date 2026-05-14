@@ -119,6 +119,16 @@ body {
   border-radius: 0.16rem !important;
 }
 
+body.mova-profile-editing .mova-navbar {
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 14px) scale(0.98);
+}
+
+.mova-navbar {
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+
 .mova-mobile {
   margin: 0 auto;
   min-height: 100vh;
