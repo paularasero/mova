@@ -22,6 +22,50 @@ const accentIcon = L.divIcon({
   iconAnchor: [16, 16],
 });
 
+function EditorialStepBackdrop({ step }) {
+  const variants = [
+    {
+      primary: 'radial-gradient(circle at 18% 28%, rgba(253,116,7,.34), rgba(251,151,179,.12) 42%, transparent 62%)',
+      secondary: 'radial-gradient(ellipse at 82% 74%, rgba(8,105,208,.16), transparent 58%)',
+      shape: 'absolute left-[-4rem] top-16 h-72 w-[21rem] rounded-[46%]',
+    },
+    {
+      primary: 'radial-gradient(circle at 70% 18%, rgba(249,168,9,.26), rgba(253,116,7,.08) 44%, transparent 62%)',
+      secondary: 'linear-gradient(135deg, rgba(4,83,62,.18), rgba(8,105,208,.08), transparent 78%)',
+      shape: 'absolute right-[-3rem] top-24 h-80 w-[18rem] rounded-[42%]',
+    },
+    {
+      primary: 'linear-gradient(180deg, rgba(253,116,7,.18), rgba(251,151,179,.08) 36%, transparent 74%)',
+      secondary: 'radial-gradient(circle at 24% 82%, rgba(8,105,208,.16), transparent 58%)',
+      shape: 'absolute left-[-2rem] top-28 h-72 w-[22rem] rounded-[44%]',
+    },
+    {
+      primary: 'radial-gradient(circle at 22% 24%, rgba(4,83,62,.22), transparent 56%)',
+      secondary: 'linear-gradient(135deg, rgba(249,168,9,.2), rgba(253,116,7,.1) 44%, rgba(8,105,208,.08) 88%)',
+      shape: 'absolute right-[-4rem] top-14 h-80 w-[20rem] rounded-[40%]',
+    },
+  ];
+  const active = variants[(step - 1) % variants.length];
+
+  return (
+    <div className="pointer-events-none absolute inset-0 overflow-hidden">
+      <motion.div
+        className={active.shape}
+        style={{ background: active.primary, filter: 'blur(18px)' }}
+        animate={{ x: [0, 7, 0], y: [0, -6, 0], scale: [1, 1.02, 1] }}
+        transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
+      />
+      <motion.div
+        className="absolute inset-x-[-12%] top-28 h-[24rem] rounded-[38%]"
+        style={{ background: active.secondary, filter: 'blur(24px)' }}
+        animate={{ x: [0, -6, 0], y: [0, 5, 0] }}
+        transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}
+      />
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(17,18,21,.02),rgba(17,18,21,.16)_48%,rgba(17,18,21,.36)_100%)]" />
+    </div>
+  );
+}
+
 function ClickToSelect({ onSelect }) {
   useMapEvents({
     click(event) {
@@ -83,46 +127,6 @@ function MapPicker({ open, onClose, onSelect }) {
   );
 }
 
-function StepGraphic({ step }) {
-  const base = 'pointer-events-none relative my-5 h-28 overflow-hidden opacity-78';
-  if (step === 1) {
-    return (
-      <motion.div aria-hidden className={base} animate={{ y: [0, -5, 0] }} transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}>
-        <div className="absolute -left-8 bottom-[-3.5rem] h-40 w-40 rounded-t-full bg-[#FD7407]" />
-        <div className="absolute left-20 bottom-[-3rem] h-36 w-36 rounded-t-full bg-[#FB97B3]" />
-        <div className="absolute right-0 bottom-[-2.5rem] h-32 w-32 rounded-t-full bg-[#0869D0]" />
-      </motion.div>
-    );
-  }
-  if (step === 2) {
-    return (
-      <motion.div aria-hidden className={base} animate={{ x: [0, 4, 0] }} transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut' }}>
-        <div className="absolute left-2 top-0 h-24 w-[36%] rounded-full bg-[linear-gradient(180deg,#FD7407,#FB97B3,#0869D0)]" />
-        <div className="absolute bottom-0 right-2 top-0 w-[48%] bg-[#04533E]">
-          <div className="absolute left-8 top-4 h-16 w-16 rounded-full bg-[#F9A809]" />
-          <div className="absolute bottom-0 left-5 right-5 top-16 flex justify-between">{Array.from({ length: 8 }, (_, i) => <span key={i} className="h-full w-[3px] bg-[#FD7407]" />)}</div>
-        </div>
-      </motion.div>
-    );
-  }
-  if (step === 3) {
-    return (
-      <motion.div aria-hidden className={base} animate={{ opacity: [0.68, 0.9, 0.68] }} transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}>
-        <div className="absolute inset-0 flex gap-2">
-          {['#FD7407', '#F9A809', '#FB97B3', '#0869D0', '#04533E'].map((color) => <span key={color} className="h-full flex-1" style={{ backgroundColor: color }} />)}
-        </div>
-      </motion.div>
-    );
-  }
-  return (
-    <motion.div aria-hidden className={base} animate={{ scale: [1, 1.02, 1] }} transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}>
-      <div className="absolute left-0 top-0 h-24 w-24 rounded-full bg-[#F9A809]" />
-      <div className="absolute left-20 top-3 h-24 w-24 rounded-full bg-[#FB97B3]" />
-      <div className="absolute right-4 top-2 h-24 w-24 rounded-full bg-[#0869D0]" />
-    </motion.div>
-  );
-}
-
 export default function CreatePlan() {
   const navigate = useNavigate();
   const user = getCurrentUser();
@@ -176,6 +180,7 @@ export default function CreatePlan() {
   return (
     <main className="mova-screen">
       <section className="mova-mobile relative overflow-hidden px-5 pb-28 pt-7">
+        <EditorialStepBackdrop step={step} />
         <header className="relative z-10 flex items-center justify-between">
           <button onClick={prev} className="grid h-11 w-11 place-items-center rounded-[0.16rem] bg-white/[0.07] text-xl"><IoArrowBack /></button>
           <div className="text-right">
@@ -188,7 +193,6 @@ export default function CreatePlan() {
           {step === 1 && (
             <>
               <h1 className="text-[2rem] font-semibold leading-tight tracking-[0.005em]">¿Qué tipo de experiencia querés compartir?</h1>
-              <StepGraphic step={step} />
               <div className="mt-5 grid grid-cols-2 gap-3">
                 {categories.map((type) => (
                   <motion.button whileTap={{ scale: 0.98 }} key={type} onClick={() => setForm((prev) => ({ ...prev, category: type, tags: Array.from(new Set([...prev.tags, type.toLowerCase()])) }))} className={`relative h-28 overflow-hidden rounded-[0.35rem] border p-4 text-left font-semibold ${form.category === type ? 'border-[var(--mova-accent)] bg-[var(--mova-accent-soft)] text-[var(--mova-accent)]' : 'border-[var(--mova-border)] bg-[var(--mova-card)] text-[var(--mova-text)]'}`}>
@@ -203,7 +207,6 @@ export default function CreatePlan() {
             <>
               <h1 className="text-[2rem] font-semibold">Agregá fotos</h1>
               <p className="mt-2 text-sm text-white/52">Sumá fotos del plan. La subida real queda lista para conectar a galería/cámara.</p>
-              <StepGraphic step={step} />
               <div className="mt-5 grid grid-cols-2 gap-3">
                 <button onClick={() => setImageUrl(fallback)} className="flex h-12 items-center justify-center gap-2 rounded-[0.16rem] bg-white/[0.07] text-sm font-semibold text-white/72"><FiCamera /> Subir foto</button>
                 <button onClick={() => setImageUrl(fallback)} className="flex h-12 items-center justify-center gap-2 rounded-[0.16rem] bg-[var(--mova-accent)] text-sm font-black text-[#111215]"><FiPlus /> Galería</button>
@@ -224,7 +227,6 @@ export default function CreatePlan() {
           {step === 3 && (
             <>
               <h1 className="text-[2rem] font-semibold">Contanos más</h1>
-              <StepGraphic step={step} />
               <div className="mt-5 space-y-3">
                 <input value={form.title} onChange={update('title')} placeholder="Título" className="w-full rounded-[0.85rem] bg-white/[0.07] px-4 py-3.5 text-sm outline-none placeholder:text-white/35" />
                 <textarea value={form.description} onChange={update('description')} placeholder="Descripción editorial del plan" rows="4" className="w-full resize-none rounded-[0.85rem] bg-white/[0.07] px-4 py-3.5 text-sm outline-none placeholder:text-white/35" />
@@ -250,7 +252,6 @@ export default function CreatePlan() {
           {step === 4 && (
             <>
               <h1 className="text-[2rem] font-semibold">Preview</h1>
-              <StepGraphic step={step} />
               <div className="mt-5 overflow-hidden rounded-[0.45rem] border border-white/10 bg-white/[0.06]">
                 <img src={cover} alt="" className="h-64 w-full object-cover" />
                 <div className="p-4">

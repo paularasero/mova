@@ -88,6 +88,27 @@ function Stars({ value = 5, onChange }) {
   );
 }
 
+function EditorialBackdrop({ variant = 'aurora', className = '' }) {
+  const shared = 'pointer-events-none absolute inset-0 overflow-hidden';
+  if (variant === 'conversation') {
+    return (
+      <div className={`${shared} ${className}`}>
+        <motion.div className="absolute -left-20 top-12 h-56 w-56 rounded-full bg-[#FD7407]/10 blur-[34px]" animate={{ x: [0, 8, 0], y: [0, -6, 0] }} transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }} />
+        <motion.div className="absolute right-[-4rem] top-1/3 h-64 w-64 rounded-full bg-[#0869D0]/10 blur-[40px]" animate={{ x: [0, -10, 0], y: [0, 8, 0] }} transition={{ duration: 13, repeat: Infinity, ease: 'easeInOut' }} />
+        <motion.div className="absolute bottom-[-7rem] left-10 h-64 w-72 rounded-[45%] bg-[#04533E]/9 blur-[44px]" animate={{ scale: [1, 1.03, 1] }} transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }} />
+      </div>
+    );
+  }
+  return (
+    <div className={`${shared} ${className}`}>
+      <motion.div className="absolute -left-14 top-4 h-48 w-64 rounded-[48%] bg-[#FD7407]/16 blur-[26px]" animate={{ x: [0, 6, 0], y: [0, -5, 0] }} transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }} />
+      <motion.div className="absolute right-[-4rem] top-20 h-56 w-56 rounded-full bg-[#FB97B3]/10 blur-[32px]" animate={{ y: [0, 7, 0] }} transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }} />
+      <motion.div className="absolute bottom-[-5rem] right-4 h-52 w-80 rounded-[42%] bg-[#0869D0]/10 blur-[34px]" animate={{ x: [0, -8, 0] }} transition={{ duration: 11, repeat: Infinity, ease: 'easeInOut' }} />
+      <motion.div className="absolute bottom-16 left-4 h-32 w-48 rounded-[44%] bg-[#04533E]/10 blur-[26px]" animate={{ scale: [1, 1.04, 1] }} transition={{ duration: 13, repeat: Infinity, ease: 'easeInOut' }} />
+    </div>
+  );
+}
+
 export default function PlanDetail() {
   const { id } = useParams();
   const user = getCurrentUser();
@@ -121,6 +142,7 @@ export default function PlanDetail() {
 
   const saved = experience.savedBy?.includes(user?.id);
   const joined = experience.joinedUsers?.includes(user?.id);
+  const liked = experience.likedBy?.includes(user?.id);
   const comments = experience.comments || [];
   const socialComments = [...comments, ...demoComments].slice(0, Math.max(3, comments.length));
   const hostSeed = encodeURIComponent(experience.author || 'MOVA host');
@@ -186,8 +208,8 @@ export default function PlanDetail() {
           <div className="absolute left-4 right-4 top-4 flex items-center justify-between">
             <Link to="/home" className="grid h-10 w-10 place-items-center rounded-[0.7rem] bg-black/42 text-xl backdrop-blur-xl"><IoArrowBack /></Link>
             <div className="flex gap-2">
-              <button className="grid h-10 w-10 place-items-center rounded-[0.7rem] bg-black/42 backdrop-blur-xl"><FiShare2 /></button>
-              <button onClick={save} className="grid h-10 w-10 place-items-center rounded-[0.7rem] bg-white/92 text-black backdrop-blur-xl"><FiBookmark fill={saved ? 'currentColor' : 'none'} /></button>
+              <button className="grid h-10 w-10 place-items-center rounded-[0.7rem] bg-black/42 text-white backdrop-blur-xl"><FiShare2 /></button>
+              <button onClick={save} className="grid h-10 w-10 place-items-center rounded-[0.7rem] bg-black/42 text-white backdrop-blur-xl transition hover:bg-black/58"><FiBookmark fill={saved ? 'currentColor' : 'none'} /></button>
             </div>
           </div>
           <div className="absolute bottom-5 left-5 right-5">
@@ -210,7 +232,18 @@ export default function PlanDetail() {
             </div>
             <div className="flex items-center justify-between border-t border-white/10 pt-3">
               <span className="text-sm text-white/48">{experience.time} · {experience.price || '$'}</span>
-              <button onClick={like} className="inline-flex items-center gap-2 rounded-[0.65rem] bg-white/[0.07] px-3 py-2 text-sm font-semibold text-white/78"><FiHeart /> {experience.likes}</button>
+              <motion.button
+                whileTap={{ scale: 0.97 }}
+                onClick={like}
+                animate={liked ? { scale: [1, 1.06, 1] } : { scale: 1 }}
+                transition={{ duration: 0.28, ease: 'easeOut' }}
+                className={`inline-flex items-center gap-2 rounded-[0.45rem] border px-3.5 py-2 text-sm font-semibold text-[#F2EDEA] transition ${liked ? 'border-[#FB97B3]/40 bg-[#FB97B3]/16' : 'border-[#FB97B3]/28 bg-[#FB97B3]/10 hover:bg-[#FB97B3]/16'}`}
+              >
+                <motion.span animate={liked ? { scale: [1, 1.18, 1] } : { scale: 1 }} transition={{ duration: 0.24 }}>
+                  <FiHeart fill={liked ? '#FB97B3' : 'none'} className="text-[1.05rem] text-[#FB97B3]" />
+                </motion.span>
+                {experience.likes}
+              </motion.button>
             </div>
           </section>
 

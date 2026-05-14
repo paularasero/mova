@@ -4,16 +4,16 @@ import { FiHome, FiMap, FiUser, FiUsers } from 'react-icons/fi';
 import { IoAdd } from 'react-icons/io5';
 
 const links = [
-  { to: '/home', label: 'Home', icon: FiHome, color: '#F9A809', text: '#111215' },
-  { to: '/map', label: 'Mapa', icon: FiMap, color: '#0869D0', text: '#F2EDEA' },
-  { to: '/create', label: 'Crear', icon: IoAdd, color: '#FD7407', text: '#111215' },
-  { to: '/community', label: 'Social', icon: FiUsers, color: '#FB97B3', text: '#111215' },
-  { to: '/profile', label: 'Perfil', icon: FiUser, color: '#04533E', text: '#F2EDEA' },
+  { to: '/home', label: 'Home', icon: FiHome },
+  { to: '/map', label: 'Mapa', icon: FiMap },
+  { to: '/create', label: 'Crear', icon: IoAdd },
+  { to: '/community', label: 'Social', icon: FiUsers },
+  { to: '/profile', label: 'Perfil', icon: FiUser },
 ];
 
 export default function Navbar() {
   return (
-    <nav className="fixed bottom-4 left-1/2 z-40 w-[90%] max-w-[382px] -translate-x-1/2 rounded-[1.15rem] border border-[#F2EDEA]/10 bg-[#111215]/94 px-3 py-3 shadow-[0_18px_44px_rgba(0,0,0,0.34)] backdrop-blur-2xl">
+    <nav className="fixed bottom-4 left-1/2 z-40 w-[90%] max-w-[382px] -translate-x-1/2 rounded-[1rem] border border-[#F2EDEA]/10 bg-[#111215]/94 px-3 py-3 shadow-[0_18px_44px_rgba(0,0,0,0.34)] backdrop-blur-2xl">
       <ul className="flex h-14 items-center justify-between gap-1">
         {links.map((link) => (
           <li key={link.to} className="min-w-0">
@@ -24,11 +24,11 @@ export default function Navbar() {
                   whileTap={{ scale: 0.94 }}
                   animate={{
                     width: isActive ? 112 : 46,
-                    backgroundColor: isActive ? link.color : 'rgba(242,237,234,0)',
-                    color: isActive ? link.text : 'rgba(242,237,234,0.68)',
+                    backgroundColor: isActive ? '#F2EDEA' : 'rgba(242,237,234,0)',
+                    color: isActive ? '#111215' : 'rgba(242,237,234,0.62)',
                   }}
                   transition={{ type: 'spring', stiffness: 420, damping: 34 }}
-                  className="flex h-12 items-center justify-center gap-2 overflow-hidden rounded-[1rem] text-[1.32rem] font-semibold"
+                  className="flex h-11 items-center justify-center gap-2 overflow-hidden rounded-[0.42rem] text-[1.32rem] font-semibold"
                 >
                   <link.icon className="shrink-0" />
                   {isActive && (

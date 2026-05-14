@@ -106,13 +106,13 @@ function ChatRow({ chat, onOpen }) {
     <motion.button initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} whileTap={{ scale: 0.99 }} onClick={() => onOpen(chat)} className="flex h-20 w-full items-center gap-3 overflow-hidden rounded-[0.35rem] bg-white/[0.045] p-3 text-left ring-1 ring-white/8">
       <img src={chat.avatar} alt="" style={{ width: 52, height: 52 }} className="shrink-0 rounded-[0.25rem] object-cover" />
       <div className="min-w-0 flex-1">
-        <div className="flex items-center justify-between gap-3">
-          <p className="truncate font-semibold">{chat.name}</p>
-          <span className="shrink-0 text-[11px] text-white/38">{chat.time}</span>
-        </div>
+        <p className="truncate font-semibold">{chat.name}</p>
         <p className="mt-1 truncate text-sm text-white/48">{chat.preview}</p>
       </div>
-      {chat.unread > 0 && <span className="grid h-6 min-w-6 place-items-center rounded-[0.16rem] bg-[#FB97B3] px-2 text-xs font-black text-[#111215]">{chat.unread}</span>}
+      <div className="flex h-full w-10 flex-col items-end justify-center gap-1 self-stretch">
+        <span className="text-[11px] leading-none text-white/38">{chat.time}</span>
+        {chat.unread > 0 ? <span className="grid h-6 min-w-6 place-items-center rounded-[0.16rem] bg-[#FB97B3] px-2 text-xs font-black leading-none text-[#111215]">{chat.unread}</span> : <span className="h-6" />}
+      </div>
     </motion.button>
   );
 }
@@ -133,7 +133,12 @@ function ChatView({ chat, onBack }) {
   };
 
   return (
-    <motion.section initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 24 }} className="flex min-h-[calc(100vh-9rem)] flex-col">
+    <motion.section initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 24 }} className="relative flex min-h-[calc(100vh-9rem)] flex-col">
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute -right-24 top-16 h-56 w-56 rounded-full bg-[#FB97B3]/8 blur-3xl" />
+        <div className="absolute -left-20 top-1/3 h-72 w-72 rounded-[38%] bg-[#0869D0]/8 blur-3xl" />
+        <div className="absolute bottom-28 right-0 h-48 w-72 rounded-t-[45%] bg-[#FD7407]/8 blur-3xl" />
+      </div>
       <header className="flex items-center gap-3">
         <button onClick={onBack} className="grid h-10 w-10 place-items-center rounded-[0.7rem] border border-white/10 bg-white/[0.06]"><FiArrowLeft /></button>
         <img src={chat.avatar} alt="" className="h-11 w-11 rounded-[0.85rem] object-cover" />
@@ -143,7 +148,7 @@ function ChatView({ chat, onBack }) {
         </div>
       </header>
 
-      <div className="mt-7 flex-1 space-y-3 pb-28">
+      <div className="relative mt-7 flex-1 space-y-3 pb-28">
         {messages.map((message, index) => {
           const mine = message.from === 'Yo';
           return (

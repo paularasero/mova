@@ -43,15 +43,15 @@ function categoryColor(category = '') {
 
 function makeIcon(category) {
   const color = categoryColor(category);
-  const accent = color === '#FD7407' ? '#0869D0' : '#FD7407';
   return L.divIcon({
     className: '',
-    html: `<div style="position:relative;width:28px;height:28px">
-      <span style="position:absolute;left:4px;top:4px;width:18px;height:18px;border-radius:999px;background:${color};border:2px solid #F2EDEA;box-shadow:0 0 0 5px ${color}33,0 10px 24px rgba(17,18,21,.32)"></span>
-      <span style="position:absolute;right:2px;bottom:3px;width:5px;height:18px;background:${accent};opacity:.82"></span>
+    html: `<div style="position:relative;width:30px;height:34px">
+      <span style="position:absolute;left:5px;top:3px;width:20px;height:20px;border-radius:56% 44% 52% 48% / 42% 56% 44% 58%;background:${color};box-shadow:0 0 0 6px ${color}26,0 12px 28px rgba(17,18,21,.26);transform:rotate(-14deg)"></span>
+      <span style="position:absolute;left:12px;top:17px;width:8px;height:13px;border-radius:0 0 12px 12px;background:${color};transform:skewX(-7deg)"></span>
+      <span style="position:absolute;left:8px;bottom:2px;width:14px;height:5px;border-radius:999px;background:rgba(17,18,21,.24);filter:blur(1px)"></span>
     </div>`,
-    iconSize: [28, 28],
-    iconAnchor: [14, 14],
+    iconSize: [30, 34],
+    iconAnchor: [15, 28],
   });
 }
 
@@ -231,17 +231,21 @@ export default function Map() {
 
         {selected && (
           <motion.div key={selected.id} initial={{ y: -12, opacity: 0, filter: 'blur(8px)' }} animate={{ y: 0, opacity: 1, filter: 'blur(0px)' }} className="absolute left-5 right-5 top-24 z-20 rounded-[0.45rem] border border-white/10 bg-[#111215]/92 p-2.5 text-[var(--mova-text)] shadow-[0_20px_55px_rgba(0,0,0,.32)] backdrop-blur-md">
-            <div className="flex gap-3">
-              <div className="flex min-w-0 flex-1 gap-3">
-                <Link to={`/plan/${selected.id}`} className="shrink-0"><img src={selected.image} alt="" className="h-20 w-20 rounded-[0.25rem] object-cover" /></Link>
-                <div className="min-w-0 flex-1">
+            <div className="flex items-stretch gap-3">
+              <div className="flex min-w-0 flex-1 items-stretch gap-3">
+                <Link to={`/plan/${selected.id}`} className="w-24 shrink-0 overflow-hidden rounded-[0.25rem]">
+                  <img src={selected.image} alt="" className="h-full w-full object-cover" />
+                </Link>
+                <div className="flex min-w-0 flex-1 flex-col justify-between">
+                  <div>
                   <Link to={`/plan/${selected.id}`}><h2 className="line-clamp-1 text-sm font-semibold leading-tight">{selected.title}</h2></Link>
                   <p className="mt-1 flex items-center gap-1 text-[11px] text-white/52"><FiMapPin /> {selected.neighborhood || selected.location}</p>
                   <p className="mt-1 flex items-center gap-1 text-[11px] text-white/52"><FiClock /> {selected.date || selected.fecha || 'Hoy'} · {selected.time || selected.horario || '21:00'}</p>
-                  <button type="button" onClick={() => join(selected.id)} className={`mt-2 rounded-[0.16rem] px-3 py-1.5 text-[11px] font-black transition ${joinedIds.has(selected.id) ? 'bg-[#F2EDEA] text-[#111215]' : 'bg-[#FD7407] text-[#111215] hover:bg-[#F9A809]'}`}>{joinedIds.has(selected.id) ? 'Te sumaste' : 'Me sumo'}</button>
+                  </div>
+                  <button type="button" onClick={() => join(selected.id)} className={`mt-3 rounded-[0.16rem] px-3 py-1.5 text-[11px] font-black transition ${joinedIds.has(selected.id) ? 'bg-[#F2EDEA] text-[#111215]' : 'bg-[#FD7407] text-[#111215] hover:bg-[#F9A809]'}`}>{joinedIds.has(selected.id) ? 'Te sumaste' : 'Me sumo'}</button>
                 </div>
               </div>
-              <button onClick={() => save(selected.id)} className="grid h-9 w-9 shrink-0 place-items-center rounded-[0.16rem] bg-white text-[#111215]"><FiBookmark /></button>
+              <button onClick={() => save(selected.id)} className="grid h-9 w-9 shrink-0 self-start place-items-center rounded-[0.16rem] bg-white text-[#111215]"><FiBookmark /></button>
             </div>
             {message && <p className="mt-2 text-[11px] font-semibold text-[#F9A809]">{message}</p>}
           </motion.div>

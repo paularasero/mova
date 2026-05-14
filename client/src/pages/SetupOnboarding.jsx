@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useMemo, useState } from 'react';
-import { FiCheck, FiMapPin, FiSearch, FiUpload, FiUser, FiX } from 'react-icons/fi';
+import { FiCamera, FiCheck, FiMapPin, FiSearch, FiUpload, FiUser, FiX } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import { apiRequest } from '../lib/api';
 import { getCurrentUser, setCurrentUser } from '../lib/auth';
@@ -19,59 +19,56 @@ const avatars = [
   'https://api.dicebear.com/9.x/bottts-neutral/svg?seed=MovaNight&backgroundColor=04533e,111215',
 ];
 
-function SetupGraphic({ step }) {
-  const base = 'pointer-events-none relative my-5 h-28 overflow-hidden opacity-78';
-  if (step === 1) {
-    return (
-      <motion.div aria-hidden className={base} animate={{ y: [0, -5, 0] }} transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}>
-        <div className="absolute left-3 top-0 h-24 w-24 rounded-full bg-[#FD7407]" />
-        <div className="absolute left-20 top-8 h-28 w-28 rounded-t-full bg-[#04533E]" />
-        <div className="absolute right-5 top-4 h-24 w-24 rounded-t-full bg-[#0869D0]" />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#111215]/20" />
-      </motion.div>
-    );
-  }
-  if (step === 2) {
-    return (
-      <motion.div aria-hidden className={base} animate={{ x: [0, 5, 0] }} transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut' }}>
-        <div className="absolute left-0 top-2 h-24 w-[42%] rounded-full bg-[linear-gradient(180deg,#FD7407,#FB97B3,#0869D0)]" />
-        <div className="absolute bottom-0 right-0 top-0 w-[46%] bg-[#04533E]">
-          <div className="absolute left-6 top-3 h-16 w-16 rounded-full bg-[#F9A809]" />
-          <div className="absolute bottom-0 left-4 right-4 top-14 flex justify-between">{Array.from({ length: 7 }, (_, i) => <span key={i} className="h-full w-[3px] bg-[#FD7407]" />)}</div>
-        </div>
-      </motion.div>
-    );
-  }
-  if (step === 3) {
-    return (
-      <motion.div aria-hidden className={base} animate={{ scale: [1, 1.025, 1] }} transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}>
-        <div className="absolute -left-4 bottom-[-4rem] h-40 w-40 rounded-t-full bg-[#0869D0]" />
-        <div className="absolute left-16 bottom-[-3rem] h-36 w-36 rounded-t-full bg-[#FB97B3]" />
-        <div className="absolute right-2 bottom-[-2rem] h-32 w-32 rounded-t-full bg-[#FD7407]" />
-      </motion.div>
-    );
-  }
-  if (step === 4) {
-    return (
-      <motion.div aria-hidden className={base} animate={{ opacity: [0.7, 0.9, 0.7] }} transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}>
-        <div className="absolute inset-0 flex gap-2">
-          {['#FD7407', '#F9A809', '#FB97B3', '#0869D0', '#04533E'].map((color, index) => <span key={color} className="h-full flex-1" style={{ backgroundColor: color, opacity: 0.58 + index * 0.05 }} />)}
-        </div>
-        <div className="absolute inset-y-0 left-8 w-[3px] bg-[#FD7407]" />
-        <div className="absolute inset-y-0 left-24 w-[3px] bg-[#FD7407]" />
-      </motion.div>
-    );
-  }
+function SetupBackdrop({ step }) {
+  const variants = [
+    {
+      primary: 'radial-gradient(circle at 22% 24%, rgba(253,116,7,.32), rgba(251,151,179,.12) 44%, transparent 64%)',
+      secondary: 'radial-gradient(circle at 78% 64%, rgba(8,105,208,.16), transparent 56%)',
+      shape: 'absolute left-[-4rem] top-12 h-72 w-[21rem] rounded-[44%]',
+    },
+    {
+      primary: 'linear-gradient(135deg, rgba(249,168,9,.18), rgba(253,116,7,.08) 38%, transparent 78%)',
+      secondary: 'radial-gradient(circle at 82% 28%, rgba(4,83,62,.18), transparent 56%)',
+      shape: 'absolute right-[-4rem] top-20 h-80 w-[20rem] rounded-[40%]',
+    },
+    {
+      primary: 'radial-gradient(circle at 30% 78%, rgba(8,105,208,.18), transparent 58%)',
+      secondary: 'linear-gradient(180deg, rgba(251,151,179,.18), rgba(253,116,7,.08) 42%, transparent 82%)',
+      shape: 'absolute left-[-2rem] top-28 h-72 w-[22rem] rounded-[42%]',
+    },
+    {
+      primary: 'linear-gradient(135deg, rgba(4,83,62,.2), rgba(8,105,208,.08), transparent 72%)',
+      secondary: 'radial-gradient(circle at 70% 20%, rgba(249,168,9,.22), transparent 54%)',
+      shape: 'absolute right-[-3rem] top-16 h-80 w-[19rem] rounded-[38%]',
+    },
+    {
+      primary: 'radial-gradient(circle at 18% 18%, rgba(251,151,179,.18), transparent 54%)',
+      secondary: 'linear-gradient(135deg, rgba(253,116,7,.18), rgba(8,105,208,.08) 52%, transparent 86%)',
+      shape: 'absolute left-[-3rem] top-18 h-80 w-[20rem] rounded-[40%]',
+    },
+  ];
+  const active = variants[(step - 1) % variants.length];
+
   return (
-    <motion.div aria-hidden className={base} animate={{ y: [0, -4, 0] }} transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}>
-      <div className="absolute left-2 top-2 h-20 w-20 rounded-full bg-[#F9A809]" />
-      <div className="absolute left-24 top-0 h-24 w-24 rounded-full bg-[#FB97B3]" />
-      <div className="absolute right-3 top-4 h-20 w-20 rounded-full bg-[#0869D0]" />
-    </motion.div>
+    <div className="pointer-events-none absolute inset-0 overflow-hidden">
+      <motion.div
+        className={active.shape}
+        style={{ background: active.primary, filter: 'blur(18px)' }}
+        animate={{ x: [0, 7, 0], y: [0, -6, 0], scale: [1, 1.02, 1] }}
+        transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
+      />
+      <motion.div
+        className="absolute inset-x-[-14%] top-28 h-[24rem] rounded-[36%]"
+        style={{ background: active.secondary, filter: 'blur(24px)' }}
+        animate={{ x: [0, -6, 0], y: [0, 5, 0] }}
+        transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}
+      />
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(17,18,21,.02),rgba(17,18,21,.16)_42%,rgba(17,18,21,.34)_100%)]" />
+    </div>
   );
 }
 
-function AvatarPicker({ open, onClose, value, onSelect }) {
+function AvatarPicker({ open, onClose, value, onSelect, onOpenGallery, onOpenCamera }) {
   return (
     <AnimatePresence>
       {open && (
@@ -82,12 +79,15 @@ function AvatarPicker({ open, onClose, value, onSelect }) {
             <div className="pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-[2rem] bg-[#FB97B3]/20 blur-xl" />
             <div className="pointer-events-none absolute -bottom-8 left-8 h-24 w-32 rotate-[-14deg] rounded-[1rem] bg-[#04533E]/16 blur-lg" />
             <div className="relative flex items-center justify-between"><h2 className="text-2xl font-semibold">Tu avatar</h2><button onClick={onClose} className="grid h-9 w-9 place-items-center rounded-[0.55rem] bg-white/[0.08]"><FiX /></button></div>
-            <p className="relative mt-2 text-sm text-white/52">Elegí un avatar gráfico o subí una imagen desde tu galería.</p>
+            <p className="relative mt-2 text-sm text-white/52">Elegí un avatar gráfico o subí una imagen desde tu dispositivo.</p>
             <div className="relative mt-5 grid grid-cols-4 gap-3">
               {avatars.map((avatar) => <button key={avatar} onClick={() => onSelect(avatar)} className={`grid h-16 place-items-center overflow-hidden rounded-[0.9rem] border ${value === avatar ? 'border-[#04533E]' : 'border-white/10'} bg-white/[0.06]`}><img src={avatar} alt="" className="h-full w-full object-cover" /></button>)}
             </div>
             <div className="relative mt-5 grid grid-cols-2 gap-3">
-              <button className="flex items-center justify-center gap-2 rounded-[0.85rem] bg-white/[0.07] px-3 py-4 text-sm font-semibold text-white/70"><FiUpload /> Galería</button>
+              <button onClick={onOpenGallery} className="flex items-center justify-center gap-2 rounded-[0.85rem] bg-white/[0.07] px-3 py-4 text-sm font-semibold text-white/70"><FiUpload /> Galería</button>
+              <button onClick={onOpenCamera} className="flex items-center justify-center gap-2 rounded-[0.85rem] bg-white/[0.07] px-3 py-4 text-sm font-semibold text-white/70"><FiCamera /> Cámara</button>
+            </div>
+            <div className="relative mt-3 grid grid-cols-1 gap-3">
               <button onClick={() => onSelect(avatars[0])} className="flex items-center justify-center gap-2 rounded-[0.85rem] bg-[#04533E] px-3 py-4 text-sm font-black text-[#111215]"><FiUser /> Elegir avatar</button>
             </div>
           </motion.div>
@@ -105,6 +105,7 @@ export default function SetupOnboarding() {
   const [cityQuery, setCityQuery] = useState('');
   const [avatarOpen, setAvatarOpen] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [avatarUploadLabel, setAvatarUploadLabel] = useState('');
   const [form, setForm] = useState({
     city: user?.city || user?.ciudad || 'Montevideo',
     favoriteCategories: [],
@@ -115,6 +116,17 @@ export default function SetupOnboarding() {
 
   const filteredCities = useMemo(() => cities.filter((city) => city.toLowerCase().includes(cityQuery.toLowerCase())), [cityQuery]);
   const toggle = (field, value) => setForm((prev) => ({ ...prev, [field]: prev[field].includes(value) ? prev[field].filter((item) => item !== value) : [...prev[field], value] }));
+  const handleAvatarFile = (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      setForm((prev) => ({ ...prev, avatar: String(reader.result || '') }));
+      setAvatarUploadLabel(file.name);
+      setAvatarOpen(false);
+    };
+    reader.readAsDataURL(file);
+  };
 
   const finish = async () => {
     setSaving(true);
@@ -140,6 +152,7 @@ export default function SetupOnboarding() {
   return (
     <main className="mova-screen">
       <section className="mova-mobile relative flex flex-col overflow-hidden px-5 pb-8 pt-8">
+        <SetupBackdrop step={step} />
         <header className="relative z-10">
           <p className="text-2xl font-bold">MOVA<span className="text-[var(--mova-accent)]">.</span></p>
           <div className="mt-6 h-1.5 overflow-hidden rounded-full bg-white/10"><motion.div animate={{ width: `${step * 20}%` }} className="h-full rounded-full bg-[var(--mova-accent)]" /></div>
@@ -150,7 +163,6 @@ export default function SetupOnboarding() {
             <>
               <h1 className="text-[2.15rem] font-semibold leading-tight">Elegí tu ciudad base.</h1>
               <p className="mt-3 text-sm text-white/52">Podés buscar cualquier ciudad. La usamos para recomendar planes cerca.</p>
-              <SetupGraphic step={step} />
               <label className="mt-6 flex h-14 items-center gap-3 rounded-[0.9rem] bg-white/[0.07] px-4"><FiSearch className="text-white/45" /><input value={cityQuery} onChange={(event) => setCityQuery(event.target.value)} placeholder="Buscar ciudad" className="w-full bg-transparent text-sm outline-none placeholder:text-white/35" /></label>
               <button onClick={() => setForm((prev) => ({ ...prev, city: 'Montevideo' }))} className="mt-4 flex w-full items-center gap-3 rounded-[0.85rem] bg-[var(--mova-accent-soft)] px-4 py-3 text-sm font-semibold text-[var(--mova-accent)]"><FiMapPin /> Usar ubicación actual</button>
               <div className="mt-4 max-h-[44vh] space-y-2 overflow-y-auto pb-2">{filteredCities.map((city) => <button key={city} onClick={() => setForm((prev) => ({ ...prev, city }))} className={`flex w-full items-center justify-between rounded-[0.85rem] px-4 py-3 text-left font-semibold ${form.city === city ? 'bg-[var(--mova-accent)] text-[#111215]' : 'bg-white/[0.07] text-white'}`}>{city}{form.city === city && <FiCheck />}</button>)}</div>
@@ -159,14 +171,12 @@ export default function SetupOnboarding() {
           {step === 2 && (
             <>
               <h1 className="text-[2.15rem] font-semibold leading-tight">¿Qué planes te gustan?</h1>
-              <SetupGraphic step={step} />
               <div className="mt-8 grid grid-cols-2 gap-3">{categories.map((item, index) => <button key={item} onClick={() => toggle('favoriteCategories', item)} className={`relative h-24 overflow-hidden rounded-[1rem] border text-sm font-semibold ${form.favoriteCategories.includes(item) ? 'border-[#04533E] bg-[var(--mova-accent-soft)] text-[#04533E]' : 'border-white/10 bg-white/[0.07] text-white/70'}`}><span className={`absolute -right-3 -top-3 h-12 w-12 rounded-[0.75rem] ${index % 3 === 0 ? 'bg-[#FD7407]/20' : index % 3 === 1 ? 'bg-[#0869D0]/18' : 'bg-[#F9A809]/18'}`} />{item}</button>)}</div>
             </>
           )}
           {step === 3 && (
             <>
               <h1 className="text-[2.15rem] font-semibold leading-tight">¿Con quién solés salir?</h1>
-              <SetupGraphic step={step} />
               <div className="mt-8 space-y-3">{companies.map((item) => <button key={item} onClick={() => toggle('company', item)} className={`flex w-full items-center justify-between rounded-[1rem] px-5 py-5 text-left font-semibold ${form.company.includes(item) ? 'bg-[var(--mova-accent)] text-[#111215]' : 'bg-white/[0.07] text-white'}`}>{item}{form.company.includes(item) && <FiCheck />}</button>)}</div>
             </>
           )}
@@ -174,7 +184,6 @@ export default function SetupOnboarding() {
             <>
               <h1 className="text-[2.15rem] font-semibold leading-tight">Tu cumpleaños.</h1>
               <p className="mt-3 text-sm text-white/52">Lo usamos para recomendaciones y momentos especiales.</p>
-              <SetupGraphic step={step} />
               <input type="date" value={form.birthday} onChange={(event) => setForm((prev) => ({ ...prev, birthday: event.target.value }))} className="mt-8 h-14 w-full rounded-[0.9rem] bg-white/[0.07] px-4 text-sm outline-none" />
             </>
           )}
@@ -182,10 +191,9 @@ export default function SetupOnboarding() {
             <>
               <h1 className="text-[2.15rem] font-semibold leading-tight">Elegí tu foto.</h1>
               <p className="mt-3 text-sm text-white/52">Podés elegir un avatar gráfico o subir una imagen desde galería.</p>
-              <SetupGraphic step={step} />
               <button onClick={() => setAvatarOpen(true)} className="mt-8 flex w-full items-center gap-4 rounded-[1rem] bg-white/[0.07] p-4 text-left">
                 <div className="grid h-24 w-24 place-items-center overflow-hidden rounded-full bg-white/[0.07] text-2xl text-white/42">{form.avatar ? <img src={form.avatar} alt="" className="h-full w-full object-cover" /> : <FiUser />}</div>
-                <div><p className="font-semibold">Cambiar avatar</p><p className="mt-1 text-sm text-white/45">Galería o avatar MOVA</p></div>
+                <div><p className="font-semibold">Cambiar avatar</p><p className="mt-1 text-sm text-white/45">{avatarUploadLabel || 'Galería o avatar MOVA'}</p></div>
               </button>
             </>
           )}
@@ -198,7 +206,16 @@ export default function SetupOnboarding() {
           </motion.button>
         </div>
       </section>
-      <AvatarPicker open={avatarOpen} onClose={() => setAvatarOpen(false)} value={form.avatar} onSelect={(avatar) => { setForm((prev) => ({ ...prev, avatar })); setAvatarOpen(false); }} />
+      <AvatarPicker
+        open={avatarOpen}
+        onClose={() => setAvatarOpen(false)}
+        value={form.avatar}
+        onSelect={(avatar) => { setForm((prev) => ({ ...prev, avatar })); setAvatarOpen(false); }}
+        onOpenGallery={() => document.getElementById('setup-gallery-upload')?.click()}
+        onOpenCamera={() => document.getElementById('setup-camera-upload')?.click()}
+      />
+      <input id="setup-gallery-upload" type="file" accept="image/*" className="hidden" onChange={handleAvatarFile} />
+      <input id="setup-camera-upload" type="file" accept="image/*" capture="environment" className="hidden" onChange={handleAvatarFile} />
     </main>
   );
 }

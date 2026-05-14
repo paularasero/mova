@@ -97,7 +97,7 @@ function SearchCard({ item, saved, joined, onSave, onJoin, tall = false }) {
       </div>
       <div className="space-y-3 p-3">
         <div className="flex items-center justify-between gap-2 text-[11px] text-[var(--mova-muted)]">
-          <span className="truncate">{categoryOf(item)}</span>
+          <span className="truncate text-[#F2EDEA]/66">{categoryOf(item)}</span>
           <span className="inline-flex shrink-0 items-center gap-1 text-[#F9A809]"><FiUsers /> {interestedOf(item)}</span>
         </div>
         <button onClick={() => onJoin(item.id)} className={`h-9 w-full rounded-[0.16rem] text-xs font-bold transition ${joined ? 'bg-[#F2EDEA] text-[#111215]' : 'bg-[#FD7407] text-[#111215] hover:bg-[#F9A809]'}`}>{joined ? 'Te sumaste' : 'Me sumo'}</button>

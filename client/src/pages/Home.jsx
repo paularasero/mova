@@ -116,7 +116,7 @@ function SmallCard({ item, saved, joined, onSave, onJoin }) {
           <h3 className="line-clamp-2 min-h-[2.5rem] text-left text-base font-semibold leading-tight">{titleOf(item)}</h3>
           <div className="mt-2 grid justify-items-start gap-1 text-left text-[11px] leading-snug text-[var(--mova-muted)]">
             <span className="truncate">{neighborhoodOf(item)}</span>
-            <span className="truncate text-[#FD7407]">{categoryOf(item)}</span>
+            <span className="truncate text-[#F2EDEA]/66">{categoryOf(item)}</span>
             <span className="inline-flex items-center gap-1 text-[#F9A809]"><FiUsers /> {interestedOf(item)} personas</span>
           </div>
         </Link>
@@ -295,7 +295,7 @@ export default function Home() {
 
         <div className="mova-scrollbar-none mt-5 flex gap-2 overflow-x-auto pb-2">
           {tabs.map((tab) => (
-            <button key={tab} onClick={() => setActiveTab(tab)} className={`shrink-0 rounded-[0.16rem] border px-4 py-2 text-sm font-semibold capitalize transition ${activeTab === tab ? 'border-white bg-white text-[#111215]' : 'border-white/18 bg-transparent text-white/78'}`}>{tab}</button>
+            <button key={tab} onClick={() => setActiveTab(tab)} className={`shrink-0 rounded-[0.16rem] border px-3 py-1.5 text-[12px] font-semibold capitalize transition ${activeTab === tab ? 'border-[#F2EDEA] bg-[#F2EDEA] text-[#111215]' : 'border-white/12 bg-white/[0.035] text-white/62'}`}>{tab}</button>
           ))}
         </div>
 
