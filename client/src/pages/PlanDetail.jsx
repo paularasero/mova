@@ -30,6 +30,17 @@ function imageOf(item) {
   return item?.image || item?.imagen || item?.images?.[0] || fallbackReviewPhoto;
 }
 
+function userActionPayload(user, userId) {
+  return {
+    userId,
+    userName: user?.nombre || user?.name || 'Usuario MOVA',
+    name: user?.nombre || user?.name || 'Usuario MOVA',
+    email: user?.email,
+    city: user?.city || user?.ciudad || 'Montevideo',
+    avatar: user?.avatar,
+  };
+}
+
 function interestedOf(item) {
   return item?.interestedCount ?? item?.joinedUsers?.length ?? 0;
 }
@@ -160,14 +171,14 @@ export default function PlanDetail() {
     try {
       const data = await apiRequest(`/experiences/${id}/save`, {
         method: 'POST',
-        body: JSON.stringify({ userId }),
+        body: JSON.stringify(userActionPayload(user, userId)),
       });
       setExperience(data.experience);
-      setMessage(data.message);
     } catch (error) {
-      setCurrentUser({ ...getCurrentUser(), id: userId, savedExperiences: previousSavedExperiences });
-      setExperience((prev) => ({ ...prev, savedBy: wasSaved ? [...new Set([...(prev.savedBy || []), userId])] : (prev.savedBy || []).filter((value) => value !== userId) }));
-      setMessage(error.message);
+      if (String(error.message || '').includes('No encontramos ese plan')) {
+        setCurrentUser({ ...getCurrentUser(), id: userId, savedExperiences: previousSavedExperiences });
+        setExperience((prev) => ({ ...prev, savedBy: wasSaved ? [...new Set([...(prev.savedBy || []), userId])] : (prev.savedBy || []).filter((value) => value !== userId) }));
+      }
     }
   };
 
@@ -177,13 +188,13 @@ export default function PlanDetail() {
     try {
       const data = await apiRequest(`/experiences/${id}/join`, {
         method: 'POST',
-        body: JSON.stringify({ userId }),
+        body: JSON.stringify(userActionPayload(user, userId)),
       });
       setExperience(data.experience);
-      setMessage(data.message);
     } catch (error) {
-      setExperience((prev) => ({ ...prev, joinedUsers: wasJoined ? [...new Set([...(prev.joinedUsers || []), userId])] : (prev.joinedUsers || []).filter((value) => value !== userId) }));
-      setMessage(error.message);
+      if (String(error.message || '').includes('No encontramos ese plan')) {
+        setExperience((prev) => ({ ...prev, joinedUsers: wasJoined ? [...new Set([...(prev.joinedUsers || []), userId])] : (prev.joinedUsers || []).filter((value) => value !== userId) }));
+      }
     }
   };
 

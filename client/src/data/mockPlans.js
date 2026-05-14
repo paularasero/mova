@@ -11,7 +11,7 @@ export const mockPlans = [
     horario: '20:30',
     precio: '$$',
     image:
-      'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=1400&q=80',
+      'https://images.unsplash.com/photo-1505686994434-e3cc5abf1330?auto=format&fit=crop&w=1400&q=85',
     rating: 4.7,
     likes: 132,
     guardados: 58,
@@ -31,7 +31,7 @@ export const mockPlans = [
     horario: '10:00',
     precio: '$',
     image:
-      'https://images.unsplash.com/photo-1542831371-29b0f74f9713?auto=format&fit=crop&w=1400&q=80',
+      'https://images.pexels.com/photos/37161361/pexels-photo-37161361.jpeg?auto=compress&cs=tinysrgb&w=1400',
     rating: 4.8,
     likes: 215,
     guardados: 121,
@@ -51,7 +51,7 @@ export const mockPlans = [
     horario: '18:45',
     precio: '$',
     image:
-      'https://images.unsplash.com/photo-1472396961693-142e6e269027?auto=format&fit=crop&w=1400&q=80',
+      'https://images.pexels.com/photos/33225974/pexels-photo-33225974.jpeg?auto=compress&cs=tinysrgb&w=1400',
     rating: 4.9,
     likes: 309,
     guardados: 189,

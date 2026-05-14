@@ -41,6 +41,21 @@ function categoryColor(category = '') {
   return match?.[1] || '#04533E';
 }
 
+function idOf(item) {
+  return item?.id || item?._id;
+}
+
+function userActionPayload(user, userId) {
+  return {
+    userId,
+    userName: user?.nombre || user?.name || 'Usuario MOVA',
+    name: user?.nombre || user?.name || 'Usuario MOVA',
+    email: user?.email,
+    city: user?.city || user?.ciudad || 'Montevideo',
+    avatar: user?.avatar,
+  };
+}
+
 function makeIcon(category) {
   const color = categoryColor(category);
   return L.divIcon({
@@ -160,7 +175,7 @@ export default function Map() {
       .then((data) => {
         setExperiences(data);
         setSelected(data[0] || null);
-        const joined = new Set(data.filter((item) => item.joinedUsers?.some((id) => String(id) === String(userId))).map((item) => item.id));
+        const joined = new Set(data.filter((item) => item.joinedUsers?.some((id) => String(id) === String(userId))).map((item) => idOf(item)));
         setJoinedIds(joined);
       })
       .catch(() => setExperiences([]));
@@ -175,7 +190,7 @@ export default function Map() {
     .sort((a, b) => (a.distance ?? 999) - (b.distance ?? 999)), [experiences, activeCategory, center]);
 
   const save = async (id) => {
-    if (!userId) return;
+    if (!userId || !id) return;
     const wasSaved = savedIds.has(id);
     const previousSavedIds = new Set(savedIds);
     const nextSavedIds = new Set(previousSavedIds);
@@ -184,24 +199,24 @@ export default function Map() {
     setSavedIds(nextSavedIds);
     setCurrentUser({ ...getCurrentUser(), id: userId, savedExperiences: Array.from(nextSavedIds) });
     try {
-      const data = await apiRequest(`/experiences/${id}/save`, { method: 'POST', body: JSON.stringify({ userId }) });
-      setMessage(data.message);
+      const data = await apiRequest(`/experiences/${id}/save`, { method: 'POST', body: JSON.stringify(userActionPayload(user, userId)) });
       const confirmedSavedIds = new Set(previousSavedIds);
       if (data.saved) confirmedSavedIds.add(id);
       else confirmedSavedIds.delete(id);
       setSavedIds(confirmedSavedIds);
       setCurrentUser({ ...getCurrentUser(), id: userId, savedExperiences: Array.from(confirmedSavedIds) });
-      setExperiences((prev) => prev.map((item) => (item.id === id ? { ...item, ...data.experience } : item)));
-      setSelected((prev) => (prev?.id === id ? { ...prev, ...data.experience } : prev));
+      setExperiences((prev) => prev.map((item) => (idOf(item) === id ? { ...item, ...data.experience } : item)));
+      setSelected((prev) => (idOf(prev) === id ? { ...prev, ...data.experience } : prev));
     } catch (error) {
-      setSavedIds(previousSavedIds);
-      setCurrentUser({ ...getCurrentUser(), id: userId, savedExperiences: Array.from(previousSavedIds) });
-      setMessage(error.message);
+      if (String(error.message || '').includes('No encontramos ese plan')) {
+        setSavedIds(previousSavedIds);
+        setCurrentUser({ ...getCurrentUser(), id: userId, savedExperiences: Array.from(previousSavedIds) });
+      }
     }
   };
 
   const join = async (id) => {
-    if (!userId) return;
+    if (!userId || !id) return;
     const wasJoined = joinedIds.has(id);
     setJoinedIds((prev) => {
       const next = new Set(prev);
@@ -209,27 +224,27 @@ export default function Map() {
       else next.add(id);
       return next;
     });
-    setExperiences((prev) => prev.map((item) => (item.id === id ? { ...item, interestedCount: Math.max(0, (item.interestedCount ?? item.joinedUsers?.length ?? 0) + (wasJoined ? -1 : 1)), joinedUsers: wasJoined ? (item.joinedUsers || []).filter((value) => value !== userId) : [...new Set([...(item.joinedUsers || []), userId])] } : item)));
-    setSelected((prev) => (prev?.id === id ? { ...prev, interestedCount: Math.max(0, (prev.interestedCount ?? prev.joinedUsers?.length ?? 0) + (wasJoined ? -1 : 1)), joinedUsers: wasJoined ? (prev.joinedUsers || []).filter((value) => value !== userId) : [...new Set([...(prev.joinedUsers || []), userId])] } : prev));
+    setExperiences((prev) => prev.map((item) => (idOf(item) === id ? { ...item, interestedCount: Math.max(0, (item.interestedCount ?? item.joinedUsers?.length ?? 0) + (wasJoined ? -1 : 1)), joinedUsers: wasJoined ? (item.joinedUsers || []).filter((value) => value !== userId) : [...new Set([...(item.joinedUsers || []), userId])] } : item)));
+    setSelected((prev) => (idOf(prev) === id ? { ...prev, interestedCount: Math.max(0, (prev.interestedCount ?? prev.joinedUsers?.length ?? 0) + (wasJoined ? -1 : 1)), joinedUsers: wasJoined ? (prev.joinedUsers || []).filter((value) => value !== userId) : [...new Set([...(prev.joinedUsers || []), userId])] } : prev));
     try {
-      const data = await apiRequest(`/experiences/${id}/join`, { method: 'POST', body: JSON.stringify({ userId }) });
-      setExperiences((prev) => prev.map((item) => (item.id === id ? { ...item, ...data.experience } : item)));
-      setSelected((prev) => (prev?.id === id ? { ...prev, ...data.experience } : prev));
+      const data = await apiRequest(`/experiences/${id}/join`, { method: 'POST', body: JSON.stringify(userActionPayload(user, userId)) });
+      setExperiences((prev) => prev.map((item) => (idOf(item) === id ? { ...item, ...data.experience } : item)));
+      setSelected((prev) => (idOf(prev) === id ? { ...prev, ...data.experience } : prev));
       setJoinedIds((prev) => {
         const next = new Set(prev);
         if (data.joined) next.add(id);
         else next.delete(id);
         return next;
       });
-      setMessage(data.message);
     } catch (error) {
-      setJoinedIds((prev) => {
-        const next = new Set(prev);
-        if (wasJoined) next.add(id);
-        else next.delete(id);
-        return next;
-      });
-      setMessage(error.message);
+      if (String(error.message || '').includes('No encontramos ese plan')) {
+        setJoinedIds((prev) => {
+          const next = new Set(prev);
+          if (wasJoined) next.add(id);
+          else next.delete(id);
+          return next;
+        });
+      }
     }
   };
 
@@ -256,7 +271,7 @@ export default function Map() {
           <TileLayer attribution='&copy; OpenStreetMap &copy; CARTO' url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png" />
           <Recenter center={center} />
           {filtered.map((experience, index) => (
-            <Marker key={experience.id} position={experience.coords || getCoords(experience, index)} icon={makeIcon(experience.category)} eventHandlers={{ click: () => setSelected(experience) }} />
+            <Marker key={idOf(experience)} position={experience.coords || getCoords(experience, index)} icon={makeIcon(experience.category)} eventHandlers={{ click: () => setSelected(experience) }} />
           ))}
         </MapContainer>
 
@@ -282,13 +297,12 @@ export default function Map() {
                   <p className="mt-1 flex items-center gap-1 text-[11px] text-white/52"><FiMapPin /> {selected.neighborhood || selected.location}</p>
                   <p className="mt-1 flex items-center gap-1 text-[11px] text-white/52"><FiClock /> {selected.date || selected.fecha || 'Hoy'} · {selected.time || selected.horario || '21:00'}</p>
                   </div>
-                  <button type="button" onClick={() => join(selected.id)} className={`mt-3 rounded-[0.16rem] px-3 py-1.5 text-[11px] font-black transition ${joinedIds.has(selected.id) ? 'bg-[#F2EDEA] text-[#111215]' : 'bg-[#FD7407] text-[#111215] hover:bg-[#F9A809]'}`}>{joinedIds.has(selected.id) ? 'Te sumaste' : 'Me sumo'}</button>
+                  <button type="button" onClick={() => join(idOf(selected))} className={`mt-3 rounded-[0.16rem] px-3 py-1.5 text-[11px] font-black transition ${joinedIds.has(idOf(selected)) ? 'bg-[#F2EDEA] text-[#111215]' : 'bg-[#FD7407] text-[#111215] hover:bg-[#F9A809]'}`}>{joinedIds.has(idOf(selected)) ? 'Te sumaste' : 'Me sumo'}</button>
                 </div>
               </div>
-              <button onClick={() => save(selected.id)} className={`grid h-9 w-9 shrink-0 self-start place-items-center rounded-[0.16rem] ${savedIds.has(selected.id) ? 'bg-[#FB97B3] text-[#111215]' : 'bg-white text-[#111215]'}`}>{savedIds.has(selected.id) ? <FiCheck /> : <FiBookmark />}</button>
+              <button onClick={() => save(idOf(selected))} className={`grid h-9 w-9 shrink-0 self-start place-items-center rounded-[0.16rem] ${savedIds.has(idOf(selected)) ? 'bg-[#FB97B3] text-[#111215]' : 'bg-white text-[#111215]'}`}>{savedIds.has(idOf(selected)) ? <FiCheck /> : <FiBookmark />}</button>
             </div>
-            {message && <p className="mt-2 text-[11px] font-semibold text-[#F9A809]">{message}</p>}
-          </motion.div>
+            </motion.div>
         )}
 
         <section className="absolute bottom-24 left-0 right-0 z-20 px-5">
@@ -305,7 +319,7 @@ export default function Map() {
           )}
           <div className="mova-scrollbar-none flex gap-3 overflow-x-auto pb-1">
             {filtered.slice(0, 6).map((item) => (
-              <button key={item.id} onClick={() => setSelected(item)} className={`photo-card relative h-24 w-40 shrink-0 overflow-hidden rounded-[0.45rem] border text-left ${selected?.id === item.id ? 'border-[#04533E]' : 'border-white/10'}`}>
+              <button key={idOf(item)} onClick={() => setSelected(item)} className={`photo-card relative h-24 w-40 shrink-0 overflow-hidden rounded-[0.45rem] border text-left ${idOf(selected) === idOf(item) ? 'border-[#04533E]' : 'border-white/10'}`}>
                 <img src={item.image} alt="" className="h-full w-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/82" />
                 <span className="absolute bottom-7 left-3 right-3 line-clamp-1 text-[12px] font-semibold text-white">{item.title}</span>

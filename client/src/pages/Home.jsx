@@ -228,7 +228,6 @@ export default function Home() {
   const [filters, setFilters] = useState({ city: user?.city || user?.ciudad || 'Montevideo', category: '', company: '', budget: '', date: '', time: '', distance: 8 });
   const [savedIds, setSavedIds] = useState(new Set(user?.savedExperiences || []));
   const [joinedIds, setJoinedIds] = useState(new Set());
-  const [actionMessage, setActionMessage] = useState('');
 
   useEffect(() => {
     setStatus('loading');
@@ -280,14 +279,12 @@ export default function Home() {
       setCurrentUser({ ...getCurrentUser(), id: userId, savedExperiences: Array.from(confirmedSavedIds) });
       setSavedIds(confirmedSavedIds);
       setExperiences((prev) => prev.map((item) => (idOf(item) === id ? { ...item, ...data.experience } : item)));
-      setActionMessage(data.message);
     } catch (error) {
       if (String(error.message || '').includes('No encontramos ese plan')) {
         setSavedIds(previousSavedIds);
         setCurrentUser({ ...getCurrentUser(), id: userId, savedExperiences: Array.from(previousSavedIds) });
         setExperiences(previousExperiences);
       }
-      setActionMessage('Listo, lo dejamos marcado y lo sincronizamos en segundos.');
     }
   };
 
@@ -312,13 +309,11 @@ export default function Home() {
         return next;
       });
       setExperiences((prev) => prev.map((item) => (idOf(item) === id ? { ...item, ...data.experience } : item)));
-      setActionMessage(data.message);
     } catch (error) {
       if (String(error.message || '').includes('No encontramos ese plan')) {
         setJoinedIds(previousJoinedIds);
         setExperiences(previousExperiences);
       }
-      setActionMessage('Listo, te dejamos sumada y sincronizamos en segundos.');
     }
   };
 
@@ -351,8 +346,6 @@ export default function Home() {
             <button key={tab} onClick={() => setActiveTab(tab)} className={`shrink-0 rounded-[0.16rem] border px-3 py-1.5 text-[12px] font-semibold capitalize transition ${activeTab === tab ? 'border-[#F2EDEA] bg-[#F2EDEA] text-[#111215]' : 'border-white/12 bg-white/[0.035] text-white/62'}`}>{tab}</button>
           ))}
         </div>
-        {actionMessage && <p className="mt-3 text-xs font-semibold text-[#F9A809]">{actionMessage}</p>}
-
         {status === 'loading' && <div className="mt-8 h-[23rem] animate-pulse rounded-[0.45rem] bg-white/[0.06]" />}
         {status === 'error' && <p className="mt-8 rounded-[0.35rem] border border-[#FB97B3]/18 bg-[#FB97B3]/10 px-4 py-3 text-sm text-[#FB97B3]">No se pudieron cargar las experiencias.</p>}
         {status === 'ready' && cityExperiences.length === 0 && (
