@@ -15,6 +15,16 @@ const cities = ['Montevideo', 'Punta del Este', 'Buenos Aires'];
 const barrios = ['Ciudad Vieja', 'Pocitos', 'Parque Rodó', 'Cordón', 'Carrasco', 'Centro'];
 const fallback = 'https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=1400&q=85';
 const MONTEVIDEO = [-34.9011, -56.1645];
+const requiredFields = [
+  { key: 'title', label: 'título', step: 3 },
+  { key: 'description', label: 'descripción', step: 3 },
+  { key: 'city', label: 'ciudad', step: 3 },
+  { key: 'neighborhood', label: 'barrio o ubicación', step: 3 },
+  { key: 'category', label: 'categoría', step: 1 },
+  { key: 'company', label: 'compañía ideal', step: 3 },
+  { key: 'date', label: 'fecha', step: 3 },
+  { key: 'time', label: 'hora', step: 3 },
+];
 const accentIcon = L.divIcon({
   className: '',
   html: '<div style="width:32px;height:32px;border-radius:999px;background:var(--mova-accent);box-shadow:0 0 0 8px rgba(253, 116, 7,.16);border:2px solid rgba(255,255,255,.9)"></div>',
@@ -167,21 +177,43 @@ export default function CreatePlan() {
   const publish = async () => {
     const normalizedNeighborhood = form.neighborhood || form.barrio || form.location;
     const normalizedLocation = form.location || normalizedNeighborhood;
-    const coverImage = form.images.find(Boolean) || cover;
-    const requiredValues = [
-      form.title,
-      form.description,
-      form.city,
-      normalizedNeighborhood,
-      form.category,
-      form.company,
-      form.date,
-      form.time,
-      coverImage,
-    ];
+    const cleanImages = form.images.filter(Boolean);
+    const coverImage = cleanImages[0] || fallback;
+    const payload = {
+      title: form.title.trim(),
+      titulo: form.title.trim(),
+      description: form.description.trim(),
+      descripcion: form.description.trim(),
+      city: form.city,
+      ciudad: form.city,
+      neighborhood: normalizedNeighborhood,
+      barrio: normalizedNeighborhood,
+      location: normalizedLocation,
+      category: form.category,
+      categoria: form.category,
+      company: form.company,
+      compania: form.company,
+      date: form.date,
+      fecha: form.date,
+      time: form.time,
+      horario: form.time,
+      price: form.price || '$',
+      precio: form.price || '$',
+      image: coverImage,
+      imagen: coverImage,
+      images: cleanImages.length ? cleanImages : [coverImage],
+      tags: Array.from(new Set([...(form.tags || []), form.category?.toLowerCase()].filter(Boolean))),
+      lat: form.lat,
+      lng: form.lng,
+      authorId: user?.id,
+      author: user?.nombre || user?.name || 'MOVA user',
+      usuario: user?.nombre || user?.name || 'MOVA user',
+    };
 
-    if (requiredValues.some((value) => !String(value || '').trim())) {
-      setMessage('Completá los campos obligatorios.');
+    const missing = requiredFields.filter((field) => !String(payload[field.key] || '').trim());
+    if (missing.length) {
+      setMessage(`Falta completar: ${missing.map((field) => field.label).join(', ')}.`);
+      setStep(missing[0].step);
       return;
     }
 
@@ -190,16 +222,7 @@ export default function CreatePlan() {
       setMessage('');
       const created = await apiRequest('/experiences', {
         method: 'POST',
-        body: JSON.stringify({
-          ...form,
-          neighborhood: normalizedNeighborhood,
-          barrio: normalizedNeighborhood,
-          location: normalizedLocation,
-          image: coverImage,
-          images: form.images.length ? form.images : [coverImage],
-          authorId: user?.id,
-          author: user?.nombre || user?.name || 'MOVA user',
-        }),
+        body: JSON.stringify(payload),
       });
       setMessage('Experiencia publicada correctamente.');
       window.setTimeout(() => navigate(`/plan/${created.id}`), 450);

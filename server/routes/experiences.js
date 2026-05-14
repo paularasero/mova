@@ -15,6 +15,15 @@ const fallbackCoordinates = {
   'punta carretas': [-34.9227, -56.1594],
   montevideo: [-34.9011, -56.1645],
 };
+const defaultImage = 'https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=1400&q=85';
+
+function text(value) {
+  return String(value || '').trim();
+}
+
+function missingFields(fields) {
+  return fields.filter((field) => !text(field.value)).map((field) => field.label);
+}
 
 function resolveCoordinates({ lat, lng, city, ciudad, neighborhood, barrio, location }) {
   const parsedLat = Number(lat);
@@ -134,33 +143,55 @@ router.post('/', async (req, res) => {
       lng,
     } = req.body;
 
-    const gallery = Array.isArray(images) ? images.filter(Boolean) : String(images || '').split('\n').map((item) => item.trim()).filter(Boolean);
-    const cover = image || imagen || gallery[0];
-    const resolvedNeighborhood = neighborhood || barrio || location;
-    const resolvedLocation = location || resolvedNeighborhood;
-    const required = [title || titulo, description || descripcion, city || ciudad, resolvedNeighborhood, category || categoria, company || compania, date || fecha, time || horario, cover];
-    if (required.some((value) => !String(value || '').trim())) {
-      return res.status(400).json({ error: 'Completá los campos obligatorios.' });
+    const resolvedTitle = text(title || titulo);
+    const resolvedDescription = text(description || descripcion);
+    const resolvedCity = text(city || ciudad);
+    const resolvedNeighborhood = text(neighborhood || barrio || location);
+    const resolvedCategory = text(category || categoria);
+    const resolvedCompany = text(company || compania);
+    const resolvedDate = text(date || fecha);
+    const resolvedTime = text(time || horario);
+    const resolvedPrice = text(price || precio) || '$';
+    const resolvedAuthor = text(author || usuario) || 'MOVA user';
+    const gallery = Array.isArray(images) ? images.map(text).filter(Boolean) : String(images || '').split('\n').map((item) => item.trim()).filter(Boolean);
+    const cover = text(image || imagen || gallery[0]) || defaultImage;
+    const resolvedLocation = text(location) || resolvedNeighborhood;
+    const missing = missingFields([
+      { label: 'título', value: resolvedTitle },
+      { label: 'descripción', value: resolvedDescription },
+      { label: 'ciudad', value: resolvedCity },
+      { label: 'barrio o ubicación', value: resolvedNeighborhood },
+      { label: 'categoría', value: resolvedCategory },
+      { label: 'compañía ideal', value: resolvedCompany },
+      { label: 'fecha', value: resolvedDate },
+      { label: 'hora', value: resolvedTime },
+    ]);
+
+    if (missing.length) {
+      return res.status(400).json({
+        error: `Falta completar: ${missing.join(', ')}.`,
+        missingFields: missing,
+      });
     }
 
-    const coords = resolveCoordinates({ lat, lng, city, ciudad, neighborhood: resolvedNeighborhood, barrio: resolvedNeighborhood, location: resolvedLocation });
+    const coords = resolveCoordinates({ lat, lng, city: resolvedCity, neighborhood: resolvedNeighborhood, location: resolvedLocation });
 
     const experience = await Plan.create({
       _id: `p_${Date.now()}`,
-      titulo: title || titulo,
-      descripcion: description || descripcion,
-      ciudad: city || ciudad,
+      titulo: resolvedTitle,
+      descripcion: resolvedDescription,
+      ciudad: resolvedCity,
       barrio: resolvedNeighborhood,
-      categoria: category || categoria,
-      compania: company || compania,
-      fecha: date || fecha,
-      horario: time || horario,
-      precio: price || precio || '$',
+      categoria: resolvedCategory,
+      compania: resolvedCompany,
+      fecha: resolvedDate,
+      horario: resolvedTime,
+      precio: resolvedPrice,
       imagen: cover,
       images: gallery.length ? gallery : [cover],
-      tags: Array.isArray(tags) ? tags : String(tags || category || categoria).split(',').map((item) => item.trim()).filter(Boolean),
+      tags: Array.isArray(tags) ? tags.map(text).filter(Boolean) : String(tags || resolvedCategory).split(',').map((item) => item.trim()).filter(Boolean),
       location: resolvedLocation,
-      usuario: author || usuario || 'MOVA user',
+      usuario: resolvedAuthor,
       authorId,
       lat: coords.lat,
       lng: coords.lng,
