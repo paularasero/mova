@@ -50,6 +50,7 @@ function SavedItem({ item, stateLabel }) {
 export default function Saved() {
   const navigate = useNavigate();
   const user = getCurrentUser();
+  const userId = user?.id || user?._id;
   const [active, setActive] = useState('Guardados');
   const [saved, setSaved] = useState([]);
   const [joined, setJoined] = useState([]);
@@ -57,16 +58,16 @@ export default function Saved() {
 
   useEffect(() => {
     Promise.all([
-      apiRequest(`/users/me/saved?userId=${user?.id}`),
+      apiRequest(`/users/me/saved?userId=${userId}`),
       apiRequest('/experiences'),
     ])
       .then(([savedData, allExperiences]) => {
         setSaved(savedData);
-        setJoined(allExperiences.filter((experience) => experience.joinedUsers?.some((id) => String(id) === String(user?.id))));
+        setJoined(allExperiences.filter((experience) => experience.joinedUsers?.some((id) => String(id) === String(userId))));
         setStatus('ready');
       })
       .catch(() => setStatus('error'));
-  }, [user?.id]);
+  }, [userId]);
 
   const visible = useMemo(() => (active === 'Guardados' ? saved : joined), [active, saved, joined]);
 

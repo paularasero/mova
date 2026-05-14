@@ -201,6 +201,7 @@ function CitySheet({ open, onClose, currentUser, currentCity, onSave }) {
 export default function Home() {
   const navigate = useNavigate();
   const user = getCurrentUser();
+  const userId = user?.id || user?._id;
   const [experiences, setExperiences] = useState([]);
   const [activeTab, setActiveTab] = useState('para hoy');
   const [heroId, setHeroId] = useState(null);
@@ -214,14 +215,14 @@ export default function Home() {
     setStatus('loading');
     apiRequest(`/experiences?city=${encodeURIComponent(filters.city || '')}`).then((data) => {
       setExperiences(data);
-      setJoinedIds(new Set(data.filter((item) => userJoined(item, user?.id)).map((item) => item.id)));
+      setJoinedIds(new Set(data.filter((item) => userJoined(item, userId)).map((item) => item.id)));
       const candidates = [...data]
         .sort((a, b) => ((interestedOf(b) || 0) + (b.likes || 0)) - ((interestedOf(a) || 0) + (a.likes || 0)))
         .slice(0, 6);
       setHeroId(candidates[Math.floor(Math.random() * Math.max(candidates.length, 1))]?.id || data[0]?.id || null);
       setStatus('ready');
     }).catch(() => setStatus('error'));
-  }, [user?.id, filters.city]);
+  }, [userId, filters.city]);
 
   const cityExperiences = experiences.filter((item) => !filters.city || cityOf(item) === filters.city);
   const filteredByTab = useMemo(() => cityExperiences.filter((item) => matchesTab(item, activeTab, user)
@@ -242,12 +243,12 @@ export default function Home() {
   const free = fillRail(withoutFeatured.filter((item) => priceOf(item) === '$' || `${item.tags?.join(' ') || ''}`.toLowerCase().includes('gratis')));
 
   const saveExperience = async (id) => {
-    if (!user?.id) return;
-    const data = await apiRequest(`/experiences/${id}/save`, { method: 'POST', body: JSON.stringify({ userId: user.id }) });
+    if (!userId) return;
+    const data = await apiRequest(`/experiences/${id}/save`, { method: 'POST', body: JSON.stringify({ userId }) });
     const savedExperiences = data.saved
       ? Array.from(new Set([...(user.savedExperiences || []), id]))
       : (user.savedExperiences || []).filter((item) => item !== id);
-    setCurrentUser({ ...user, savedExperiences });
+    setCurrentUser({ ...user, id: userId, savedExperiences });
     setSavedIds((prev) => {
       const next = new Set(prev);
       if (data.saved) next.add(id);
@@ -258,8 +259,8 @@ export default function Home() {
   };
 
   const joinExperience = async (id) => {
-    if (!user?.id) return;
-    const data = await apiRequest(`/experiences/${id}/join`, { method: 'POST', body: JSON.stringify({ userId: user.id }) });
+    if (!userId) return;
+    const data = await apiRequest(`/experiences/${id}/join`, { method: 'POST', body: JSON.stringify({ userId }) });
     setJoinedIds((prev) => {
       const next = new Set(prev);
       if (data.joined) next.add(id);
@@ -314,11 +315,11 @@ export default function Home() {
             <Link to="/create" className="mt-5 inline-flex rounded-[0.16rem] bg-[#FD7407] px-4 py-2.5 text-sm font-black text-[#111215] hover:bg-[#F9A809]">Crear plan</Link>
           </motion.div>
         )}
-        {featured && <div className="mt-4"><FeaturedCard item={featured} saved={savedIds.has(featured.id)} joined={joinedIds.has(featured.id) || userJoined(featured, user?.id)} onSave={saveExperience} onJoin={joinExperience} /></div>}
-        <Rail title="Populares cerca" items={popularNear} userId={user?.id} savedIds={savedIds} joinedIds={joinedIds} onSave={saveExperience} onJoin={joinExperience} />
+        {featured && <div className="mt-4"><FeaturedCard item={featured} saved={savedIds.has(featured.id)} joined={joinedIds.has(featured.id) || userJoined(featured, userId)} onSave={saveExperience} onJoin={joinExperience} /></div>}
+        <Rail title="Populares cerca" items={popularNear} userId={userId} savedIds={savedIds} joinedIds={joinedIds} onSave={saveExperience} onJoin={joinExperience} />
         <EditorialBanner />
-        <Rail title="Para hoy" items={today} userId={user?.id} savedIds={savedIds} joinedIds={joinedIds} onSave={saveExperience} onJoin={joinExperience} />
-        <Rail title="Con amigos" items={friends} userId={user?.id} savedIds={savedIds} joinedIds={joinedIds} onSave={saveExperience} onJoin={joinExperience} />
+        <Rail title="Para hoy" items={today} userId={userId} savedIds={savedIds} joinedIds={joinedIds} onSave={saveExperience} onJoin={joinExperience} />
+        <Rail title="Con amigos" items={friends} userId={userId} savedIds={savedIds} joinedIds={joinedIds} onSave={saveExperience} onJoin={joinExperience} />
       </section>
       <CitySheet open={cityOpen} onClose={() => setCityOpen(false)} currentUser={user} currentCity={filters.city} onSave={(city) => setFilters((prev) => ({ ...prev, city }))} />
     </main>

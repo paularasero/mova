@@ -129,6 +129,7 @@ function CityPicker({ open, value, onClose, onSelect }) {
 
 export default function Map() {
   const user = getCurrentUser();
+  const userId = user?.id || user?._id;
   const initialCity = user?.city || user?.ciudad || 'Montevideo';
   const [city, setCity] = useState(initialCity);
   const [experiences, setExperiences] = useState([]);
@@ -160,11 +161,11 @@ export default function Map() {
       .then((data) => {
         setExperiences(data);
         setSelected(data[0] || null);
-        const joined = new Set(data.filter((item) => item.joinedUsers?.some((id) => String(id) === String(user?.id))).map((item) => item.id));
+        const joined = new Set(data.filter((item) => item.joinedUsers?.some((id) => String(id) === String(userId))).map((item) => item.id));
         setJoinedIds(joined);
       })
       .catch(() => setExperiences([]));
-  }, [city, user?.id]);
+  }, [city, userId]);
 
   const filtered = useMemo(() => experiences
     .filter((experience) => activeCategory === 'Todos' || String(experience.category || '').toLowerCase().includes(activeCategory.toLowerCase()))
@@ -175,14 +176,14 @@ export default function Map() {
     .sort((a, b) => (a.distance ?? 999) - (b.distance ?? 999)), [experiences, activeCategory, center]);
 
   const save = async (id) => {
-    if (!user?.id) return;
-    const data = await apiRequest(`/experiences/${id}/save`, { method: 'POST', body: JSON.stringify({ userId: user.id }) });
+    if (!userId) return;
+    const data = await apiRequest(`/experiences/${id}/save`, { method: 'POST', body: JSON.stringify({ userId }) });
     setMessage(data.message);
   };
 
   const join = async (id) => {
-    if (!user?.id) return;
-    const data = await apiRequest(`/experiences/${id}/join`, { method: 'POST', body: JSON.stringify({ userId: user.id }) });
+    if (!userId) return;
+    const data = await apiRequest(`/experiences/${id}/join`, { method: 'POST', body: JSON.stringify({ userId }) });
     setExperiences((prev) => prev.map((item) => (item.id === id ? { ...item, ...data.experience } : item)));
     setSelected((prev) => (prev?.id === id ? { ...prev, ...data.experience } : prev));
     setJoinedIds((prev) => {
@@ -197,11 +198,11 @@ export default function Map() {
     setCity(nextCity);
     setCityOpen(false);
     setSelected(null);
-    if (!user?.id) return;
+    if (!userId) return;
     try {
       const updated = await apiRequest('/users/me', {
         method: 'PUT',
-        body: JSON.stringify({ userId: user.id, city: nextCity, preferences: user.preferences }),
+        body: JSON.stringify({ userId, city: nextCity, preferences: user.preferences }),
       });
       setCurrentUser(updated);
     } catch {

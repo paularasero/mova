@@ -11,6 +11,19 @@ function safeParse(value, fallback) {
   }
 }
 
+function normalizeUser(user) {
+  if (!user) return null;
+  return {
+    ...user,
+    id: user.id || user._id || null,
+    name: user.name || user.nombre || '',
+    nombre: user.nombre || user.name || '',
+    city: user.city || user.ciudad || 'Montevideo',
+    ciudad: user.ciudad || user.city || 'Montevideo',
+    savedExperiences: Array.isArray(user.savedExperiences) ? user.savedExperiences : [],
+  };
+}
+
 export function getStoredUsers() {
   return safeParse(localStorage.getItem(USERS_KEY), []);
 }
@@ -20,14 +33,15 @@ export function saveStoredUsers(users) {
 }
 
 export function getCurrentUser() {
-  return safeParse(localStorage.getItem(CURRENT_USER_KEY), null);
+  return normalizeUser(safeParse(localStorage.getItem(CURRENT_USER_KEY), null));
 }
 
 export function setCurrentUser(user) {
-  localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
-  if (user?.preferences?.theme && typeof document !== 'undefined') {
+  const normalized = normalizeUser(user);
+  localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(normalized));
+  if (normalized?.preferences?.theme && typeof document !== 'undefined') {
     const savedTheme = localStorage.getItem('mova_theme');
-    const nextTheme = savedTheme || user.preferences.theme || 'light';
+    const nextTheme = savedTheme || normalized.preferences.theme || 'light';
     localStorage.setItem('mova_theme', nextTheme);
     document.documentElement.dataset.theme = nextTheme;
   }

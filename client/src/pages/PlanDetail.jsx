@@ -112,6 +112,7 @@ function EditorialBackdrop({ variant = 'aurora', className = '' }) {
 export default function PlanDetail() {
   const { id } = useParams();
   const user = getCurrentUser();
+  const userId = user?.id || user?._id;
   const [experience, setExperience] = useState(null);
   const [similar, setSimilar] = useState([]);
   const [activeImage, setActiveImage] = useState(0);
@@ -140,9 +141,9 @@ export default function PlanDetail() {
     return <main className="mova-screen p-6 mova-muted">Cargando experiencia...</main>;
   }
 
-  const saved = experience.savedBy?.includes(user?.id);
-  const joined = experience.joinedUsers?.includes(user?.id);
-  const liked = experience.likedBy?.includes(user?.id);
+  const saved = experience.savedBy?.includes(userId);
+  const joined = experience.joinedUsers?.includes(userId);
+  const liked = experience.likedBy?.includes(userId);
   const comments = experience.comments || [];
   const socialComments = [...comments, ...demoComments].slice(0, Math.max(3, comments.length));
   const hostSeed = encodeURIComponent(experience.author || 'MOVA host');
@@ -151,7 +152,7 @@ export default function PlanDetail() {
   const save = async () => {
     const data = await apiRequest(`/experiences/${id}/save`, {
       method: 'POST',
-      body: JSON.stringify({ userId: user?.id }),
+      body: JSON.stringify({ userId }),
     });
     setExperience(data.experience);
     setMessage(data.message);
@@ -160,7 +161,7 @@ export default function PlanDetail() {
   const join = async () => {
     const data = await apiRequest(`/experiences/${id}/join`, {
       method: 'POST',
-      body: JSON.stringify({ userId: user?.id }),
+      body: JSON.stringify({ userId }),
     });
     setExperience(data.experience);
     setMessage(data.message);
@@ -169,7 +170,7 @@ export default function PlanDetail() {
   const like = async () => {
     const data = await apiRequest(`/experiences/${id}/like`, {
       method: 'POST',
-      body: JSON.stringify({ userId: user?.id }),
+      body: JSON.stringify({ userId }),
     });
     setExperience(data);
   };
@@ -180,7 +181,7 @@ export default function PlanDetail() {
     const data = await apiRequest(`/experiences/${id}/comment`, {
       method: 'POST',
       body: JSON.stringify({
-        userId: user?.id,
+        userId: userId,
         userName: user?.nombre || user?.name,
         text: comment,
         rating,
