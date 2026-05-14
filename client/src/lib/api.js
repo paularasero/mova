@@ -1,6 +1,9 @@
 function resolveApiUrl() {
   if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL.replace(/\/$/, '');
-  if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') return '/api';
+  if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
+    if (window.location.hostname === 'mova-t928.vercel.app') return '/api';
+    return 'https://mova-t928.vercel.app/api';
+  }
   return 'http://localhost:4000/api';
 }
 
