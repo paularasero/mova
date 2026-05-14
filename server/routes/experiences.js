@@ -136,19 +136,21 @@ router.post('/', async (req, res) => {
 
     const gallery = Array.isArray(images) ? images.filter(Boolean) : String(images || '').split('\n').map((item) => item.trim()).filter(Boolean);
     const cover = image || imagen || gallery[0];
-    const required = [title || titulo, description || descripcion, city || ciudad, neighborhood || barrio, category || categoria, company || compania, date || fecha, time || horario, cover];
+    const resolvedNeighborhood = neighborhood || barrio || location;
+    const resolvedLocation = location || resolvedNeighborhood;
+    const required = [title || titulo, description || descripcion, city || ciudad, resolvedNeighborhood, category || categoria, company || compania, date || fecha, time || horario, cover];
     if (required.some((value) => !String(value || '').trim())) {
       return res.status(400).json({ error: 'Completá los campos obligatorios.' });
     }
 
-    const coords = resolveCoordinates({ lat, lng, city, ciudad, neighborhood, barrio, location });
+    const coords = resolveCoordinates({ lat, lng, city, ciudad, neighborhood: resolvedNeighborhood, barrio: resolvedNeighborhood, location: resolvedLocation });
 
     const experience = await Plan.create({
       _id: `p_${Date.now()}`,
       titulo: title || titulo,
       descripcion: description || descripcion,
       ciudad: city || ciudad,
-      barrio: neighborhood || barrio,
+      barrio: resolvedNeighborhood,
       categoria: category || categoria,
       compania: company || compania,
       fecha: date || fecha,
@@ -157,7 +159,7 @@ router.post('/', async (req, res) => {
       imagen: cover,
       images: gallery.length ? gallery : [cover],
       tags: Array.isArray(tags) ? tags : String(tags || category || categoria).split(',').map((item) => item.trim()).filter(Boolean),
-      location: location || barrio || neighborhood,
+      location: resolvedLocation,
       usuario: author || usuario || 'MOVA user',
       authorId,
       lat: coords.lat,

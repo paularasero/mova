@@ -133,6 +133,7 @@ export default function CreatePlan() {
   const [step, setStep] = useState(1);
   const [mapOpen, setMapOpen] = useState(false);
   const [message, setMessage] = useState('');
+  const [isPublishing, setIsPublishing] = useState(false);
   const [imageUrl, setImageUrl] = useState('');
   const [form, setForm] = useState({
     category: 'Night',
@@ -164,17 +165,49 @@ export default function CreatePlan() {
   const removeImage = (image) => setForm((prev) => ({ ...prev, images: prev.images.filter((item) => item !== image) }));
 
   const publish = async () => {
-    const required = ['title', 'description', 'neighborhood', 'date', 'time'];
-    if (required.some((field) => !String(form[field] || '').trim()) || form.images.length === 0) {
+    const normalizedNeighborhood = form.neighborhood || form.barrio || form.location;
+    const normalizedLocation = form.location || normalizedNeighborhood;
+    const coverImage = form.images.find(Boolean) || cover;
+    const requiredValues = [
+      form.title,
+      form.description,
+      form.city,
+      normalizedNeighborhood,
+      form.category,
+      form.company,
+      form.date,
+      form.time,
+      coverImage,
+    ];
+
+    if (requiredValues.some((value) => !String(value || '').trim())) {
       setMessage('Completá los campos obligatorios.');
       return;
     }
-    const created = await apiRequest('/experiences', {
-      method: 'POST',
-      body: JSON.stringify({ ...form, image: cover, authorId: user?.id, author: user?.nombre }),
-    });
-    setMessage('Experiencia publicada correctamente.');
-    window.setTimeout(() => navigate(`/plan/${created.id}`), 450);
+
+    try {
+      setIsPublishing(true);
+      setMessage('');
+      const created = await apiRequest('/experiences', {
+        method: 'POST',
+        body: JSON.stringify({
+          ...form,
+          neighborhood: normalizedNeighborhood,
+          barrio: normalizedNeighborhood,
+          location: normalizedLocation,
+          image: coverImage,
+          images: form.images.length ? form.images : [coverImage],
+          authorId: user?.id,
+          author: user?.nombre || user?.name || 'MOVA user',
+        }),
+      });
+      setMessage('Experiencia publicada correctamente.');
+      window.setTimeout(() => navigate(`/plan/${created.id}`), 450);
+    } catch (error) {
+      setMessage(error.message || 'No pudimos publicar la experiencia.');
+    } finally {
+      setIsPublishing(false);
+    }
   };
 
   return (
@@ -266,11 +299,20 @@ export default function CreatePlan() {
         </motion.div>
 
         {message && <p className="relative z-10 mt-5 rounded-[0.35rem] bg-[var(--mova-accent-soft)] px-4 py-3 text-sm font-semibold text-[var(--mova-accent)]">{message}</p>}
-        <motion.button whileTap={{ scale: 0.985 }} onClick={step === 4 ? publish : next} className="relative z-10 mt-6 h-14 w-full rounded-[0.16rem] bg-[var(--mova-accent)] font-bold text-[#111215]">
-          {step === 4 ? 'Publicar experiencia' : 'Siguiente'}
+        <motion.button whileTap={{ scale: 0.985 }} disabled={isPublishing} onClick={step === 4 ? publish : next} className="relative z-10 mt-6 h-14 w-full rounded-[0.16rem] bg-[var(--mova-accent)] font-bold text-[#111215] disabled:cursor-not-allowed disabled:opacity-60">
+          {step === 4 ? (isPublishing ? 'Publicando...' : 'Publicar experiencia') : 'Siguiente'}
         </motion.button>
       </section>
-      <MapPicker open={mapOpen} onClose={() => setMapOpen(false)} onSelect={(place) => setForm((prev) => ({ ...prev, ...place }))} />
+      <MapPicker
+        open={mapOpen}
+        onClose={() => setMapOpen(false)}
+        onSelect={(place) => setForm((prev) => ({
+          ...prev,
+          ...place,
+          neighborhood: place.neighborhood || place.barrio || prev.neighborhood,
+          location: place.location || prev.location || place.barrio,
+        }))}
+      />
     </main>
   );
 }
