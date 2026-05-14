@@ -6,6 +6,7 @@ import { apiRequest } from '../lib/api';
 import { getCurrentUser } from '../lib/auth';
 
 const tabs = ['Guardados', 'Me sumé'];
+const savedCacheKey = (userId) => `mova_saved_cache_${userId}`;
 
 function imageOf(item) {
   return item?.image || item?.imagen || item?.images?.[0] || '';
@@ -57,13 +58,26 @@ export default function Saved() {
   const [status, setStatus] = useState('loading');
 
   useEffect(() => {
+    const cached = userId ? localStorage.getItem(savedCacheKey(userId)) : null;
+    if (cached) {
+      try {
+        const data = JSON.parse(cached);
+        setSaved(data.saved || []);
+        setJoined(data.joined || []);
+        setStatus('ready');
+      } catch {
+        // ignore cache parse issues
+      }
+    }
     Promise.all([
       apiRequest(`/users/me/saved?userId=${userId}`),
       apiRequest('/experiences'),
     ])
       .then(([savedData, allExperiences]) => {
+        const nextJoined = allExperiences.filter((experience) => experience.joinedUsers?.some((id) => String(id) === String(userId)));
         setSaved(savedData);
-        setJoined(allExperiences.filter((experience) => experience.joinedUsers?.some((id) => String(id) === String(userId))));
+        setJoined(nextJoined);
+        if (userId) localStorage.setItem(savedCacheKey(userId), JSON.stringify({ saved: savedData, joined: nextJoined }));
         setStatus('ready');
       })
       .catch(() => setStatus('error'));
@@ -94,6 +108,11 @@ export default function Saved() {
           ))}
         </div>
 
+        {status === 'loading' && (
+          <div className="relative z-10 mt-6 space-y-3">
+            {Array.from({ length: 3 }, (_, index) => <div key={index} className="h-28 animate-pulse rounded-[1rem] bg-white/[0.06]" />)}
+          </div>
+        )}
         {status === 'error' && <p className="relative z-10 mt-6 rounded-[0.8rem] bg-red-500/10 px-4 py-3 text-sm text-[#FB97B3]">No pudimos cargar tus planes.</p>}
         {status === 'ready' && visible.length === 0 && (
           <div className="relative z-10 mt-8 rounded-[1rem] border border-white/10 bg-white/[0.05] p-5">

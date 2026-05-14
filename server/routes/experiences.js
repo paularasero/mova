@@ -55,6 +55,43 @@ function buildQuery(queryParams) {
   return query;
 }
 
+function usernameFromName(name = 'Usuario MOVA') {
+  const base = String(name)
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '')
+    .slice(0, 18);
+  return base ? `@${base}` : '@movauser';
+}
+
+async function ensureUserForAction(userId, payload = {}) {
+  if (!userId) return null;
+  const existing = await User.findById(userId);
+  if (existing) return existing;
+
+  const nombre = payload.userName || payload.name || payload.nombre || 'Usuario MOVA';
+  const ciudad = payload.city || payload.ciudad || 'Montevideo';
+  const baseUser = {
+    _id: userId,
+    nombre,
+    username: payload.username || usernameFromName(nombre),
+    ciudad,
+    password: payload.password || '',
+    savedExperiences: [],
+    ...(payload.avatar ? { avatar: payload.avatar } : {}),
+  };
+
+  try {
+    return await User.create({ ...baseUser, ...(payload.email ? { email: String(payload.email).toLowerCase() } : {}) });
+  } catch (error) {
+    if (payload.email && error?.code === 11000) {
+      return User.create(baseUser);
+    }
+    throw error;
+  }
+}
+
 router.get('/', async (req, res) => {
   try {
     const experiences = await Plan.find(buildQuery(req.query)).sort({ createdAt: -1, fecha: 1 });
@@ -259,9 +296,11 @@ router.post('/:id/save', async (req, res) => {
     const { userId } = req.body;
     if (!userId) return res.status(400).json({ error: 'Iniciá sesión para guardar experiencias.' });
 
-    const user = await User.findById(userId);
     const experience = await Plan.findById(req.params.id);
-    if (!user || !experience) return res.status(404).json({ error: 'No encontramos la experiencia.' });
+    if (!experience) return res.status(404).json({ error: 'No encontramos ese plan.' });
+
+    const user = await ensureUserForAction(userId, req.body);
+    if (!user) return res.status(400).json({ error: 'Iniciá sesión para guardar experiencias.' });
 
     const saved = user.savedExperiences?.includes(req.params.id);
     const userUpdate = saved
@@ -285,9 +324,11 @@ router.post('/:id/join', async (req, res) => {
     const { userId } = req.body;
     if (!userId) return res.status(400).json({ error: 'Iniciá sesión para sumarte a un plan.' });
 
-    const user = await User.findById(userId);
     const experience = await Plan.findById(req.params.id);
-    if (!user || !experience) return res.status(404).json({ error: 'No encontramos la experiencia.' });
+    if (!experience) return res.status(404).json({ error: 'No encontramos ese plan.' });
+
+    const user = await ensureUserForAction(userId, req.body);
+    if (!user) return res.status(400).json({ error: 'Iniciá sesión para sumarte a un plan.' });
 
     const joined = experience.joinedUsers?.includes(userId);
     const update = joined

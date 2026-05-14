@@ -149,7 +149,7 @@ export default function Login() {
                     value={form.password}
                     onChange={handleChange('password')}
                     onBlur={() => setTouched((prev) => ({ ...prev, password: true }))}
-                    placeholder="Mínimo 6 caracteres"
+                    placeholder="Tu contraseña"
                     style={{ backgroundColor: 'rgba(13, 13, 13, 0.88)' }}
                     className="w-full border border-[#F2EDEA]/10 bg-[#111215]/86 px-4 py-3.5 text-base text-[#F2EDEA] outline-none transition placeholder:text-[#F2EDEA]/38 focus:border-[var(--mova-accent)] focus:bg-[#111215] focus:shadow-[0_0_0_4px_rgba(253,116,7,0.10)]"
                   />

@@ -28,6 +28,10 @@ function titleOf(item) {
   return item?.title || item?.titulo || 'Plan MOVA';
 }
 
+function idOf(item) {
+  return item?.id || item?._id;
+}
+
 function descriptionOf(item) {
   return item?.description || item?.descripcion || '';
 }
@@ -68,6 +72,17 @@ function userJoined(item, userId) {
   return Boolean(userId && item?.joinedUsers?.includes(userId));
 }
 
+function userActionPayload(user) {
+  return {
+    userId: user?.id || user?._id,
+    userName: user?.nombre || user?.name || 'Usuario MOVA',
+    name: user?.nombre || user?.name || 'Usuario MOVA',
+    email: user?.email,
+    city: user?.city || user?.ciudad || 'Montevideo',
+    avatar: user?.avatar,
+  };
+}
+
 function distanceKm(item, city) {
   const center = cityCenters[city] || cityCenters.Montevideo;
   const lat = Number(item?.lat);
@@ -82,10 +97,11 @@ function distanceKm(item, city) {
 }
 
 function SearchCard({ item, saved, joined, onSave, onJoin, tall = false }) {
+  const planId = idOf(item);
   return (
     <motion.article initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} whileTap={{ scale: 0.98 }} className={`overflow-hidden rounded-[0.45rem] border border-[var(--mova-border)] bg-[var(--mova-surface)] shadow-[0_12px_30px_rgba(17,17,17,0.05)] ${tall ? 'row-span-2' : ''}`}>
       <div className={`photo-card relative overflow-hidden ${tall ? 'aspect-[0.78]' : 'aspect-[1.02]'}`}>
-        <Link to={`/plan/${item.id}`} className="block h-full">
+        <Link to={`/plan/${planId}`} className="block h-full">
           <img src={item.image} alt="" className="h-full w-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-b from-black/5 via-black/10 to-black/70" />
           <div className="absolute bottom-3 left-3 right-3">
@@ -93,14 +109,14 @@ function SearchCard({ item, saved, joined, onSave, onJoin, tall = false }) {
             <p className="mt-1 line-clamp-1 text-xs text-white/72">{neighborhoodOf(item)}</p>
           </div>
         </Link>
-        <button onClick={() => onSave(item.id)} className={`absolute right-2 top-2 grid h-8 w-8 place-items-center rounded-[0.16rem] backdrop-blur-xl ${saved ? 'bg-[#F2EDEA] text-[#111215]' : 'bg-[#F2EDEA]/90 text-[#111215]'}`}>{saved ? <FiCheck /> : <FiBookmark />}</button>
+        <button onClick={() => onSave(planId)} className={`absolute right-2 top-2 grid h-8 w-8 place-items-center rounded-[0.16rem] backdrop-blur-xl ${saved ? 'bg-[#F2EDEA] text-[#111215]' : 'bg-[#F2EDEA]/90 text-[#111215]'}`}>{saved ? <FiCheck /> : <FiBookmark />}</button>
       </div>
       <div className="space-y-3 p-3">
         <div className="flex items-center justify-between gap-2 text-[11px] text-[var(--mova-muted)]">
           <span className="truncate text-[#F2EDEA]/66">{categoryOf(item)}</span>
           <span className="inline-flex shrink-0 items-center gap-1 text-[#F9A809]"><FiUsers /> {interestedOf(item)}</span>
         </div>
-        <button onClick={() => onJoin(item.id)} className={`h-9 w-full rounded-[0.16rem] text-xs font-bold transition ${joined ? 'bg-[#F2EDEA] text-[#111215]' : 'bg-[#FD7407] text-[#111215] hover:bg-[#F9A809]'}`}>{joined ? 'Te sumaste' : 'Me sumo'}</button>
+        <button onClick={() => onJoin(planId)} className={`h-9 w-full rounded-[0.16rem] text-xs font-bold transition ${joined ? 'bg-[#F2EDEA] text-[#111215]' : 'bg-[#FD7407] text-[#111215] hover:bg-[#F9A809]'}`}>{joined ? 'Te sumaste' : 'Me sumo'}</button>
       </div>
     </motion.article>
   );
@@ -168,7 +184,7 @@ export default function Explore() {
   useEffect(() => {
     apiRequest('/experiences').then((data) => {
       setExperiences(data);
-      setJoinedIds(new Set(data.filter((item) => userJoined(item, user?.id)).map((item) => item.id)));
+      setJoinedIds(new Set(data.filter((item) => userJoined(item, user?.id)).map((item) => idOf(item))));
       setStatus('ready');
     }).catch(() => setStatus('error'));
   }, [user?.id]);
@@ -204,31 +220,61 @@ export default function Explore() {
   }, [query, filters, defaultFilters.distance]);
 
   const saveExperience = async (id) => {
-    if (!user?.id) return;
-    const data = await apiRequest(`/experiences/${id}/save`, { method: 'POST', body: JSON.stringify({ userId: user.id }) });
-    const savedExperiences = data.saved
-      ? Array.from(new Set([...(user.savedExperiences || []), id]))
-      : (user.savedExperiences || []).filter((item) => item !== id);
-    setCurrentUser({ ...user, savedExperiences });
-    setSavedIds((prev) => {
-      const next = new Set(prev);
-      if (data.saved) next.add(id);
-      else next.delete(id);
-      return next;
-    });
-    setExperiences((prev) => prev.map((item) => (item.id === id ? { ...item, ...data.experience } : item)));
+    if (!user?.id || !id) return;
+    const wasSaved = savedIds.has(id);
+    const previousSavedIds = new Set(savedIds);
+    const optimisticSavedIds = new Set(previousSavedIds);
+    if (wasSaved) optimisticSavedIds.delete(id);
+    else optimisticSavedIds.add(id);
+    setSavedIds(optimisticSavedIds);
+    setCurrentUser({ ...user, savedExperiences: Array.from(optimisticSavedIds) });
+
+    try {
+      const data = await apiRequest(`/experiences/${id}/save`, { method: 'POST', body: JSON.stringify(userActionPayload(user)) });
+      const confirmedSavedIds = new Set(previousSavedIds);
+      if (data.saved) confirmedSavedIds.add(id);
+      else confirmedSavedIds.delete(id);
+      setSavedIds(confirmedSavedIds);
+      setCurrentUser({ ...user, savedExperiences: Array.from(confirmedSavedIds) });
+      setExperiences((prev) => prev.map((item) => (idOf(item) === id ? { ...item, ...data.experience } : item)));
+    } catch (error) {
+      if (String(error.message || '').includes('No encontramos ese plan')) {
+        setSavedIds(previousSavedIds);
+        setCurrentUser({ ...user, savedExperiences: Array.from(previousSavedIds) });
+      }
+    }
   };
 
   const joinExperience = async (id) => {
-    if (!user?.id) return;
-    const data = await apiRequest(`/experiences/${id}/join`, { method: 'POST', body: JSON.stringify({ userId: user.id }) });
+    if (!user?.id || !id) return;
+    const wasJoined = joinedIds.has(id);
     setJoinedIds((prev) => {
       const next = new Set(prev);
-      if (data.joined) next.add(id);
-      else next.delete(id);
+      if (wasJoined) next.delete(id);
+      else next.add(id);
       return next;
     });
-    setExperiences((prev) => prev.map((item) => (item.id === id ? { ...item, ...data.experience } : item)));
+    setExperiences((prev) => prev.map((item) => (idOf(item) === id ? { ...item, interestedCount: Math.max(0, interestedOf(item) + (wasJoined ? -1 : 1)), joinedUsers: wasJoined ? (item.joinedUsers || []).filter((value) => value !== user.id) : [...new Set([...(item.joinedUsers || []), user.id])] } : item)));
+
+    try {
+      const data = await apiRequest(`/experiences/${id}/join`, { method: 'POST', body: JSON.stringify(userActionPayload(user)) });
+      setJoinedIds((prev) => {
+        const next = new Set(prev);
+        if (data.joined) next.add(id);
+        else next.delete(id);
+        return next;
+      });
+      setExperiences((prev) => prev.map((item) => (idOf(item) === id ? { ...item, ...data.experience } : item)));
+    } catch (error) {
+      if (String(error.message || '').includes('No encontramos ese plan')) {
+        setJoinedIds((prev) => {
+          const next = new Set(prev);
+          if (wasJoined) next.add(id);
+          else next.delete(id);
+          return next;
+        });
+      }
+    }
   };
 
   const clearFilters = () => {
@@ -265,7 +311,7 @@ export default function Explore() {
         {status === 'error' && <p className="mt-6 text-sm text-[#FB97B3]">No se pudieron cargar las experiencias.</p>}
         <section className="mt-4">
           <div className="grid grid-cols-2 gap-3">
-            {results.map((item, index) => <SearchCard key={item.id} item={item} saved={savedIds.has(item.id)} joined={joinedIds.has(item.id) || userJoined(item, user?.id)} onSave={saveExperience} onJoin={joinExperience} tall={index % 4 === 1 || index % 4 === 2} />)}
+            {results.map((item, index) => <SearchCard key={idOf(item)} item={item} saved={savedIds.has(idOf(item))} joined={joinedIds.has(idOf(item)) || userJoined(item, user?.id)} onSave={saveExperience} onJoin={joinExperience} tall={index % 4 === 1 || index % 4 === 2} />)}
           </div>
         </section>
         {status === 'ready' && results.length === 0 && (

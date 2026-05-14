@@ -27,6 +27,10 @@ function imageOf(item) {
   return item?.image || item?.imagen || item?.images?.[0] || fallbackImage;
 }
 
+function idOf(item) {
+  return item?.id || item?._id;
+}
+
 function titleOf(item) {
   return item?.title || item?.titulo || 'Plan MOVA';
 }
@@ -63,6 +67,17 @@ function userJoined(item, userId) {
   return Boolean(userId && item?.joinedUsers?.includes(userId));
 }
 
+function userActionPayload(user, userId) {
+  return {
+    userId,
+    userName: user?.nombre || user?.name || 'Usuario MOVA',
+    name: user?.nombre || user?.name || 'Usuario MOVA',
+    email: user?.email,
+    city: user?.city || user?.ciudad || 'Montevideo',
+    avatar: user?.avatar,
+  };
+}
+
 function matchesTab(item, tab, user) {
   const text = `${titleOf(item)} ${categoryOf(item)} ${item.tags?.join(' ') || ''} ${companyOf(item)} ${priceOf(item)}`.toLowerCase();
   if (tab === 'para hoy') return true;
@@ -76,43 +91,45 @@ function matchesTab(item, tab, user) {
 }
 
 function FeaturedCard({ item, saved, joined, onSave, onJoin }) {
+  const planId = idOf(item);
   return (
     <motion.article initial={{ opacity: 0, y: 24, filter: 'blur(8px)' }} animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }} whileTap={{ scale: 0.99 }} transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }} className="relative overflow-hidden rounded-[0.45rem] bg-[#111215] shadow-[0_24px_70px_rgba(0,0,0,.36)]">
       <div className="pointer-events-none absolute -right-12 -top-10 z-10 h-36 w-36 rounded-[0.45rem] bg-[#FB97B3]/18 blur-xl" />
       <div className="photo-card relative h-[20rem] overflow-hidden">
-        <Link to={`/plan/${item.id}`} className="block h-full">
+        <Link to={`/plan/${planId}`} className="block h-full">
           <img src={imageOf(item)} onError={(event) => { event.currentTarget.src = fallbackImage; }} alt={titleOf(item)} className="h-full w-full object-cover transition duration-700 hover:scale-105" />
         </Link>
         <div className="absolute inset-0 bg-gradient-to-b from-black/12 via-transparent to-black/86" />
         <span className="absolute left-4 top-4 rounded-[0.35rem] border border-white/20 bg-black/38 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/82 backdrop-blur-md">Plan del día</span>
         <span className="absolute right-16 top-4 rounded-[0.45rem] bg-white px-3 py-1.5 text-xs font-black text-[#111215]">★ {item.rating || 4.8}</span>
-        <button onClick={() => onSave(item.id)} className={`absolute right-4 top-4 grid h-10 w-10 place-items-center rounded-[0.16rem] backdrop-blur-xl ${saved ? 'bg-[#FB97B3] text-[#111215]' : 'bg-white/90 text-[#111215]'}`}>{saved ? <FiCheck /> : <FiBookmark />}</button>
+        <button onClick={() => onSave(planId)} className={`absolute right-4 top-4 grid h-10 w-10 place-items-center rounded-[0.16rem] backdrop-blur-xl ${saved ? 'bg-[#FB97B3] text-[#111215]' : 'bg-white/90 text-[#111215]'}`}>{saved ? <FiCheck /> : <FiBookmark />}</button>
         <div className="absolute bottom-0 left-0 right-0 p-5">
-          <Link to={`/plan/${item.id}`} className="block">
+          <Link to={`/plan/${planId}`} className="block">
             <p className="mb-2 text-xs font-semibold uppercase tracking-[0.16em] text-[#F2EDEA]">{neighborhoodOf(item)} · {categoryOf(item)}</p>
             <h2 className="max-w-[17rem] text-[2rem] font-semibold leading-[1.02] tracking-[0.005em] text-white">{titleOf(item)}</h2>
           </Link>
         </div>
       </div>
-      <div className="flex items-center justify-between gap-4 p-4">
+      <div className="flex items-center justify-between gap-4 bg-[rgba(242,237,234,0.045)] p-4">
         <span className="inline-flex items-center gap-1 text-sm font-semibold text-[var(--mova-muted)]"><FiUsers /> {interestedOf(item)} personas interesadas</span>
-        <button onClick={() => onJoin(item.id)} className={`h-10 shrink-0 rounded-[0.16rem] px-4 text-sm font-bold transition ${joined ? 'bg-white text-[#111215]' : 'bg-[#FD7407] text-[#111215] shadow-[0_14px_32px_rgba(253,116,7,.22)] hover:bg-[#F9A809]'}`}>{joined ? 'Te sumaste' : 'Me sumo'}</button>
+        <button onClick={() => onJoin(planId)} className={`h-10 shrink-0 rounded-[0.16rem] px-4 text-sm font-bold transition ${joined ? 'bg-white text-[#111215]' : 'bg-[#FD7407] text-[#111215] shadow-[0_14px_32px_rgba(253,116,7,.22)] hover:bg-[#F9A809]'}`}>{joined ? 'Te sumaste' : 'Me sumo'}</button>
       </div>
     </motion.article>
   );
 }
 
 function SmallCard({ item, saved, joined, onSave, onJoin }) {
+  const planId = idOf(item);
   return (
     <motion.article initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} whileTap={{ scale: 0.985 }} className="mova-playful-card h-[20rem] w-44 shrink-0 overflow-hidden rounded-[0.45rem]">
       <div className="photo-card relative h-36 overflow-hidden">
-        <Link to={`/plan/${item.id}`} className="block h-full">
+        <Link to={`/plan/${planId}`} className="block h-full">
           <img src={imageOf(item)} onError={(event) => { event.currentTarget.src = fallbackImage; }} alt={titleOf(item)} className="h-full w-full object-cover" loading="lazy" />
         </Link>
-        <button onClick={() => onSave(item.id)} className={`absolute right-2 top-2 grid h-8 w-8 place-items-center rounded-[0.16rem] backdrop-blur-xl ${saved ? 'bg-[#FB97B3] text-[#111215]' : 'bg-white/90 text-[#111215]'}`}>{saved ? <FiCheck /> : <FiBookmark />}</button>
+        <button onClick={() => onSave(planId)} className={`absolute right-2 top-2 grid h-8 w-8 place-items-center rounded-[0.16rem] backdrop-blur-xl ${saved ? 'bg-[#FB97B3] text-[#111215]' : 'bg-white/90 text-[#111215]'}`}>{saved ? <FiCheck /> : <FiBookmark />}</button>
       </div>
       <div className="flex h-[11rem] flex-col justify-between p-3 text-left">
-        <Link to={`/plan/${item.id}`} className="block">
+        <Link to={`/plan/${planId}`} className="block">
           <h3 className="line-clamp-2 min-h-[2.5rem] text-left text-base font-semibold leading-tight">{titleOf(item)}</h3>
           <div className="mt-2 grid justify-items-start gap-1 text-left text-[11px] leading-snug text-[var(--mova-muted)]">
             <span className="truncate">{neighborhoodOf(item)}</span>
@@ -120,7 +137,7 @@ function SmallCard({ item, saved, joined, onSave, onJoin }) {
             <span className="inline-flex items-center gap-1 text-[#F9A809]"><FiUsers /> {interestedOf(item)} personas</span>
           </div>
         </Link>
-        <button onClick={() => onJoin(item.id)} className={`h-9 w-full rounded-[0.16rem] text-xs font-bold transition ${joined ? 'bg-white text-[#111215]' : 'bg-[#FD7407] text-[#111215] hover:bg-[#F9A809]'}`}>{joined ? 'Te sumaste' : 'Me sumo'}</button>
+        <button onClick={() => onJoin(planId)} className={`h-9 w-full rounded-[0.16rem] text-xs font-bold transition ${joined ? 'bg-white text-[#111215]' : 'bg-[#FD7407] text-[#111215] hover:bg-[#F9A809]'}`}>{joined ? 'Te sumaste' : 'Me sumo'}</button>
         </div>
     </motion.article>
   );
@@ -156,7 +173,7 @@ function Rail({ title, items, userId, savedIds, joinedIds, onSave, onJoin }) {
       </div>
       <div className="mova-scrollbar-none flex gap-3 overflow-x-auto pb-2">
         {items.map((item) => (
-          <SmallCard key={`${title}-${item.id}`} item={item} saved={savedIds.has(item.id)} joined={joinedIds.has(item.id) || userJoined(item, userId)} onSave={onSave} onJoin={onJoin} />
+          <SmallCard key={`${title}-${idOf(item)}`} item={item} saved={savedIds.has(idOf(item))} joined={joinedIds.has(idOf(item)) || userJoined(item, userId)} onSave={onSave} onJoin={onJoin} />
         ))}
       </div>
     </section>
@@ -166,10 +183,11 @@ function Rail({ title, items, userId, savedIds, joinedIds, onSave, onJoin }) {
 function CitySheet({ open, onClose, currentUser, currentCity, onSave }) {
   const [query, setQuery] = useState('');
   const filtered = cities.filter((city) => city.toLowerCase().includes(query.toLowerCase()));
+  const currentUserId = currentUser?.id || currentUser?._id;
   const selectCity = async (city) => {
     const updated = await apiRequest('/users/me', {
       method: 'PUT',
-      body: JSON.stringify({ userId: currentUser?.id, city, preferences: currentUser?.preferences }),
+      body: JSON.stringify({ userId: currentUserId, city, preferences: currentUser?.preferences }),
     });
     setCurrentUser(updated);
     onSave(city);
@@ -210,16 +228,17 @@ export default function Home() {
   const [filters, setFilters] = useState({ city: user?.city || user?.ciudad || 'Montevideo', category: '', company: '', budget: '', date: '', time: '', distance: 8 });
   const [savedIds, setSavedIds] = useState(new Set(user?.savedExperiences || []));
   const [joinedIds, setJoinedIds] = useState(new Set());
+  const [actionMessage, setActionMessage] = useState('');
 
   useEffect(() => {
     setStatus('loading');
     apiRequest(`/experiences?city=${encodeURIComponent(filters.city || '')}`).then((data) => {
       setExperiences(data);
-      setJoinedIds(new Set(data.filter((item) => userJoined(item, userId)).map((item) => item.id)));
+      setJoinedIds(new Set(data.filter((item) => userJoined(item, userId)).map((item) => idOf(item))));
       const candidates = [...data]
         .sort((a, b) => ((interestedOf(b) || 0) + (b.likes || 0)) - ((interestedOf(a) || 0) + (a.likes || 0)))
         .slice(0, 6);
-      setHeroId(candidates[Math.floor(Math.random() * Math.max(candidates.length, 1))]?.id || data[0]?.id || null);
+      setHeroId(idOf(candidates[Math.floor(Math.random() * Math.max(candidates.length, 1))]) || idOf(data[0]) || null);
       setStatus('ready');
     }).catch(() => setStatus('error'));
   }, [userId, filters.city]);
@@ -231,8 +250,8 @@ export default function Home() {
     && (!filters.budget || priceOf(item) === filters.budget)
     && (!filters.date || item.date === filters.date || item.fecha === filters.date)), [cityExperiences, activeTab, filters, user]);
   const filtered = filteredByTab.length || !cityExperiences.length ? filteredByTab : cityExperiences;
-  const featured = filtered.find((item) => item.id === heroId) || filtered[0] || null;
-  const withoutFeatured = filtered.filter((item) => item.id !== featured?.id);
+  const featured = filtered.find((item) => idOf(item) === heroId) || filtered[0] || null;
+  const withoutFeatured = filtered.filter((item) => idOf(item) !== idOf(featured));
   const fillRail = (items) => items.slice(0, 8);
   const popularNear = fillRail([...withoutFeatured].sort((a, b) => ((interestedOf(b) || 0) + (b.likes || 0)) - ((interestedOf(a) || 0) + (a.likes || 0))));
   const today = fillRail(withoutFeatured);
@@ -243,31 +262,64 @@ export default function Home() {
   const free = fillRail(withoutFeatured.filter((item) => priceOf(item) === '$' || `${item.tags?.join(' ') || ''}`.toLowerCase().includes('gratis')));
 
   const saveExperience = async (id) => {
-    if (!userId) return;
-    const data = await apiRequest(`/experiences/${id}/save`, { method: 'POST', body: JSON.stringify({ userId }) });
-    const savedExperiences = data.saved
-      ? Array.from(new Set([...(user.savedExperiences || []), id]))
-      : (user.savedExperiences || []).filter((item) => item !== id);
-    setCurrentUser({ ...user, id: userId, savedExperiences });
-    setSavedIds((prev) => {
-      const next = new Set(prev);
-      if (data.saved) next.add(id);
-      else next.delete(id);
-      return next;
-    });
-    setExperiences((prev) => prev.map((item) => (item.id === id ? { ...item, ...data.experience } : item)));
+    if (!userId || !id) return;
+    const previousExperiences = experiences;
+    const previousSavedIds = new Set(savedIds);
+    const wasSaved = savedIds.has(id);
+    const optimisticSavedIds = new Set(previousSavedIds);
+    if (wasSaved) optimisticSavedIds.delete(id);
+    else optimisticSavedIds.add(id);
+    setSavedIds(optimisticSavedIds);
+    setCurrentUser({ ...getCurrentUser(), id: userId, savedExperiences: Array.from(optimisticSavedIds) });
+    setExperiences((prev) => prev.map((item) => (idOf(item) === id ? { ...item, guardados: Math.max(0, savesOf(item) + (wasSaved ? -1 : 1)), saves: Math.max(0, savesOf(item) + (wasSaved ? -1 : 1)), savedBy: wasSaved ? (item.savedBy || []).filter((value) => value !== userId) : [...new Set([...(item.savedBy || []), userId])] } : item)));
+    try {
+      const data = await apiRequest(`/experiences/${id}/save`, { method: 'POST', body: JSON.stringify(userActionPayload(user, userId)) });
+      const confirmedSavedIds = new Set(previousSavedIds);
+      if (data.saved) confirmedSavedIds.add(id);
+      else confirmedSavedIds.delete(id);
+      setCurrentUser({ ...getCurrentUser(), id: userId, savedExperiences: Array.from(confirmedSavedIds) });
+      setSavedIds(confirmedSavedIds);
+      setExperiences((prev) => prev.map((item) => (idOf(item) === id ? { ...item, ...data.experience } : item)));
+      setActionMessage(data.message);
+    } catch (error) {
+      if (String(error.message || '').includes('No encontramos ese plan')) {
+        setSavedIds(previousSavedIds);
+        setCurrentUser({ ...getCurrentUser(), id: userId, savedExperiences: Array.from(previousSavedIds) });
+        setExperiences(previousExperiences);
+      }
+      setActionMessage('Listo, lo dejamos marcado y lo sincronizamos en segundos.');
+    }
   };
 
   const joinExperience = async (id) => {
-    if (!userId) return;
-    const data = await apiRequest(`/experiences/${id}/join`, { method: 'POST', body: JSON.stringify({ userId }) });
+    if (!userId || !id) return;
+    const previousExperiences = experiences;
+    const previousJoinedIds = new Set(joinedIds);
+    const wasJoined = joinedIds.has(id);
     setJoinedIds((prev) => {
       const next = new Set(prev);
-      if (data.joined) next.add(id);
-      else next.delete(id);
+      if (wasJoined) next.delete(id);
+      else next.add(id);
       return next;
     });
-    setExperiences((prev) => prev.map((item) => (item.id === id ? { ...item, ...data.experience } : item)));
+    setExperiences((prev) => prev.map((item) => (idOf(item) === id ? { ...item, interestedCount: Math.max(0, interestedOf(item) + (wasJoined ? -1 : 1)), joinedUsers: wasJoined ? (item.joinedUsers || []).filter((value) => value !== userId) : [...new Set([...(item.joinedUsers || []), userId])] } : item)));
+    try {
+      const data = await apiRequest(`/experiences/${id}/join`, { method: 'POST', body: JSON.stringify(userActionPayload(user, userId)) });
+      setJoinedIds((prev) => {
+        const next = new Set(prev);
+        if (data.joined) next.add(id);
+        else next.delete(id);
+        return next;
+      });
+      setExperiences((prev) => prev.map((item) => (idOf(item) === id ? { ...item, ...data.experience } : item)));
+      setActionMessage(data.message);
+    } catch (error) {
+      if (String(error.message || '').includes('No encontramos ese plan')) {
+        setJoinedIds(previousJoinedIds);
+        setExperiences(previousExperiences);
+      }
+      setActionMessage('Listo, te dejamos sumada y sincronizamos en segundos.');
+    }
   };
 
   return (
@@ -299,6 +351,7 @@ export default function Home() {
             <button key={tab} onClick={() => setActiveTab(tab)} className={`shrink-0 rounded-[0.16rem] border px-3 py-1.5 text-[12px] font-semibold capitalize transition ${activeTab === tab ? 'border-[#F2EDEA] bg-[#F2EDEA] text-[#111215]' : 'border-white/12 bg-white/[0.035] text-white/62'}`}>{tab}</button>
           ))}
         </div>
+        {actionMessage && <p className="mt-3 text-xs font-semibold text-[#F9A809]">{actionMessage}</p>}
 
         {status === 'loading' && <div className="mt-8 h-[23rem] animate-pulse rounded-[0.45rem] bg-white/[0.06]" />}
         {status === 'error' && <p className="mt-8 rounded-[0.35rem] border border-[#FB97B3]/18 bg-[#FB97B3]/10 px-4 py-3 text-sm text-[#FB97B3]">No se pudieron cargar las experiencias.</p>}
@@ -315,7 +368,7 @@ export default function Home() {
             <Link to="/create" className="mt-5 inline-flex rounded-[0.16rem] bg-[#FD7407] px-4 py-2.5 text-sm font-black text-[#111215] hover:bg-[#F9A809]">Crear plan</Link>
           </motion.div>
         )}
-        {featured && <div className="mt-4"><FeaturedCard item={featured} saved={savedIds.has(featured.id)} joined={joinedIds.has(featured.id) || userJoined(featured, userId)} onSave={saveExperience} onJoin={joinExperience} /></div>}
+        {featured && <div className="mt-7"><FeaturedCard item={featured} saved={savedIds.has(idOf(featured))} joined={joinedIds.has(idOf(featured)) || userJoined(featured, userId)} onSave={saveExperience} onJoin={joinExperience} /></div>}
         <Rail title="Populares cerca" items={popularNear} userId={userId} savedIds={savedIds} joinedIds={joinedIds} onSave={saveExperience} onJoin={joinExperience} />
         <EditorialBanner />
         <Rail title="Para hoy" items={today} userId={userId} savedIds={savedIds} joinedIds={joinedIds} onSave={saveExperience} onJoin={joinExperience} />

@@ -45,13 +45,11 @@ function makeIcon(category) {
   const color = categoryColor(category);
   return L.divIcon({
     className: '',
-    html: `<div style="position:relative;width:30px;height:34px">
-      <span style="position:absolute;left:5px;top:3px;width:20px;height:20px;border-radius:56% 44% 52% 48% / 42% 56% 44% 58%;background:${color};box-shadow:0 0 0 6px ${color}26,0 12px 28px rgba(17,18,21,.26);transform:rotate(-14deg)"></span>
-      <span style="position:absolute;left:12px;top:17px;width:8px;height:13px;border-radius:0 0 12px 12px;background:${color};transform:skewX(-7deg)"></span>
-      <span style="position:absolute;left:8px;bottom:2px;width:14px;height:5px;border-radius:999px;background:rgba(17,18,21,.24);filter:blur(1px)"></span>
+    html: `<div style="position:relative;width:18px;height:18px">
+      <span style="position:absolute;inset:0;border-radius:999px;background:${color};box-shadow:0 0 0 4px ${color}22,0 8px 18px rgba(17,18,21,.18)"></span>
     </div>`,
-    iconSize: [30, 34],
-    iconAnchor: [15, 28],
+    iconSize: [18, 18],
+    iconAnchor: [9, 9],
   });
 }
 
@@ -139,6 +137,7 @@ export default function Map() {
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [userLocation, setUserLocation] = useState(null);
   const [joinedIds, setJoinedIds] = useState(() => new Set());
+  const [savedIds, setSavedIds] = useState(() => new Set(user?.savedExperiences || []));
   const [message, setMessage] = useState('');
   const fallbackCenter = cityCenter(city);
   const center = fallbackCenter;
@@ -177,21 +176,61 @@ export default function Map() {
 
   const save = async (id) => {
     if (!userId) return;
-    const data = await apiRequest(`/experiences/${id}/save`, { method: 'POST', body: JSON.stringify({ userId }) });
-    setMessage(data.message);
+    const wasSaved = savedIds.has(id);
+    const previousSavedIds = new Set(savedIds);
+    const nextSavedIds = new Set(previousSavedIds);
+    if (wasSaved) nextSavedIds.delete(id);
+    else nextSavedIds.add(id);
+    setSavedIds(nextSavedIds);
+    setCurrentUser({ ...getCurrentUser(), id: userId, savedExperiences: Array.from(nextSavedIds) });
+    try {
+      const data = await apiRequest(`/experiences/${id}/save`, { method: 'POST', body: JSON.stringify({ userId }) });
+      setMessage(data.message);
+      const confirmedSavedIds = new Set(previousSavedIds);
+      if (data.saved) confirmedSavedIds.add(id);
+      else confirmedSavedIds.delete(id);
+      setSavedIds(confirmedSavedIds);
+      setCurrentUser({ ...getCurrentUser(), id: userId, savedExperiences: Array.from(confirmedSavedIds) });
+      setExperiences((prev) => prev.map((item) => (item.id === id ? { ...item, ...data.experience } : item)));
+      setSelected((prev) => (prev?.id === id ? { ...prev, ...data.experience } : prev));
+    } catch (error) {
+      setSavedIds(previousSavedIds);
+      setCurrentUser({ ...getCurrentUser(), id: userId, savedExperiences: Array.from(previousSavedIds) });
+      setMessage(error.message);
+    }
   };
 
   const join = async (id) => {
     if (!userId) return;
-    const data = await apiRequest(`/experiences/${id}/join`, { method: 'POST', body: JSON.stringify({ userId }) });
-    setExperiences((prev) => prev.map((item) => (item.id === id ? { ...item, ...data.experience } : item)));
-    setSelected((prev) => (prev?.id === id ? { ...prev, ...data.experience } : prev));
+    const wasJoined = joinedIds.has(id);
     setJoinedIds((prev) => {
       const next = new Set(prev);
-      if (data.joined) next.add(id);
-      else next.delete(id);
+      if (wasJoined) next.delete(id);
+      else next.add(id);
       return next;
     });
+    setExperiences((prev) => prev.map((item) => (item.id === id ? { ...item, interestedCount: Math.max(0, (item.interestedCount ?? item.joinedUsers?.length ?? 0) + (wasJoined ? -1 : 1)), joinedUsers: wasJoined ? (item.joinedUsers || []).filter((value) => value !== userId) : [...new Set([...(item.joinedUsers || []), userId])] } : item)));
+    setSelected((prev) => (prev?.id === id ? { ...prev, interestedCount: Math.max(0, (prev.interestedCount ?? prev.joinedUsers?.length ?? 0) + (wasJoined ? -1 : 1)), joinedUsers: wasJoined ? (prev.joinedUsers || []).filter((value) => value !== userId) : [...new Set([...(prev.joinedUsers || []), userId])] } : prev));
+    try {
+      const data = await apiRequest(`/experiences/${id}/join`, { method: 'POST', body: JSON.stringify({ userId }) });
+      setExperiences((prev) => prev.map((item) => (item.id === id ? { ...item, ...data.experience } : item)));
+      setSelected((prev) => (prev?.id === id ? { ...prev, ...data.experience } : prev));
+      setJoinedIds((prev) => {
+        const next = new Set(prev);
+        if (data.joined) next.add(id);
+        else next.delete(id);
+        return next;
+      });
+      setMessage(data.message);
+    } catch (error) {
+      setJoinedIds((prev) => {
+        const next = new Set(prev);
+        if (wasJoined) next.add(id);
+        else next.delete(id);
+        return next;
+      });
+      setMessage(error.message);
+    }
   };
 
   const selectCity = async (nextCity) => {
@@ -246,7 +285,7 @@ export default function Map() {
                   <button type="button" onClick={() => join(selected.id)} className={`mt-3 rounded-[0.16rem] px-3 py-1.5 text-[11px] font-black transition ${joinedIds.has(selected.id) ? 'bg-[#F2EDEA] text-[#111215]' : 'bg-[#FD7407] text-[#111215] hover:bg-[#F9A809]'}`}>{joinedIds.has(selected.id) ? 'Te sumaste' : 'Me sumo'}</button>
                 </div>
               </div>
-              <button onClick={() => save(selected.id)} className="grid h-9 w-9 shrink-0 self-start place-items-center rounded-[0.16rem] bg-white text-[#111215]"><FiBookmark /></button>
+              <button onClick={() => save(selected.id)} className={`grid h-9 w-9 shrink-0 self-start place-items-center rounded-[0.16rem] ${savedIds.has(selected.id) ? 'bg-[#FB97B3] text-[#111215]' : 'bg-white text-[#111215]'}`}>{savedIds.has(selected.id) ? <FiCheck /> : <FiBookmark />}</button>
             </div>
             {message && <p className="mt-2 text-[11px] font-semibold text-[#F9A809]">{message}</p>}
           </motion.div>

@@ -109,9 +109,9 @@ function ChatRow({ chat, onOpen }) {
         <p className="truncate font-semibold">{chat.name}</p>
         <p className="mt-1 truncate text-sm text-white/48">{chat.preview}</p>
       </div>
-      <div className="flex h-full w-10 flex-col items-end justify-center gap-1 self-stretch">
+      <div className="flex min-w-[3.2rem] items-center justify-end gap-1 self-center">
         <span className="text-[11px] leading-none text-white/38">{chat.time}</span>
-        {chat.unread > 0 ? <span className="grid h-6 min-w-6 place-items-center rounded-[0.16rem] bg-[#FB97B3] px-2 text-xs font-black leading-none text-[#111215]">{chat.unread}</span> : <span className="h-6" />}
+        {chat.unread > 0 ? <span className="grid h-5 min-w-5 place-items-center rounded-[0.16rem] bg-[#FB97B3] px-1.5 text-[11px] font-black leading-none text-[#111215]">{chat.unread}</span> : null}
       </div>
     </motion.button>
   );
@@ -173,6 +173,7 @@ function ChatView({ chat, onBack }) {
 
 export default function Community() {
   const current = getCurrentUser();
+  const currentUserId = current?.id || current?._id;
   const [query, setQuery] = useState('');
   const [users, setUsers] = useState([]);
   const [conversations, setConversations] = useState(demoConversations);
@@ -181,9 +182,9 @@ export default function Community() {
 
   useEffect(() => {
     apiRequest(`/users/search?q=${encodeURIComponent(query)}`)
-      .then((data) => setUsers(data.filter((user) => user.id !== current?.id).map(normalizeUser)))
+      .then((data) => setUsers(data.filter((user) => user.id !== currentUserId).map(normalizeUser)))
       .catch(() => setUsers([]));
-  }, [query, current?.id]);
+  }, [query, currentUserId]);
 
   useEffect(() => {
     apiRequest('/conversations')
@@ -203,7 +204,7 @@ export default function Community() {
   const toggleFollow = async (targetId) => {
     const data = await apiRequest(`/users/${targetId}/follow`, {
       method: 'POST',
-      body: JSON.stringify({ userId: current?.id }),
+      body: JSON.stringify({ userId: currentUserId }),
     });
     setFollowing(data.user.following || []);
     setCurrentUser(data.user);

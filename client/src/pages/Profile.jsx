@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useMemo, useState } from 'react';
-import { FiBookmark, FiCamera, FiEdit3, FiGrid, FiSettings, FiStar, FiUpload, FiUsers, FiX } from 'react-icons/fi';
+import { FiCamera, FiEdit3, FiSettings, FiStar, FiUpload, FiX } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 import PlanCard from '../components/PlanCard';
 import { apiRequest } from '../lib/api';
@@ -30,12 +30,9 @@ function GraphicAvatar({ user }) {
   );
 }
 
-function StatBlock({ label, value, icon: Icon }) {
+function StatBlock({ label, value }) {
   return (
-    <div className="rounded-[0.35rem] border border-white/10 bg-white/[0.055] p-3">
-      <div className="mb-3 flex h-8 w-8 items-center justify-center rounded-[0.12rem] bg-[#F2EDEA] text-[#111215]">
-        <Icon />
-      </div>
+    <div className="p-3 text-center">
       <p className="text-2xl font-semibold leading-none">{value}</p>
       <p className="mt-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-white/42">{label}</p>
     </div>
@@ -93,6 +90,7 @@ function EditProfileModal({ open, onClose, value, onChangeName, onOpenGallery, o
 
 export default function Profile() {
   const current = getCurrentUser();
+  const currentUserId = current?.id || current?._id;
   const [profile, setProfile] = useState(null);
   const [tab, setTab] = useState('Creados');
   const [editing, setEditing] = useState(false);
@@ -101,8 +99,8 @@ export default function Profile() {
   const [draftAvatar, setDraftAvatar] = useState('');
 
   useEffect(() => {
-    apiRequest(`/users/me/profile?userId=${current?.id}`).then(setProfile).catch(() => setProfile(null));
-  }, [current?.id]);
+    apiRequest(`/users/me/profile?userId=${currentUserId}`).then(setProfile).catch(() => setProfile(null));
+  }, [currentUserId]);
 
   const user = profile?.user || current;
   const created = profile?.created || [];
@@ -129,13 +127,13 @@ export default function Profile() {
   };
 
   const saveProfile = async () => {
-    if (!current?.id) return;
+    if (!currentUserId) return;
     setSaving(true);
     try {
       const updated = await apiRequest('/users/me', {
         method: 'PUT',
         body: JSON.stringify({
-          userId: current.id,
+          userId: currentUserId,
           name: draftName.trim() || name,
           avatar: draftAvatar || user?.avatar,
           preferences: user?.preferences,
@@ -177,10 +175,10 @@ export default function Profile() {
           </button>
         </motion.section>
 
-        <section className="relative z-10 mt-7 grid grid-cols-3 gap-2">
-          <StatBlock label="Posts" value={created.length} icon={FiGrid} />
-          <StatBlock label="Seguidores" value={stats.followers || user?.followersCount || user?.seguidores || 0} icon={FiUsers} />
-          <StatBlock label="Guardados" value={saved.length} icon={FiBookmark} />
+        <section className="relative z-10 mt-7 grid grid-cols-3 gap-2 py-2">
+          <StatBlock label="Posts" value={created.length} />
+          <StatBlock label="Seguidores" value={stats.followers || user?.followersCount || user?.seguidores || 0} />
+          <StatBlock label="Guardados" value={saved.length} />
         </section>
 
         <section className="relative z-10 mt-7">

@@ -7,7 +7,7 @@ import { FiBookmark, FiCalendar, FiCloud, FiHeart, FiMapPin, FiSend, FiShare2, F
 import { IoArrowBack } from 'react-icons/io5';
 import { Link, useParams } from 'react-router-dom';
 import { apiRequest } from '../lib/api';
-import { getCurrentUser } from '../lib/auth';
+import { getCurrentUser, setCurrentUser } from '../lib/auth';
 
 const MONTEVIDEO = [-34.9011, -56.1645];
 const fallbackAvatar = 'https://api.dicebear.com/9.x/bottts-neutral/svg?seed=MOVAHost&backgroundColor=fd7407,0869d0,f9a809';
@@ -150,21 +150,41 @@ export default function PlanDetail() {
   const hostAvatar = `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${hostSeed}&backgroundColor=fd7407,0869d0,f9a809`;
 
   const save = async () => {
-    const data = await apiRequest(`/experiences/${id}/save`, {
-      method: 'POST',
-      body: JSON.stringify({ userId }),
-    });
-    setExperience(data.experience);
-    setMessage(data.message);
+    const wasSaved = saved;
+    const previousSavedExperiences = getCurrentUser()?.savedExperiences || [];
+    const nextSavedExperiences = wasSaved
+      ? previousSavedExperiences.filter((value) => value !== id)
+      : Array.from(new Set([...previousSavedExperiences, id]));
+    setCurrentUser({ ...getCurrentUser(), id: userId, savedExperiences: nextSavedExperiences });
+    setExperience((prev) => ({ ...prev, savedBy: wasSaved ? (prev.savedBy || []).filter((value) => value !== userId) : [...new Set([...(prev.savedBy || []), userId])], guardados: Math.max(0, (prev.guardados || prev.saves || 0) + (wasSaved ? -1 : 1)), saves: Math.max(0, (prev.saves || prev.guardados || 0) + (wasSaved ? -1 : 1)) }));
+    try {
+      const data = await apiRequest(`/experiences/${id}/save`, {
+        method: 'POST',
+        body: JSON.stringify({ userId }),
+      });
+      setExperience(data.experience);
+      setMessage(data.message);
+    } catch (error) {
+      setCurrentUser({ ...getCurrentUser(), id: userId, savedExperiences: previousSavedExperiences });
+      setExperience((prev) => ({ ...prev, savedBy: wasSaved ? [...new Set([...(prev.savedBy || []), userId])] : (prev.savedBy || []).filter((value) => value !== userId) }));
+      setMessage(error.message);
+    }
   };
 
   const join = async () => {
-    const data = await apiRequest(`/experiences/${id}/join`, {
-      method: 'POST',
-      body: JSON.stringify({ userId }),
-    });
-    setExperience(data.experience);
-    setMessage(data.message);
+    const wasJoined = joined;
+    setExperience((prev) => ({ ...prev, joinedUsers: wasJoined ? (prev.joinedUsers || []).filter((value) => value !== userId) : [...new Set([...(prev.joinedUsers || []), userId])], interestedCount: Math.max(0, interestedOf(prev) + (wasJoined ? -1 : 1)) }));
+    try {
+      const data = await apiRequest(`/experiences/${id}/join`, {
+        method: 'POST',
+        body: JSON.stringify({ userId }),
+      });
+      setExperience(data.experience);
+      setMessage(data.message);
+    } catch (error) {
+      setExperience((prev) => ({ ...prev, joinedUsers: wasJoined ? [...new Set([...(prev.joinedUsers || []), userId])] : (prev.joinedUsers || []).filter((value) => value !== userId) }));
+      setMessage(error.message);
+    }
   };
 
   const like = async () => {
