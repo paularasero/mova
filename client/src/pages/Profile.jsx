@@ -53,6 +53,7 @@ function PosterHighlight({ label, value, color, index }) {
 
 function EditProfileModal({ open, onClose, value, onChangeName, onOpenGallery, onOpenCamera, onSelectAvatar, onSave, saving }) {
   if (!open) return null;
+  const avatarSeeds = ['MovaSun', 'MovaBlue', 'MovaNight', 'MovaCity', 'MovaJazz', 'MovaCafe', 'MovaPark', 'MovaGlow'];
   return (
     <div className="mova-modal-wrap">
       <button className="mova-overlay" onClick={onClose} aria-label="Cerrar edición de perfil" />
@@ -62,7 +63,17 @@ function EditProfileModal({ open, onClose, value, onChangeName, onOpenGallery, o
           <button onClick={onClose} className="grid h-9 w-9 place-items-center rounded-[0.16rem] bg-white/[0.08] text-white/78"><FiX /></button>
         </div>
         <label className="mt-5 block text-xs font-semibold uppercase tracking-[0.14em] text-white/42">Nombre</label>
-        <input value={value.name} onChange={(event) => onChangeName(event.target.value)} placeholder="Paula Rasero" className="mt-2 h-12 w-full rounded-[0.16rem] border border-white/10 bg-white/[0.06] px-4 text-sm outline-none placeholder:text-white/30" />
+        <input value={value.name} onChange={(event) => onChangeName(event.target.value)} placeholder="Tu nombre" className="mt-2 h-12 w-full rounded-[0.16rem] border border-white/10 bg-white/[0.06] px-4 text-sm outline-none placeholder:text-white/30" />
+
+        <div className="mt-5 flex items-center gap-4 rounded-[0.25rem] border border-white/10 bg-white/[0.045] p-3">
+          <div className="h-16 w-16 overflow-hidden rounded-[0.2rem] bg-[#111215]">
+            {value.avatar ? <img src={value.avatar} alt="" className="h-full w-full object-cover" /> : <img src={officialAvatar(value.name || 'MOVA')} alt="" className="h-full w-full object-cover" />}
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-white/86">Avatar actual</p>
+            <p className="mt-1 text-xs leading-relaxed text-white/42">Elegí uno MOVA o subí una foto desde tu dispositivo.</p>
+          </div>
+        </div>
 
         <div className="mt-5 flex gap-2">
           <button onClick={onOpenGallery} className="flex h-11 flex-1 items-center justify-center gap-2 rounded-[0.16rem] border border-white/10 bg-white/[0.06] text-sm font-semibold text-white/82"><FiUpload /> Galería</button>
@@ -72,17 +83,24 @@ function EditProfileModal({ open, onClose, value, onChangeName, onOpenGallery, o
         <div className="mt-5">
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-white/42">Avatar</p>
           <div className="mt-3 grid grid-cols-4 gap-2">
-            {['MovaSun', 'MovaBlue', 'MovaNight', 'MovaCity', 'MovaJazz', 'MovaCafe', 'MovaPark', 'MovaGlow'].map((seed) => (
-              <button key={seed} onClick={() => onSelectAvatar(officialAvatar(seed))} className="overflow-hidden rounded-[0.16rem] border border-white/10 bg-white/[0.04] p-1">
+            {avatarSeeds.map((seed) => {
+              const avatar = officialAvatar(seed);
+              const selected = value.avatar === avatar;
+              return (
+              <button key={seed} onClick={() => onSelectAvatar(avatar)} className={`overflow-hidden rounded-[0.16rem] border bg-white/[0.04] p-1 transition ${selected ? 'border-[#FD7407] ring-2 ring-[#FD7407]/24' : 'border-white/10'}`}>
                 <img src={officialAvatar(seed)} alt="" className="h-14 w-full object-cover" />
               </button>
-            ))}
+              );
+            })}
           </div>
         </div>
 
-        <button onClick={onSave} disabled={saving} className="mt-6 h-12 w-full rounded-[0.16rem] bg-[#F2EDEA] text-sm font-black text-[#111215] disabled:opacity-60">
-          {saving ? 'Guardando...' : 'Guardar cambios'}
-        </button>
+        <div className="mt-6 grid grid-cols-2 gap-2">
+          <button onClick={onClose} disabled={saving} className="h-12 rounded-[0.16rem] border border-white/10 bg-white/[0.06] text-sm font-black text-white/72 disabled:opacity-60">Cancelar</button>
+          <button onClick={onSave} disabled={saving} className="h-12 rounded-[0.16rem] bg-[#F2EDEA] text-sm font-black text-[#111215] disabled:opacity-60">
+            {saving ? 'Guardando...' : 'Guardar cambios'}
+          </button>
+        </div>
       </motion.div>
     </div>
   );

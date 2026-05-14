@@ -204,7 +204,7 @@ export default function Register() {
                     value={form.name}
                     onChange={handleChange('name')}
                     onBlur={() => setTouched((prev) => ({ ...prev, name: true }))}
-                    placeholder="Paula Rasero"
+                    placeholder="Tu nombre"
                     style={{ backgroundColor: 'rgba(13, 13, 13, 0.88)' }}
                     className={inputClass('name')}
                   />
@@ -218,7 +218,7 @@ export default function Register() {
                     value={form.email}
                     onChange={handleChange('email')}
                     onBlur={() => setTouched((prev) => ({ ...prev, email: true }))}
-                    placeholder="paula@email.com"
+                    placeholder="tu@email.com"
                     style={{ backgroundColor: 'rgba(13, 13, 13, 0.88)' }}
                     className={inputClass('email')}
                   />
@@ -233,7 +233,7 @@ export default function Register() {
                       value={form.password}
                       onChange={handleChange('password')}
                       onBlur={() => setTouched((prev) => ({ ...prev, password: true }))}
-                      placeholder="Ej: Mova2026"
+                      placeholder="Tu contraseña"
                       style={{ backgroundColor: 'rgba(13, 13, 13, 0.88)' }}
                       className={inputClass('password', 'pr-12')}
                     />

@@ -32,7 +32,7 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-surface text-ink">
+    <div className="min-h-screen bg-[#111215] text-[#F2EDEA]">
       <Routes>
         <Route path="/" element={currentUser ? <Navigate to="/home" replace /> : <Onboarding />} />
         <Route path="/login" element={<Login />} />
